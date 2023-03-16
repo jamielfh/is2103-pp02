@@ -1,0 +1,52 @@
+# Compiled class file
+*.class
+
+# Log file
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# User defined
+nbproject/private/
+build/
+dist/
+
+CrazyBidsApplication-ejb/nbproject/private/
+CrazyBidsApplication-ejb/build/
+CrazyBidsApplication-ejb/dist/
+
+# EnterpriseApplication1-war/nbproject/private/
+# EnterpriseApplication1-war/build/
+# EnterpriseApplication1-war/dist/
+
+OASAdministrationPanel/nbproject/private/
+OASAdministrationPanel/build/
+OASAdministrationPanel/dist/
+
+OASAuctionClient/nbproject/private/
+OASAuctionClient/build/
+OASAuctionClient/dist/
+
+ProxyBiddingAgent/nbproject/private/
+ProxyBiddingAgent/build/
+ProxyBiddingAgent/dist/
+
+CrazyBidsApplicationLibrary/nbproject/private/
+CrazyBidsApplicationLibrary/build/
+CrazyBidsApplicationLibrary/dist/
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
