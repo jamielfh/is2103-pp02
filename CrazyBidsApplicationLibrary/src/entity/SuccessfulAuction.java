@@ -11,6 +11,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -27,7 +30,26 @@ public class SuccessfulAuction implements Serializable {
     private String successfulAuctionName;
     @Column(nullable = false, length = 32)
     private String successfulAuctionDetails;
+    
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private Customer customer;
+    
+    @OneToOne
+    private Address address;
+    
+    @OneToOne
+    private Auction auction;
 
+    public SuccessfulAuction() {
+        
+    }
+
+    public SuccessfulAuction(String successfulAuctionName, String successfulAuctionDetails) {
+        this.successfulAuctionName = successfulAuctionName;
+        this.successfulAuctionDetails = successfulAuctionDetails;
+    }
+    
     public Long getId() {
         return id;
     }
@@ -87,6 +109,48 @@ public class SuccessfulAuction implements Serializable {
      */
     public void setSuccessfulAuctionDetails(String successfulAuctionDetails) {
         this.successfulAuctionDetails = successfulAuctionDetails;
+    }
+
+    /**
+     * @return the customer
+     */
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    /**
+     * @param customer the customer to set
+     */
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    /**
+     * @return the address
+     */
+    public Address getAddress() {
+        return address;
+    }
+
+    /**
+     * @param address the address to set
+     */
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    /**
+     * @return the auction
+     */
+    public Auction getAuction() {
+        return auction;
+    }
+
+    /**
+     * @param auction the auction to set
+     */
+    public void setAuction(Auction auction) {
+        this.auction = auction;
     }
     
 }

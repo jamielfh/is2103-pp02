@@ -7,12 +7,16 @@ package entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -45,6 +49,32 @@ public class Auction implements Serializable {
     private Boolean isDisabled;
     @Column(nullable = false)
     private Boolean manualIntervention;
+    
+    @OneToOne(mappedBy = "auction")
+    private SuccessfulAuction successfulAuction;
+    
+    @OneToMany(mappedBy = "auction")
+    private List<Bid> bids;
+
+    public Auction() {
+        bids = new ArrayList<>();
+    }
+
+    public Auction(String auctionName, String auctionDetails, Date auctionStartDateTime, Date auctionEndDateTime, BigDecimal startingBid, BigDecimal reservePrice, Boolean isDisabled, Boolean manualIntervention) {
+        this();
+        
+        this.auctionName = auctionName;
+        this.auctionDetails = auctionDetails;
+        this.auctionStartDateTime = auctionStartDateTime;
+        this.auctionEndDateTime = auctionEndDateTime;
+        this.startingBid = startingBid;
+        this.reservePrice = reservePrice;
+        this.isDisabled = isDisabled;
+        this.manualIntervention = manualIntervention;
+    }
+    
+    
+    
 
     public Long getId() {
         return id;
@@ -190,6 +220,34 @@ public class Auction implements Serializable {
      */
     public void setAuctionDetails(String auctionDetails) {
         this.auctionDetails = auctionDetails;
+    }
+
+    /**
+     * @return the successfulAuction
+     */
+    public SuccessfulAuction getSuccessfulAuction() {
+        return successfulAuction;
+    }
+
+    /**
+     * @param successfulAuction the successfulAuction to set
+     */
+    public void setSuccessfulAuction(SuccessfulAuction successfulAuction) {
+        this.successfulAuction = successfulAuction;
+    }
+
+    /**
+     * @return the bids
+     */
+    public List<Bid> getBids() {
+        return bids;
+    }
+
+    /**
+     * @param bids the bids to set
+     */
+    public void setBids(List<Bid> bids) {
+        this.bids = bids;
     }
     
 }

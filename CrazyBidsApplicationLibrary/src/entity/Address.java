@@ -11,6 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 /**
  *
@@ -31,6 +33,17 @@ public class Address implements Serializable {
     private String postalCode;
     @Column(nullable = false)
     private Boolean isDisabled;
+
+    public Address() {
+        
+    }
+
+    public Address(String addressLine1, String addressLine2, String postalCode, Boolean isDisabled) {
+        this.addressLine1 = addressLine1;
+        this.addressLine2 = addressLine2;
+        this.postalCode = postalCode;
+        this.isDisabled = isDisabled;
+    }
 
     public Long getId() {
         return id;

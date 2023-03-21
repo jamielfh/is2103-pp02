@@ -38,6 +38,18 @@ public class Employee implements Serializable {
     @Column(nullable = false, length = 32)
     private String password;
 
+    public Employee() {
+        
+    }
+    
+    public Employee(String firstName, String lastName, AccessRightEnum accessRightEnum, String username, String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.accessRightEnum = accessRightEnum;
+        this.username = username;
+        this.password = password;
+    }
+
     public Long getId() {
         return id;
     }

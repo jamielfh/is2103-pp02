@@ -13,6 +13,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -21,6 +25,8 @@ import javax.persistence.TemporalType;
  * @author Bransome Tan Yi Hao
  */
 @Entity
+@Inheritance(strategy=InheritanceType.JOINED)
+
 public class CreditTransaction implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -32,6 +38,20 @@ public class CreditTransaction implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     private Date transactionDateTime;
+    
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private Customer customer;
+
+    public CreditTransaction() {
+        
+    }
+
+    public CreditTransaction(BigDecimal transactionAmount, Date transactionDateTime) {
+        this.transactionAmount = transactionAmount;
+        this.transactionDateTime = transactionDateTime;
+    }
+    
 
     public Long getId() {
         return id;
@@ -92,6 +112,20 @@ public class CreditTransaction implements Serializable {
      */
     public void setTransactionDateTime(Date transactionDateTime) {
         this.transactionDateTime = transactionDateTime;
+    }
+
+    /**
+     * @return the customer
+     */
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    /**
+     * @param customer the customer to set
+     */
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
     
 }

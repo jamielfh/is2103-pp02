@@ -8,11 +8,15 @@ package entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -32,7 +36,31 @@ public class Bid implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     private Date bidDateTime;
+    
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private Customer customer;
+    
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private Auction auction;
+    
+    @OneToOne(cascade = CascadeType.ALL, optional = false) //one to one both mandatory
+    @JoinColumn(name = "bidTransactionId", referencedColumnName = "bidId")
+    private BidTransaction bidTransaction;
+    
+    @OneToOne(mappedBy = "bid")
+    private RefundTransaction refundTransaction;
 
+    public Bid() {
+        
+    }
+
+    public Bid(BigDecimal bidAmount, Date bidDateTime) {
+        this.bidAmount = bidAmount;
+        this.bidDateTime = bidDateTime;
+    }
+    
     public Long getId() {
         return id;
     }
@@ -92,6 +120,62 @@ public class Bid implements Serializable {
      */
     public void setBidDateTime(Date bidDateTime) {
         this.bidDateTime = bidDateTime;
+    }
+
+    /**
+     * @return the customer
+     */
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    /**
+     * @param customer the customer to set
+     */
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    /**
+     * @return the auction
+     */
+    public Auction getAuction() {
+        return auction;
+    }
+
+    /**
+     * @param auction the auction to set
+     */
+    public void setAuction(Auction auction) {
+        this.auction = auction;
+    }
+
+    /**
+     * @return the bidTransaction
+     */
+    public BidTransaction getBidTransaction() {
+        return bidTransaction;
+    }
+
+    /**
+     * @param bidTransaction the bidTransaction to set
+     */
+    public void setBidTransaction(BidTransaction bidTransaction) {
+        this.bidTransaction = bidTransaction;
+    }
+
+    /**
+     * @return the refundTransaction
+     */
+    public RefundTransaction getRefundTransaction() {
+        return refundTransaction;
+    }
+
+    /**
+     * @param refundTransaction the refundTransaction to set
+     */
+    public void setRefundTransaction(RefundTransaction refundTransaction) {
+        this.refundTransaction = refundTransaction;
     }
     
 }

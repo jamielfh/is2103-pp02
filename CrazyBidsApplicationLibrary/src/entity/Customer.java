@@ -7,11 +7,14 @@ package entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -38,6 +41,38 @@ public class Customer implements Serializable {
     private String mobileNumber;
     @Column(nullable = false, precision = 18, scale = 4)
     private BigDecimal creditBalance;
+    
+    @OneToMany
+    private List<Address> addresses;
+    
+    @OneToMany(mappedBy = "customer")
+    private List<SuccessfulAuction> successfulAuctions;
+    
+    @OneToMany(mappedBy = "customer")
+    private List<Bid> bids;
+    
+    @OneToMany(mappedBy = "customer")
+    private List<CreditTransaction> creditTransactions;
+
+    public Customer() {
+         addresses = new ArrayList<>();
+         successfulAuctions = new ArrayList<>();
+         bids = new ArrayList<>();
+         creditTransactions = new ArrayList<>();
+    }
+
+    public Customer(String firstName, String lastName, String username, String password, String email, String mobileNumber, BigDecimal creditBalance) {
+        this();
+        
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.mobileNumber = mobileNumber;
+        this.creditBalance = creditBalance;
+    }
+    
 
     public Long getId() {
         return id;
@@ -168,6 +203,62 @@ public class Customer implements Serializable {
      */
     public void setCreditBalance(BigDecimal creditBalance) {
         this.creditBalance = creditBalance;
+    }
+
+    /**
+     * @return the addresses
+     */
+    public List<Address> getAddresses() {
+        return addresses;
+    }
+
+    /**
+     * @param addresses the addresses to set
+     */
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
+    }
+
+    /**
+     * @return the successfulAuctions
+     */
+    public List<SuccessfulAuction> getSuccessfulAuctions() {
+        return successfulAuctions;
+    }
+
+    /**
+     * @param successfulAuctions the successfulAuctions to set
+     */
+    public void setSuccessfulAuctions(List<SuccessfulAuction> successfulAuctions) {
+        this.successfulAuctions = successfulAuctions;
+    }
+
+    /**
+     * @return the bids
+     */
+    public List<Bid> getBids() {
+        return bids;
+    }
+
+    /**
+     * @param bids the bids to set
+     */
+    public void setBids(List<Bid> bids) {
+        this.bids = bids;
+    }
+
+    /**
+     * @return the creditTransactions
+     */
+    public List<CreditTransaction> getCreditTransactions() {
+        return creditTransactions;
+    }
+
+    /**
+     * @param creditTransactions the creditTransactions to set
+     */
+    public void setCreditTransactions(List<CreditTransaction> creditTransactions) {
+        this.creditTransactions = creditTransactions;
     }
     
 }

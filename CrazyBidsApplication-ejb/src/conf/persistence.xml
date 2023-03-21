@@ -10,6 +10,9 @@
     <class>entity.CreditPackage</class>
     <class>entity.CreditTransaction</class>
     <class>entity.SuccessfulAuction</class>
+    <class>entity.BidTransaction</class>
+    <class>entity.PurchaseTransaction</class>
+    <class>entity.RefundTransaction</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>
