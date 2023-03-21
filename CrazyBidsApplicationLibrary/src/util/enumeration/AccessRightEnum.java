@@ -7,8 +7,10 @@ package util.enumeration;
 
 /**
  *
- * @author jamielee
+ * @author Bransome Tan Yi Hao
  */
-public enum CreditTransactionType {
-    
+public enum AccessRightEnum {
+    SYSTEMADMIN,
+    FINANCESTAFF,
+    SALESSTAFF
 }
