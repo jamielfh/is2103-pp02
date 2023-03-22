@@ -33,7 +33,7 @@ public class Employee implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AccessRightEnum accessRightEnum;
-    @Column(nullable = false, length = 32)
+    @Column(nullable = false, unique = true, length = 32)
     private String username;
     @Column(nullable = false, length = 32)
     private String password;

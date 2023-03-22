@@ -35,10 +35,12 @@ public class SuccessfulAuction implements Serializable {
     @JoinColumn(nullable = false)
     private Customer customer;
     
-    @OneToOne
+    @OneToOne(optional = false)
+    @JoinColumn(nullable = false)
     private Address address;
     
-    @OneToOne
+    @OneToOne(optional = false)
+    @JoinColumn(nullable = false)
     private Auction auction;
 
     public SuccessfulAuction() {
