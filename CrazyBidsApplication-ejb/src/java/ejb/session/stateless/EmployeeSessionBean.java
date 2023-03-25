@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.Employee;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -55,7 +56,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
     public Employee employeeLogin(String username, String password) throws InvalidLoginCredentialException {
         try {
             Employee employee = retrieveEmployeebyUsername(username);
-            
+
             if (employee.getPassword().equals(password)) {
                 return employee;
             } else {
@@ -69,26 +70,27 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
     }
 
     @Override
+    public List<Employee> retrieveAllEmployees() {
+        Query query = em.createQuery("SELECT e FROM Employee e");
+
+        return query.getResultList();
+    }
+
+    @Override
     public Long createNewEmployee(Employee newEmployee) throws UnknownPersistenceException {
         try {
             em.persist(newEmployee);
             em.flush();
-            
+
             return newEmployee.getId();
         } catch (PersistenceException ex) {
-            if(ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException"))
-            {
-                if(ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException"))
-                {
+            if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
+                if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
                     throw new UnknownPersistenceException("Employee with username " + newEmployee.getUsername() + " already exists!");
-                }
-                else
-                {
+                } else {
                     throw new UnknownPersistenceException(ex.getMessage());
                 }
-            }
-            else
-            {
+            } else {
                 throw new UnknownPersistenceException(ex.getMessage());
             }
         }
@@ -100,6 +102,18 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
         if (employee != null) {
             employee.setPassword(newPassword);
         }
+    }
+
+    @Override
+    public void updateEmployee(Employee updatedEmployee) throws EmployeeNotFoundException {
+        Employee employee = retrieveEmployeebyId(updatedEmployee.getId());
+        employee.setFirstName(updatedEmployee.getFirstName());
+        employee.setLastName(updatedEmployee.getLastName());
+        employee.setAccessRightEnum(updatedEmployee.getAccessRightEnum());
+        
+        // by right we shouldn't let system admin change username & password?
+        //employee.setUsername(updatedEmployee.getUsername());
+        //employee.setPassword(updatedEmployee.getPassword());
     }
 
     @Override

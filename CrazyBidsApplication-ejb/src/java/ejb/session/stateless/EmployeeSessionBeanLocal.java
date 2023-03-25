@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.Employee;
+import java.util.List;
 import javax.ejb.Local;
 import util.exception.EmployeeNotFoundException;
 import util.exception.InvalidLoginCredentialException;
@@ -29,5 +30,9 @@ public interface EmployeeSessionBeanLocal {
     void changePassword(Long employeeId, String newPassword) throws EmployeeNotFoundException;
 
     void deleteEmployee(Long employeeId) throws EmployeeNotFoundException;
+
+    List<Employee> retrieveAllEmployees();
+
+    void updateEmployee(Employee updatedEmployee) throws EmployeeNotFoundException;
     
 }
