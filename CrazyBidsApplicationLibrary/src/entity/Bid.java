@@ -31,7 +31,7 @@ public class Bid implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, precision = 18, scale = 2)
+    @Column(nullable = false, precision = 18, scale = 4)
     private BigDecimal bidAmount;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)

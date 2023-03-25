@@ -41,9 +41,9 @@ public class Auction implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     private Date auctionEndDateTime;
-    @Column(nullable = false, precision = 18, scale = 2)
+    @Column(nullable = false, precision = 18, scale = 4)
     private BigDecimal startingBid;
-    @Column(nullable = false, precision = 18, scale = 2)
+    @Column(nullable = false, precision = 18, scale = 4)
     private BigDecimal reservePrice;
     @Column(nullable = false)
     private Boolean isDisabled;

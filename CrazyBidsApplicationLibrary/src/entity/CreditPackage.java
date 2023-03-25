@@ -26,7 +26,7 @@ public class CreditPackage implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, precision = 18, scale = 2)
+    @Column(nullable = false, precision = 18, scale = 4)
     private BigDecimal creditPackageAmount;
     @Column(nullable = false)
     private Boolean isDisabled;
