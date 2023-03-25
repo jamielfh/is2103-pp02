@@ -95,5 +95,19 @@ public class CreditPackage implements Serializable {
         this.isDisabled = isDisabled;
     }
 
+    /**
+     * @return the purchaseTransactions
+     */
+    public List<PurchaseTransaction> getPurchaseTransactions() {
+        return purchaseTransactions;
+    }
+
+    /**
+     * @param purchaseTransactions the purchaseTransactions to set
+     */
+    public void setPurchaseTransactions(List<PurchaseTransaction> purchaseTransactions) {
+        this.purchaseTransactions = purchaseTransactions;
+    }
+
     
 }
