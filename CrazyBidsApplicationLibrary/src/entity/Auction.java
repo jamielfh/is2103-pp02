@@ -32,15 +32,15 @@ public class Auction implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false, length = 32)
-    private String auctionName;
+    private String name;
     @Column(nullable = false, length = 32)
-    private String auctionDetails;
+    private String details;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
-    private Date auctionStartDateTime;
+    private Date startDateTime;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
-    private Date auctionEndDateTime;
+    private Date endDateTime;
     @Column(nullable = false, precision = 18, scale = 4)
     private BigDecimal startingBid;
     @Column(nullable = false, precision = 18, scale = 4)
@@ -60,13 +60,13 @@ public class Auction implements Serializable {
         bids = new ArrayList<>();
     }
 
-    public Auction(String auctionName, String auctionDetails, Date auctionStartDateTime, Date auctionEndDateTime, BigDecimal startingBid, BigDecimal reservePrice, Boolean isDisabled, Boolean manualIntervention) {
+    public Auction(String name, String details, Date startDateTime, Date endDateTime, BigDecimal startingBid, BigDecimal reservePrice, Boolean isDisabled, Boolean manualIntervention) {
         this();
         
-        this.auctionName = auctionName;
-        this.auctionDetails = auctionDetails;
-        this.auctionStartDateTime = auctionStartDateTime;
-        this.auctionEndDateTime = auctionEndDateTime;
+        this.name = name;
+        this.details = details;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
         this.startingBid = startingBid;
         this.reservePrice = reservePrice;
         this.isDisabled = isDisabled;
@@ -110,46 +110,46 @@ public class Auction implements Serializable {
     }
 
     /**
-     * @return the auctionName
+     * @return the name
      */
-    public String getAuctionName() {
-        return auctionName;
+    public String getName() {
+        return name;
     }
 
     /**
-     * @param auctionName the auctionName to set
+     * @param name the name to set
      */
-    public void setAuctionName(String auctionName) {
-        this.auctionName = auctionName;
+    public void setName(String name) {
+        this.name = name;
     }
 
 
     /**
-     * @return the auctionStartDateTime
+     * @return the startDateTime
      */
-    public Date getAuctionStartDateTime() {
-        return auctionStartDateTime;
+    public Date getStartDateTime() {
+        return startDateTime;
     }
 
     /**
-     * @param auctionStartDateTime the auctionStartDateTime to set
+     * @param startDateTime the startDateTime to set
      */
-    public void setAuctionStartDateTime(Date auctionStartDateTime) {
-        this.auctionStartDateTime = auctionStartDateTime;
+    public void setStartDateTime(Date startDateTime) {
+        this.startDateTime = startDateTime;
     }
 
     /**
-     * @return the auctionEndDateTime
+     * @return the endDateTime
      */
-    public Date getAuctionEndDateTime() {
-        return auctionEndDateTime;
+    public Date getEndDateTime() {
+        return endDateTime;
     }
 
     /**
-     * @param auctionEndDateTime the auctionEndDateTime to set
+     * @param endDateTime the endDateTime to set
      */
-    public void setAuctionEndDateTime(Date auctionEndDateTime) {
-        this.auctionEndDateTime = auctionEndDateTime;
+    public void setEndDateTime(Date endDateTime) {
+        this.endDateTime = endDateTime;
     }
 
     /**
@@ -209,17 +209,17 @@ public class Auction implements Serializable {
     }
 
     /**
-     * @return the auctionDetails
+     * @return the details
      */
-    public String getAuctionDetails() {
-        return auctionDetails;
+    public String getDetails() {
+        return details;
     }
 
     /**
-     * @param auctionDetails the auctionDetails to set
+     * @param details the details to set
      */
-    public void setAuctionDetails(String auctionDetails) {
-        this.auctionDetails = auctionDetails;
+    public void setDetails(String details) {
+        this.details = details;
     }
 
     /**
