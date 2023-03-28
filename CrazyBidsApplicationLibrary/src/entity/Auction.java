@@ -43,7 +43,7 @@ public class Auction implements Serializable {
     private Date endDateTime;
     @Column(nullable = false, precision = 18, scale = 4)
     private BigDecimal startingBid;
-    @Column(nullable = false, precision = 18, scale = 4)
+    @Column(nullable = true, precision = 18, scale = 4)
     private BigDecimal reservePrice;
     @Column(nullable = false)
     private Boolean isDisabled;

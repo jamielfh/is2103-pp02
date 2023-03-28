@@ -8,8 +8,11 @@ package ejb.session.stateless;
 import entity.CreditPackage;
 import java.util.List;
 import javax.ejb.Remote;
+import util.exception.CreditPackageIsDisabledException;
+import util.exception.CreditPackageIsUsedException;
 import util.exception.CreditPackageNotFoundException;
 import util.exception.UnknownPersistenceException;
+import util.exception.UpdateCreditPackageException;
 
 /**
  *
@@ -22,10 +25,12 @@ public interface CreditPackageSessionBeanRemote {
 
     Long createCreditPackage(CreditPackage newCreditPackage) throws UnknownPersistenceException;
 
-    void deleteCreditPackage(Long creditPackageId) throws CreditPackageNotFoundException;
+    void deleteCreditPackage(Long creditPackageId) throws CreditPackageNotFoundException, CreditPackageIsUsedException;
 
     List<CreditPackage> retrieveAllCreditPackages();
 
-    void updateCreditPackage(CreditPackage updatedCP) throws CreditPackageNotFoundException;
+    void updateCreditPackage(CreditPackage updatedCP) throws CreditPackageNotFoundException, UpdateCreditPackageException;
+    
+    void disableCreditPackage(Long creditPackageId) throws CreditPackageNotFoundException, CreditPackageIsDisabledException;
     
 }

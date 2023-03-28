@@ -17,6 +17,7 @@ import javax.persistence.Query;
 import util.exception.EmployeeNotFoundException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.UnknownPersistenceException;
+import util.exception.UpdateEmployeeException;
 
 /**
  *
@@ -105,15 +106,29 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
     }
 
     @Override
-    public void updateEmployee(Employee updatedEmployee) throws EmployeeNotFoundException {
-        Employee employee = retrieveEmployeebyId(updatedEmployee.getId());
-        employee.setFirstName(updatedEmployee.getFirstName());
-        employee.setLastName(updatedEmployee.getLastName());
-        employee.setAccessRightEnum(updatedEmployee.getAccessRightEnum());
-        
-        // by right we shouldn't let system admin change username & password?
-        //employee.setUsername(updatedEmployee.getUsername());
-        //employee.setPassword(updatedEmployee.getPassword());
+    public void updateEmployee(Employee updatedEmployee) throws EmployeeNotFoundException, UpdateEmployeeException {
+       
+        if(updatedEmployee!= null && updatedEmployee.getId() != null)
+        {
+            Employee employeeToUpdate = retrieveEmployeebyId(updatedEmployee.getId());
+            
+            if(employeeToUpdate.getUsername().equals(updatedEmployee.getUsername()))
+            {
+                employeeToUpdate.setFirstName(updatedEmployee.getFirstName());
+                employeeToUpdate.setLastName(updatedEmployee.getLastName());
+                employeeToUpdate.setAccessRightEnum(updatedEmployee.getAccessRightEnum());
+                
+                // Username and Password are deliberately NOT updated to demonstrate that client is not allowed to update account credential through this business method
+            }
+            else
+            {
+                throw new UpdateEmployeeException("Username of employee record to be updated does not match the existing record");
+            }
+        }
+        else
+        {
+            throw new EmployeeNotFoundException("Employee ID not provided for employee to be updated");
+        }
     }
 
     @Override

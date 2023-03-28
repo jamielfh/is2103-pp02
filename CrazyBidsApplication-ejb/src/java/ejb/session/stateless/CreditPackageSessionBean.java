@@ -12,8 +12,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import util.exception.CreditPackageIsDisabledException;
+import util.exception.CreditPackageIsUsedException;
 import util.exception.CreditPackageNotFoundException;
 import util.exception.UnknownPersistenceException;
+import util.exception.UpdateCreditPackageException;
 
 /**
  *
@@ -58,21 +61,52 @@ public class CreditPackageSessionBean implements CreditPackageSessionBeanRemote,
     }
 
     @Override
-    public void updateCreditPackage(CreditPackage updatedCP) throws CreditPackageNotFoundException {
-        CreditPackage cp = retrieveCreditPackagebyId(updatedCP.getId());
-        cp.setCreditPackageAmount(updatedCP.getCreditPackageAmount());
-        cp.setIsDisabled(updatedCP.getIsDisabled());
+    public void updateCreditPackage(CreditPackage updatedCP) throws CreditPackageNotFoundException, UpdateCreditPackageException {
+  
+         if(updatedCP != null && updatedCP.getId() != null)
+        {
+            CreditPackage cpToUpdate = retrieveCreditPackagebyId(updatedCP.getId());
+            
+            if(cpToUpdate.getCreditPackageAmount().equals(updatedCP.getCreditPackageAmount()))
+            {
+                cpToUpdate.setCreditPackageAmount(updatedCP.getCreditPackageAmount());
+                
+                //cp.setIsDisabled(updatedCP.getIsDisabled());
+                
+                // Disable Credit Package are deliberately NOT updated to demonstrate that client is not allowed to update account credential through this business method
+            }
+            else
+            {
+                throw new UpdateCreditPackageException("Amount of credit package record to be updated does not match the existing record");
+            }
+        }
+        else
+        {
+            throw new CreditPackageNotFoundException("Credit Package ID not provided for credit package to be updated");
+        }
     }
     
     @Override
-    public void deleteCreditPackage(Long creditPackageId) throws CreditPackageNotFoundException {
+    public void deleteCreditPackage(Long creditPackageId) throws CreditPackageNotFoundException, CreditPackageIsUsedException{
         CreditPackage cp = retrieveCreditPackagebyId(creditPackageId);
         
-        if (cp.getPurchaseTransactions().isEmpty()) {
+        if (cp.getCreditTransactions().isEmpty()) {
             em.remove(cp);
         } else {
-            cp.setIsDisabled(true); // or do we need to explicitly state that it is disabled and not deleted?
+            throw new CreditPackageIsUsedException("Credit Package is in use and you are not allowed to delete it. You can opt to disable it.");
         }
     }
+    
+    @Override
+    public void disableCreditPackage(Long creditPackageId) throws CreditPackageNotFoundException, CreditPackageIsDisabledException {
+        CreditPackage cp = retrieveCreditPackagebyId(creditPackageId);
+        if (!cp.getIsDisabled()) {
+            cp.setIsDisabled(true);
+        } else {
+            throw new CreditPackageIsDisabledException("Credit Package is already disabled.");
+        }
+    }
+    
+    
 
 }

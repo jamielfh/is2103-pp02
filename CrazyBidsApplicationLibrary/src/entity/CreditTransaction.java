@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,15 +19,16 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import util.enumeration.CreditTransactionEnum;
 
 /**
  *
  * @author Bransome Tan Yi Hao
  */
 @Entity
-@Inheritance(strategy=InheritanceType.JOINED)
 
 public class CreditTransaction implements Serializable {
 
@@ -35,6 +38,9 @@ public class CreditTransaction implements Serializable {
     private Long id;
     @Column(nullable = false, precision = 18, scale = 4)
     private BigDecimal transactionAmount;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private CreditTransactionEnum creditTransactionEnum;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     private Date transactionDateTime;
@@ -42,6 +48,14 @@ public class CreditTransaction implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private Customer customer;
+    
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private CreditPackage creditPackage;
+    
+    @OneToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private Bid bid;
 
     public CreditTransaction() {
         
@@ -126,6 +140,48 @@ public class CreditTransaction implements Serializable {
      */
     public void setCustomer(Customer customer) {
         this.customer = customer;
+    }
+
+    /**
+     * @return the creditTransactionEnum
+     */
+    public CreditTransactionEnum getCreditTransactionEnum() {
+        return creditTransactionEnum;
+    }
+
+    /**
+     * @param creditTransactionEnum the creditTransactionEnum to set
+     */
+    public void setCreditTransactionEnum(CreditTransactionEnum creditTransactionEnum) {
+        this.creditTransactionEnum = creditTransactionEnum;
+    }
+
+    /**
+     * @return the creditPackage
+     */
+    public CreditPackage getCreditPackage() {
+        return creditPackage;
+    }
+
+    /**
+     * @param creditPackage the creditPackage to set
+     */
+    public void setCreditPackage(CreditPackage creditPackage) {
+        this.creditPackage = creditPackage;
+    }
+
+    /**
+     * @return the bid
+     */
+    public Bid getBid() {
+        return bid;
+    }
+
+    /**
+     * @param bid the bid to set
+     */
+    public void setBid(Bid bid) {
+        this.bid = bid;
     }
     
 }

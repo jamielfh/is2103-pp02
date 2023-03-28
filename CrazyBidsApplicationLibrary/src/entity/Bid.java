@@ -45,12 +45,9 @@ public class Bid implements Serializable {
     @JoinColumn(nullable = false)
     private Auction auction;
     
-    @OneToOne(cascade = CascadeType.ALL, optional = false) //one to one both mandatory
-    @JoinColumn(name = "bidTransactionId", referencedColumnName = "bidId")
-    private BidTransaction bidTransaction;
-    
     @OneToOne(mappedBy = "bid")
-    private RefundTransaction refundTransaction;
+    private CreditTransaction creditTransaction;
+   
 
     public Bid() {
         
@@ -151,31 +148,17 @@ public class Bid implements Serializable {
     }
 
     /**
-     * @return the bidTransaction
+     * @return the creditTransaction
      */
-    public BidTransaction getBidTransaction() {
-        return bidTransaction;
+    public CreditTransaction getCreditTransaction() {
+        return creditTransaction;
     }
 
     /**
-     * @param bidTransaction the bidTransaction to set
+     * @param creditTransaction the creditTransaction to set
      */
-    public void setBidTransaction(BidTransaction bidTransaction) {
-        this.bidTransaction = bidTransaction;
-    }
-
-    /**
-     * @return the refundTransaction
-     */
-    public RefundTransaction getRefundTransaction() {
-        return refundTransaction;
-    }
-
-    /**
-     * @param refundTransaction the refundTransaction to set
-     */
-    public void setRefundTransaction(RefundTransaction refundTransaction) {
-        this.refundTransaction = refundTransaction;
+    public void setCreditTransaction(CreditTransaction creditTransaction) {
+        this.creditTransaction = creditTransaction;
     }
     
 }

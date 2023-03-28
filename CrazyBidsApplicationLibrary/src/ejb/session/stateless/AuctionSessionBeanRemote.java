@@ -8,8 +8,11 @@ package ejb.session.stateless;
 import entity.Auction;
 import java.util.List;
 import javax.ejb.Remote;
+import util.exception.AuctionHasBidsException;
+import util.exception.AuctionIsDisabledException;
 import util.exception.AuctionNotFoundException;
 import util.exception.UnknownPersistenceException;
+import util.exception.UpdateAuctionException;
 
 /**
  *
@@ -24,8 +27,12 @@ public interface AuctionSessionBeanRemote {
 
     Long createAuction(Auction newAuction) throws UnknownPersistenceException;
 
-    void updateAuction(Auction updatedAuction) throws AuctionNotFoundException;
+    void updateAuction(Auction updatedAuction) throws AuctionNotFoundException, UpdateAuctionException;
 
-    void deleteAuction(Long auctionId) throws AuctionNotFoundException;
+    void deleteAuction(Long auctionId) throws AuctionNotFoundException, AuctionHasBidsException;
+
+    void disableAuction(Long auctionId) throws AuctionNotFoundException, AuctionIsDisabledException;
+    
+    List<Auction> retrieveAllAuctionsWithBidsBelowReservePrice();
     
 }

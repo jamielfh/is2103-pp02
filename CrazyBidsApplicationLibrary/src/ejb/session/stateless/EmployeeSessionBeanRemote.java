@@ -11,6 +11,7 @@ import javax.ejb.Remote;
 import util.exception.EmployeeNotFoundException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.UnknownPersistenceException;
+import util.exception.UpdateEmployeeException;
 
 /**
  *
@@ -33,6 +34,6 @@ public interface EmployeeSessionBeanRemote {
 
     List<Employee> retrieveAllEmployees();
 
-    void updateEmployee(Employee updatedEmployee) throws EmployeeNotFoundException;
+    void updateEmployee(Employee updatedEmployee) throws EmployeeNotFoundException, UpdateEmployeeException;
     
 }
