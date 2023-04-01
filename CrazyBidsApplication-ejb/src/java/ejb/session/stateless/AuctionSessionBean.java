@@ -9,6 +9,7 @@ import entity.Auction;
 import entity.Bid;
 import entity.Customer;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -46,14 +47,23 @@ public class AuctionSessionBean implements AuctionSessionBeanRemote, AuctionSess
 
     @Override
     public List<Auction> retrieveAllAuctions() {
-        Query query = em.createQuery("SELECT a from Auction a ORDER BY a.auctionStartDateTime ASC");
+        Query query = em.createQuery("SELECT a from Auction a ORDER BY a.startDateTime ASC");
+        return query.getResultList();
+    }
+    
+    @Override
+    public List<Auction> retrieveAllActiveAuctions() {
+        Query query = em.createQuery("SELECT a from Auction a WHERE a.startDateTime <= :inStartDate AND a.endDateTime >= :inEndDate AND a.isDisabled = false ORDER BY a.startDateTime ASC");
+        Date currentDate = new Date();
+        query.setParameter("inStartDate", currentDate);
+        query.setParameter("inEndDate", currentDate);
         return query.getResultList();
     }
     
     @Override
     public List<Auction> retrieveAllAuctionsWithBidsBelowReservePrice() {
         // Not sure if this is correct but can try out
-        Query query = em.createQuery("SELECT a FROM Auction a JOIN a.bids b WHERE b.bidAmount < a.reservePrice ORDER BY a.auctionStartDateTime ASC");
+        Query query = em.createQuery("SELECT a FROM Auction a JOIN a.bids b WHERE b.bidAmount < a.reservePrice ORDER BY a.startDateTime ASC");
         return query.getResultList();
     }
     

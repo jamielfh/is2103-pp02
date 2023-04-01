@@ -30,6 +30,8 @@ public class SuccessfulAuction implements Serializable {
     private String successfulAuctionName;
     @Column(nullable = false, length = 32)
     private String successfulAuctionDetails;
+    @Column(nullable = false, length = 32)
+    private String successfulAuctionDeliveryAddress;
     
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
@@ -46,9 +48,10 @@ public class SuccessfulAuction implements Serializable {
         
     }
 
-    public SuccessfulAuction(String successfulAuctionName, String successfulAuctionDetails) {
+    public SuccessfulAuction(String successfulAuctionName, String successfulAuctionDetails, String successfulAuctionDeliveryAddress) {
         this.successfulAuctionName = successfulAuctionName;
         this.successfulAuctionDetails = successfulAuctionDetails;
+        this.successfulAuctionDeliveryAddress = successfulAuctionDeliveryAddress;
     }
     
     public Long getId() {
@@ -152,6 +155,20 @@ public class SuccessfulAuction implements Serializable {
      */
     public void setAuction(Auction auction) {
         this.auction = auction;
+    }
+
+    /**
+     * @return the successfulAuctionDeliveryAddress
+     */
+    public String getSuccessfulAuctionDeliveryAddress() {
+        return successfulAuctionDeliveryAddress;
+    }
+
+    /**
+     * @param successfulAuctionDeliveryAddress the successfulAuctionDeliveryAddress to set
+     */
+    public void setSuccessfulAuctionDeliveryAddress(String successfulAuctionDeliveryAddress) {
+        this.successfulAuctionDeliveryAddress = successfulAuctionDeliveryAddress;
     }
     
 }

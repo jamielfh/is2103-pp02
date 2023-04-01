@@ -31,8 +31,10 @@ public interface AuctionSessionBeanLocal {
 
     void deleteAuction(Long auctionId) throws AuctionNotFoundException, AuctionHasBidsException;
 
-    public void disableAuction(Long auctionId) throws AuctionNotFoundException, AuctionIsDisabledException;
+    void disableAuction(Long auctionId) throws AuctionNotFoundException, AuctionIsDisabledException;
 
-    public List<Auction> retrieveAllAuctionsWithBidsBelowReservePrice();
+    List<Auction> retrieveAllAuctionsWithBidsBelowReservePrice();
+
+    List<Auction> retrieveAllActiveAuctions();
     
 }

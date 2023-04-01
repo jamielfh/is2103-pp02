@@ -32,5 +32,7 @@ public interface CreditPackageSessionBeanLocal {
     void updateCreditPackage(CreditPackage updatedCP) throws CreditPackageNotFoundException, UpdateCreditPackageException;
 
     void disableCreditPackage(Long creditPackageId) throws CreditPackageNotFoundException, CreditPackageIsDisabledException;
+
+    List<CreditPackage> retrieveAllActiveCreditPackages();
     
 }

@@ -33,4 +33,6 @@ public interface CreditPackageSessionBeanRemote {
     
     void disableCreditPackage(Long creditPackageId) throws CreditPackageNotFoundException, CreditPackageIsDisabledException;
     
+     List<CreditPackage> retrieveAllActiveCreditPackages();
+    
 }

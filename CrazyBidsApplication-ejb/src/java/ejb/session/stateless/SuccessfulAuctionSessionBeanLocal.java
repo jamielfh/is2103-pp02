@@ -9,6 +9,8 @@ import entity.SuccessfulAuction;
 import java.util.List;
 import javax.ejb.Local;
 import util.exception.AddressNotFoundException;
+import util.exception.AuctionNotFoundException;
+import util.exception.CustomerNotFoundException;
 import util.exception.DeliveryAddressExistException;
 import util.exception.SuccessfulAuctionNotFoundException;
 import util.exception.UnknownPersistenceException;
@@ -25,8 +27,10 @@ public interface SuccessfulAuctionSessionBeanLocal {
 
     List<SuccessfulAuction> retrieveAllSuccessfulAuction();
 
-    Long createNewSuccessfulAuction(SuccessfulAuction newSuccessfulAuction) throws UnknownPersistenceException;
+    Long createNewSuccessfulAuction(SuccessfulAuction newSuccessfulAuction, Long customerId, Long auctionId) throws UnknownPersistenceException, CustomerNotFoundException, AuctionNotFoundException;
 
     void updateDeliveryAddress(Long successfulAuctionId, Long addressId) throws DeliveryAddressExistException, UpdateDeliveryAddressException, SuccessfulAuctionNotFoundException, AddressNotFoundException;
+
+    List<SuccessfulAuction> retrieveAllSuccessfulAuctionByCustomerId(Long customerId) throws CustomerNotFoundException;
     
 }

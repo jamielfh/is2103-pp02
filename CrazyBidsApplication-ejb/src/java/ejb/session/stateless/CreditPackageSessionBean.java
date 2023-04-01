@@ -47,6 +47,13 @@ public class CreditPackageSessionBean implements CreditPackageSessionBeanRemote,
         
         return query.getResultList();
     }
+    
+    @Override
+    public List<CreditPackage> retrieveAllActiveCreditPackages() {
+        Query query = em.createQuery("SELECT cp from CreditPackage cp WHERE cp.isDisabled = false ORDER BY cp.creditPackageAmount ASC");
+        
+        return query.getResultList();
+    }
 
     @Override
     public Long createCreditPackage(CreditPackage newCreditPackage) throws UnknownPersistenceException {

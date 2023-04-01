@@ -49,20 +49,19 @@ public class CreditTransaction implements Serializable {
     @JoinColumn(nullable = false)
     private Customer customer;
     
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @ManyToOne
     private CreditPackage creditPackage;
     
-    @OneToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @OneToOne
     private Bid bid;
 
     public CreditTransaction() {
         
     }
 
-    public CreditTransaction(BigDecimal transactionAmount, Date transactionDateTime) {
+    public CreditTransaction(BigDecimal transactionAmount, CreditTransactionEnum creditTransactionEnum, Date transactionDateTime) {
         this.transactionAmount = transactionAmount;
+        this.creditTransactionEnum = creditTransactionEnum;
         this.transactionDateTime = transactionDateTime;
     }
     

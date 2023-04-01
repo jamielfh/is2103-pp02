@@ -35,4 +35,6 @@ public interface AuctionSessionBeanRemote {
     
     List<Auction> retrieveAllAuctionsWithBidsBelowReservePrice();
     
+    List<Auction> retrieveAllActiveAuctions();
+    
 }

@@ -5,9 +5,11 @@
  */
 package ejb.session.stateless;
 
+import entity.CreditTransaction;
 import entity.Customer;
 import java.util.List;
 import javax.ejb.Remote;
+import util.exception.CreditPackageNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.UnknownPersistenceException;
@@ -30,4 +32,8 @@ public interface CustomerSessionBeanRemote {
     Long createNewCustomer(Customer newCustomer) throws UnknownPersistenceException;
 
     void updateCustomer(Customer customer) throws CustomerNotFoundException, UpdateCustomerException;
+    
+    List<CreditTransaction> retrieveAllCreditTransactionByCustomerId(Long customerId) throws CustomerNotFoundException;
+    
+    void purchaseCreditPackage(Long creditPackageId, Long customerId, Long quantity) throws CustomerNotFoundException, CreditPackageNotFoundException;
 }
