@@ -6,6 +6,8 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -33,12 +36,17 @@ public class Address implements Serializable {
     private String postalCode;
     @Column(nullable = false)
     private Boolean isDisabled;
-
+    
+    @OneToMany(mappedBy = "address")
+    private List<SuccessfulAuction> successfulAuctions;
+    
     public Address() {
-        
+        successfulAuctions = new ArrayList<>();
     }
 
     public Address(String addressLine1, String addressLine2, String postalCode, Boolean isDisabled) {
+        this();
+        
         this.addressLine1 = addressLine1;
         this.addressLine2 = addressLine2;
         this.postalCode = postalCode;
@@ -132,6 +140,20 @@ public class Address implements Serializable {
      */
     public void setIsDisabled(Boolean isDisabled) {
         this.isDisabled = isDisabled;
+    }
+
+    /**
+     * @return the successfulAuctions
+     */
+    public List<SuccessfulAuction> getSuccessfulAuctions() {
+        return successfulAuctions;
+    }
+
+    /**
+     * @param successfulAuctions the successfulAuctions to set
+     */
+    public void setSuccessfulAuctions(List<SuccessfulAuction> successfulAuctions) {
+        this.successfulAuctions = successfulAuctions;
     }
     
 }

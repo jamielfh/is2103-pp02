@@ -7,6 +7,7 @@ package entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,13 +27,25 @@ public class CreditPackage implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, precision = 18, scale = 2)
+    @Column(nullable = false, precision = 18, scale = 4)
     private BigDecimal creditPackageAmount;
     @Column(nullable = false)
     private Boolean isDisabled;
     
     @OneToMany(mappedBy = "creditPackage")
-    private List<PurchaseTransaction> purchaseTransactions;
+    private List<CreditTransaction> creditTransactions;
+
+    public CreditPackage() {
+        creditTransactions = new ArrayList<>();
+    }
+
+    public CreditPackage(BigDecimal creditPackageAmount, Boolean isDisabled) {
+        this();
+        
+        this.creditPackageAmount = creditPackageAmount;
+        this.isDisabled = isDisabled;
+    }
+    
 
     public Long getId() {
         return id;
@@ -95,5 +108,18 @@ public class CreditPackage implements Serializable {
         this.isDisabled = isDisabled;
     }
 
+    /**
+     * @return the creditTransactions
+     */
+    public List<CreditTransaction> getCreditTransactions() {
+        return creditTransactions;
+    }
+
+    /**
+     * @param creditTransactions the creditTransactions to set
+     */
+    public void setCreditTransactions(List<CreditTransaction> creditTransactions) {
+        this.creditTransactions = creditTransactions;
+    }
     
 }
