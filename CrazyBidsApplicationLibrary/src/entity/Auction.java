@@ -72,9 +72,6 @@ public class Auction implements Serializable {
         this.isDisabled = isDisabled;
         this.manualIntervention = manualIntervention;
     }
-    
-    
-    
 
     public Long getId() {
         return id;

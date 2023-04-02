@@ -14,8 +14,6 @@ import entity.SuccessfulAuction;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
@@ -35,7 +33,7 @@ import util.exception.UnknownPersistenceException;
 @LocalBean
 @Startup
 
-public class DataInitSessionBean {
+public class ClientDataInitSessionBean {
 
     @EJB
     private SuccessfulAuctionSessionBeanLocal successfulAuctionSessionBeanLocal;
@@ -49,7 +47,7 @@ public class DataInitSessionBean {
     @PersistenceContext(unitName = "CrazyBidsApplication-ejbPU")
     private EntityManager em;
 
-    public DataInitSessionBean() {
+    public ClientDataInitSessionBean() {
     }
 
     @PostConstruct

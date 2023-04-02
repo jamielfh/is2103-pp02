@@ -13,7 +13,6 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
-import javax.persistence.Query;
 import util.exception.AddressIsAssociatedWithWinningBidException;
 import util.exception.AddressIsDisabledException;
 import util.exception.AddressNotFoundException;

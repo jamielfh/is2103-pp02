@@ -30,7 +30,7 @@ public interface EmployeeSessionBeanLocal {
 
     void changePassword(Long employeeId, String newPassword) throws EmployeeNotFoundException;
 
-    void deleteEmployee(Long employeeId) throws EmployeeNotFoundException;
+    void deleteEmployee(Long deletedEmployee) throws EmployeeNotFoundException;
 
     List<Employee> retrieveAllEmployees();
 

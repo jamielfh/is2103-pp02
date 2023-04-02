@@ -11,8 +11,6 @@ import entity.Address;
 import entity.Customer;
 import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import util.exception.AddressIsAssociatedWithWinningBidException;
 import util.exception.AddressIsDisabledException;
 import util.exception.AddressNotFoundException;

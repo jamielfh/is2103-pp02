@@ -68,24 +68,16 @@ public class CreditPackageSessionBean implements CreditPackageSessionBeanRemote,
     }
 
     @Override
-    public void updateCreditPackage(CreditPackage updatedCP) throws CreditPackageNotFoundException, UpdateCreditPackageException {
-  
-         if(updatedCP != null && updatedCP.getId() != null)
+    public void updateCreditPackage(CreditPackage updatedCP) throws CreditPackageNotFoundException 
+    {
+        if(updatedCP != null && updatedCP.getId() != null)
         {
             CreditPackage cpToUpdate = retrieveCreditPackagebyId(updatedCP.getId());
             
-            if(cpToUpdate.getCreditPackageAmount().equals(updatedCP.getCreditPackageAmount()))
-            {
-                cpToUpdate.setCreditPackageAmount(updatedCP.getCreditPackageAmount());
+            cpToUpdate.setCreditPackageAmount(updatedCP.getCreditPackageAmount());
                 
-                //cp.setIsDisabled(updatedCP.getIsDisabled());
-                
-                // Disable Credit Package are deliberately NOT updated to demonstrate that client is not allowed to update account credential through this business method
-            }
-            else
-            {
-                throw new UpdateCreditPackageException("Amount of credit package record to be updated does not match the existing record");
-            }
+            //cp.setIsDisabled(updatedCP.getIsDisabled());
+            // Disable Credit Package are deliberately NOT updated to demonstrate that client is not allowed to update account credential through this business method
         }
         else
         {

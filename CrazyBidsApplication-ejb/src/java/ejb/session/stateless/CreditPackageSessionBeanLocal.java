@@ -29,7 +29,7 @@ public interface CreditPackageSessionBeanLocal {
 
     List<CreditPackage> retrieveAllCreditPackages();
 
-    void updateCreditPackage(CreditPackage updatedCP) throws CreditPackageNotFoundException, UpdateCreditPackageException;
+    void updateCreditPackage(CreditPackage updatedCP) throws CreditPackageNotFoundException;
 
     void disableCreditPackage(Long creditPackageId) throws CreditPackageNotFoundException, CreditPackageIsDisabledException;
 

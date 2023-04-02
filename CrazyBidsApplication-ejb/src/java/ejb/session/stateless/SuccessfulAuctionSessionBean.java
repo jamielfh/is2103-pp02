@@ -54,7 +54,7 @@ public class SuccessfulAuctionSessionBean implements SuccessfulAuctionSessionBea
     }
     
     @Override
-    public List<SuccessfulAuction> retrieveAllSuccessfulAuction() {
+    public List<SuccessfulAuction> retrieveAllSuccessfulAuctions() {
         Query query = em.createQuery("SELECT sa FROM SuccessfulAuction sa");
         return query.getResultList();
     }

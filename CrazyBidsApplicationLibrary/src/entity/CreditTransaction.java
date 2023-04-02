@@ -54,6 +54,9 @@ public class CreditTransaction implements Serializable {
     
     @OneToOne
     private Bid bid;
+    
+    @OneToOne
+    private Bid refundedBid;
 
     public CreditTransaction() {
         
@@ -181,6 +184,20 @@ public class CreditTransaction implements Serializable {
      */
     public void setBid(Bid bid) {
         this.bid = bid;
+    }
+
+    /**
+     * @return the refundedBid
+     */
+    public Bid getRefundedBid() {
+        return refundedBid;
+    }
+
+    /**
+     * @param refundedBid the refundedBid to set
+     */
+    public void setRefundedBid(Bid refundedBid) {
+        this.refundedBid = refundedBid;
     }
     
 }

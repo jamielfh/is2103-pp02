@@ -8,8 +8,6 @@ package oasauctionclient;
 import ejb.session.stateless.CustomerSessionBeanRemote;
 import entity.Customer;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import util.exception.CustomerNotFoundException;
 import util.exception.UpdateCustomerException;
 

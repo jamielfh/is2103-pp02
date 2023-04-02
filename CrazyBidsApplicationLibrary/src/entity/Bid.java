@@ -25,7 +25,7 @@ import javax.persistence.TemporalType;
  * @author Bransome Tan Yi Hao
  */
 @Entity
-public class Bid implements Serializable {
+public class Bid implements Comparable<Bid>, Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -45,9 +45,12 @@ public class Bid implements Serializable {
     @JoinColumn(nullable = false)
     private Auction auction;
     
-    @OneToOne(mappedBy = "bid")
-    private CreditTransaction creditTransaction;
+    @OneToOne(optional = false, mappedBy = "bid")
+    @JoinColumn(nullable = false)
+    private CreditTransaction bidTransaction;
    
+    @OneToOne(mappedBy = "refundedBid")
+    private CreditTransaction refundTransaction;
 
     public Bid() {
         
@@ -148,17 +151,36 @@ public class Bid implements Serializable {
     }
 
     /**
-     * @return the creditTransaction
+     * @return the bidTransaction
      */
-    public CreditTransaction getCreditTransaction() {
-        return creditTransaction;
+    public CreditTransaction getBidTransaction() {
+        return bidTransaction;
     }
 
     /**
-     * @param creditTransaction the creditTransaction to set
+     * @param bidTransaction the bidTransaction to set
      */
-    public void setCreditTransaction(CreditTransaction creditTransaction) {
-        this.creditTransaction = creditTransaction;
+    public void setBidTransaction(CreditTransaction bidTransaction) {
+        this.bidTransaction = bidTransaction;
+    }
+
+    @Override
+    public int compareTo(Bid other) {
+        return other.getBidAmount().compareTo(this.getBidAmount());
+    }
+
+    /**
+     * @return the refundTransaction
+     */
+    public CreditTransaction getRefundTransaction() {
+        return refundTransaction;
+    }
+
+    /**
+     * @param refundTransaction the refundTransaction to set
+     */
+    public void setRefundTransaction(CreditTransaction refundTransaction) {
+        this.refundTransaction = refundTransaction;
     }
     
 }

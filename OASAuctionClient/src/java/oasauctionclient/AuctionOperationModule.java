@@ -9,17 +9,13 @@ import ejb.session.stateless.AuctionSessionBeanRemote;
 import ejb.session.stateless.CustomerSessionBeanRemote;
 import ejb.session.stateless.SuccessfulAuctionSessionBeanRemote;
 import entity.Auction;
-import entity.CreditPackage;
 import entity.Customer;
 import entity.SuccessfulAuction;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import util.exception.AddressNotFoundException;
 import util.exception.AuctionNotFoundException;
-import util.exception.CreditPackageNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.DeliveryAddressExistException;
 import util.exception.SuccessfulAuctionNotFoundException;
@@ -46,7 +42,7 @@ public class AuctionOperationModule {
         this.currentCustomer = currentCustomer;
     }
     
-     public void menuAuctionOperation() {
+    public void menuAuctionOperation() {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
         

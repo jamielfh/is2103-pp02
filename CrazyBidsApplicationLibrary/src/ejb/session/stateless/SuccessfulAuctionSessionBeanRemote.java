@@ -24,7 +24,7 @@ import util.exception.UpdateDeliveryAddressException;
 public interface SuccessfulAuctionSessionBeanRemote {
     SuccessfulAuction retrieveSuccessfulAuctionbyId(Long successfulAuctionId) throws SuccessfulAuctionNotFoundException;
 
-    List<SuccessfulAuction> retrieveAllSuccessfulAuction();
+    List<SuccessfulAuction> retrieveAllSuccessfulAuctions();
 
     Long createNewSuccessfulAuction(SuccessfulAuction newSuccessfulAuction, Long customerId, Long auctionId) throws UnknownPersistenceException, CustomerNotFoundException, AuctionNotFoundException;
 
