@@ -143,22 +143,7 @@ public class AuctionSessionBean implements AuctionSessionBeanRemote, AuctionSess
             Collections.sort(bids);
             
             Bid highestBid = bids.get(0);
-            BigDecimal highestBidAmount = highestBid.getBidAmount();
-            Customer customer = highestBid.getCustomer();
-            Date currentDate = new Date();
-            
-            CreditTransaction newRefundTransaction = new CreditTransaction(highestBidAmount, CreditTransactionEnum.REFUND, currentDate);
-            newRefundTransaction.setBid(highestBid);
-            highestBid.setRefundTransaction(newRefundTransaction);
-            
-            BigDecimal customerBalance = customer.getCreditBalance();
-            customerBalance.add(highestBidAmount);
-            customer.setCreditBalance(customerBalance);
-            
-            newRefundTransaction.setCustomer(customer);
-            List<CreditTransaction> customerTransactions = customer.getCreditTransactions();
-            customerTransactions.add(newRefundTransaction);
-            customer.setCreditTransactions(customerTransactions);
+            doRefund(highestBid);
             
             auction.setIsDisabled(true);
             
@@ -166,6 +151,26 @@ public class AuctionSessionBean implements AuctionSessionBeanRemote, AuctionSess
              throw new AuctionIsDisabledException("Auction is already disabled.");
         }
      
+    }
+    
+    private void doRefund(Bid bid)
+    {
+        BigDecimal bidAmount = bid.getBidAmount();
+        Customer customer = bid.getCustomer();
+        Date currentDate = new Date();
+
+        CreditTransaction newRefundTransaction = new CreditTransaction(bidAmount, CreditTransactionEnum.REFUND, currentDate);
+        newRefundTransaction.setBid(bid);
+        bid.setRefundTransaction(newRefundTransaction);
+
+        BigDecimal customerBalance = customer.getCreditBalance();
+        customerBalance.add(bidAmount);
+        customer.setCreditBalance(customerBalance);
+
+        newRefundTransaction.setCustomer(customer);
+        List<CreditTransaction> customerTransactions = customer.getCreditTransactions();
+        customerTransactions.add(newRefundTransaction);
+        customer.setCreditTransactions(customerTransactions);
     }
     
 }
