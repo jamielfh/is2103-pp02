@@ -6,16 +6,18 @@
 package ejb.session.stateless;
 
 import entity.Address;
+import entity.Customer;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
-import javax.persistence.Query;
 import util.exception.AddressIsAssociatedWithWinningBidException;
 import util.exception.AddressIsDisabledException;
 import util.exception.AddressNotFoundException;
-import util.exception.UnknownPersistenceException;
+import util.exception.CustomerNotFoundException;
+import util.exception.GeneralException;
 import util.exception.UpdateAddressException;
 
 /**
@@ -24,6 +26,9 @@ import util.exception.UpdateAddressException;
  */
 @Stateless
 public class AddressSessionBean implements AddressSessionBeanRemote, AddressSessionBeanLocal {
+
+    @EJB
+    private CustomerSessionBeanLocal customerSessionBeanLocal;
 
     @PersistenceContext(unitName = "CrazyBidsApplication-ejbPU")
     private EntityManager em;
@@ -42,20 +47,30 @@ public class AddressSessionBean implements AddressSessionBeanRemote, AddressSess
     }
 
     @Override
-    public List<Address> retrieveAllAddresses() {
-        Query query = em.createQuery("SELECT a from Address a");
-        return query.getResultList();
+    public List<Address> retrieveAllAddressesByCustomerId(Long customerId) throws CustomerNotFoundException {
+        Customer customer = em.find(Customer.class, customerId);
+        if (customer != null) {
+            customer.getAddresses().size();
+            List<Address> customerAddresses = customer.getAddresses();
+            return customerAddresses;
+        } else {
+            throw new CustomerNotFoundException("Customer ID " + customerId + " not found in system!");
+        }
     }
 
     @Override
-    public Long createAddress(Address newAddress) throws UnknownPersistenceException {
+    public Long createAddress(Address newAddress, Long customerId) throws GeneralException, CustomerNotFoundException {
         try {
             em.persist(newAddress);
             em.flush();
             
+            // Set Relationship Association
+            Customer customer = customerSessionBeanLocal.retrieveCustomerbyId(customerId);
+            customer.getAddresses().add(newAddress);
+            
             return newAddress.getId();
         } catch (PersistenceException ex) {
-            throw new UnknownPersistenceException(ex.getMessage());
+            throw new GeneralException(ex.getMessage());
         }
     }
 
@@ -86,10 +101,12 @@ public class AddressSessionBean implements AddressSessionBeanRemote, AddressSess
     }
 
     @Override
-    public void deleteAddress(Long addressId) throws AddressNotFoundException, AddressIsAssociatedWithWinningBidException{
+    public void deleteAddress(Long addressId, Long customerId) throws AddressNotFoundException, AddressIsAssociatedWithWinningBidException, CustomerNotFoundException{
         Address address = retrieveAddressbyId(addressId);
+        Customer customer = customerSessionBeanLocal.retrieveCustomerbyId(customerId);
         
         if (address.getSuccessfulAuctions().isEmpty()) {
+            customer.getAddresses().remove(address);
             em.remove(address);
         } else {
             // if address has successful auctions, disable it

@@ -6,6 +6,8 @@
 package ejb.session.stateless;
 
 import entity.Address;
+import entity.Auction;
+import entity.Customer;
 import entity.SuccessfulAuction;
 import java.util.List;
 import javax.ejb.EJB;
@@ -15,9 +17,11 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import util.exception.AddressNotFoundException;
+import util.exception.AuctionNotFoundException;
+import util.exception.CustomerNotFoundException;
 import util.exception.DeliveryAddressExistException;
 import util.exception.SuccessfulAuctionNotFoundException;
-import util.exception.UnknownPersistenceException;
+import util.exception.GeneralException;
 import util.exception.UpdateDeliveryAddressException;
 
 /**
@@ -26,6 +30,12 @@ import util.exception.UpdateDeliveryAddressException;
  */
 @Stateless
 public class SuccessfulAuctionSessionBean implements SuccessfulAuctionSessionBeanRemote, SuccessfulAuctionSessionBeanLocal {
+
+    @EJB
+    private AuctionSessionBeanLocal auctionSessionBeanLocal;
+
+    @EJB
+    private CustomerSessionBeanLocal customerSessionBeanLocal;
 
     @EJB
     private AddressSessionBeanLocal addressSessionBeanLocal;
@@ -44,20 +54,37 @@ public class SuccessfulAuctionSessionBean implements SuccessfulAuctionSessionBea
     }
     
     @Override
-    public List<SuccessfulAuction> retrieveAllSuccessfulAuction() {
+    public List<SuccessfulAuction> retrieveAllSuccessfulAuctions() {
         Query query = em.createQuery("SELECT sa FROM SuccessfulAuction sa");
         return query.getResultList();
     }
+    
+    @Override
+    public List<SuccessfulAuction> retrieveAllSuccessfulAuctionByCustomerId(Long customerId) throws CustomerNotFoundException {
+        Customer customer = customerSessionBeanLocal.retrieveCustomerbyId(customerId);
+        customer.getSuccessfulAuctions().size();
+        List<SuccessfulAuction> customerSuccessfulAuction = customer.getSuccessfulAuctions();
+        return customerSuccessfulAuction;
+    }
 
     @Override
-    public Long createNewSuccessfulAuction(SuccessfulAuction newSuccessfulAuction) throws UnknownPersistenceException {
+    public Long createNewSuccessfulAuction(SuccessfulAuction newSuccessfulAuction, Long customerId, Long auctionId) throws GeneralException, CustomerNotFoundException, AuctionNotFoundException {
         try {
+             
+            Customer customer = customerSessionBeanLocal.retrieveCustomerbyId(customerId);
+            Auction auction = auctionSessionBeanLocal.retrieveAuctionbyId(auctionId);
+            
+            //Set relationship association
+            newSuccessfulAuction.setCustomer(customer);
+            newSuccessfulAuction.setAuction(auction);
+            customer.getSuccessfulAuctions().add(newSuccessfulAuction);
+            auction.setSuccessfulAuction(newSuccessfulAuction);
             em.persist(newSuccessfulAuction);
             em.flush();
             
             return newSuccessfulAuction.getId();
         } catch (PersistenceException ex) {
-            throw new UnknownPersistenceException(ex.getMessage());
+            throw new GeneralException(ex.getMessage());
         }
     }
     
@@ -67,11 +94,13 @@ public class SuccessfulAuctionSessionBean implements SuccessfulAuctionSessionBea
         if(successfulAuctionId != null && addressId != null)
         {
             SuccessfulAuction successfulAuctionToUpdate = retrieveSuccessfulAuctionbyId(successfulAuctionId);
-            Address addressToUpdate = addressSessionBeanLocal.retrieveAddressbyId(addressId);
+            Address address = addressSessionBeanLocal.retrieveAddressbyId(addressId);
             
-            if(successfulAuctionToUpdate.getAddress() != null)
+            if(successfulAuctionToUpdate.getAddress() == null)
             {
-                successfulAuctionToUpdate.setAddress(addressToUpdate);
+                successfulAuctionToUpdate.setAddress(address);
+                String deliveryAddress = address.getAddressLine1() + " " + address.getAddressLine2() + ", Postal Code: " + address.getPostalCode();
+                successfulAuctionToUpdate.setSuccessfulAuctionDeliveryAddress(deliveryAddress);
             }
             else
             {

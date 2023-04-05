@@ -15,6 +15,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -28,18 +32,33 @@ public class Customer implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false, length = 32)
+    @NotNull
+    @Size(min = 1, max = 32)
     private String firstName;
     @Column(nullable = false, length = 32)
+    @NotNull
+    @Size(min = 1, max = 32)
     private String lastName;
     @Column(nullable = false, unique = true, length = 32)
+    @NotNull
+    @Size(min = 1, max = 32)
     private String username;
-    @Column(nullable = false, length = 32)
+    @Column(nullable = false, length = 16)
+    @NotNull
+    @Size(min = 1, max = 16)
     private String password;
     @Column(nullable = false, length = 32)
+    @NotNull
+    @Size(min = 1, max = 32)
     private String email;
-    @Column(nullable = false, length = 32)
+    @Column(nullable = false, length = 16)
+    @NotNull
+    @Size(min = 1, max = 16)
     private String mobileNumber;
     @Column(nullable = false, precision = 18, scale = 4)
+    @NotNull
+    @Digits(integer = 14, fraction = 4)
+    @DecimalMin("0.00")
     private BigDecimal creditBalance;
     
     @OneToMany

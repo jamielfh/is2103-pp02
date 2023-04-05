@@ -19,6 +19,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -32,22 +36,35 @@ public class Auction implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false, length = 32)
+    @NotNull
+    @Size(min = 1, max = 32)
     private String name;
-    @Column(nullable = false, length = 32)
+    @Column(nullable = false, length = 128)
+    @NotNull
+    @Size(min = 1, max = 128)
     private String details;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
+    @NotNull
     private Date startDateTime;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
+    @NotNull
     private Date endDateTime;
     @Column(nullable = false, precision = 18, scale = 4)
+    @NotNull
+    @Digits(integer = 14, fraction = 4)
+    @DecimalMin("0.01")
     private BigDecimal startingBid;
     @Column(nullable = true, precision = 18, scale = 4)
+    @Digits(integer = 14, fraction = 4)
+    @DecimalMin("0.01")
     private BigDecimal reservePrice;
     @Column(nullable = false)
+    @NotNull
     private Boolean isDisabled;
     @Column(nullable = false)
+    @NotNull
     private Boolean manualIntervention;
     
     @OneToOne(mappedBy = "auction")
@@ -72,9 +89,6 @@ public class Auction implements Serializable {
         this.isDisabled = isDisabled;
         this.manualIntervention = manualIntervention;
     }
-    
-    
-    
 
     public Long getId() {
         return id;

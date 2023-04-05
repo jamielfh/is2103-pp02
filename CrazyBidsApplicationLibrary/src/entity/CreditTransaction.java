@@ -15,13 +15,14 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
 import util.enumeration.CreditTransactionEnum;
 
 /**
@@ -37,32 +38,39 @@ public class CreditTransaction implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false, precision = 18, scale = 4)
+    @NotNull
+    @Digits(integer = 14, fraction = 4)
+    @DecimalMin("0.05")
     private BigDecimal transactionAmount;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @NotNull
     private CreditTransactionEnum creditTransactionEnum;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
+    @NotNull
     private Date transactionDateTime;
     
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private Customer customer;
     
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @ManyToOne
     private CreditPackage creditPackage;
     
-    @OneToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @OneToOne
     private Bid bid;
+    
+    @OneToOne
+    private Bid refundedBid;
 
     public CreditTransaction() {
         
     }
 
-    public CreditTransaction(BigDecimal transactionAmount, Date transactionDateTime) {
+    public CreditTransaction(BigDecimal transactionAmount, CreditTransactionEnum creditTransactionEnum, Date transactionDateTime) {
         this.transactionAmount = transactionAmount;
+        this.creditTransactionEnum = creditTransactionEnum;
         this.transactionDateTime = transactionDateTime;
     }
     
@@ -182,6 +190,20 @@ public class CreditTransaction implements Serializable {
      */
     public void setBid(Bid bid) {
         this.bid = bid;
+    }
+
+    /**
+     * @return the refundedBid
+     */
+    public Bid getRefundedBid() {
+        return refundedBid;
+    }
+
+    /**
+     * @param refundedBid the refundedBid to set
+     */
+    public void setRefundedBid(Bid refundedBid) {
+        this.refundedBid = refundedBid;
     }
     
 }

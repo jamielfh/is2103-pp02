@@ -14,6 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -27,9 +29,17 @@ public class SuccessfulAuction implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false, length = 32)
+    @NotNull
+    @Size(min = 1, max = 32)
     private String successfulAuctionName;
-    @Column(nullable = false, length = 32)
+    @Column(nullable = false, length = 128)
+    @NotNull
+    @Size(min = 1, max = 128)
     private String successfulAuctionDetails;
+    @Column(nullable = false, length = 70)
+    @NotNull
+    @Size(min = 1, max = 70)
+    private String successfulAuctionDeliveryAddress;
     
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
@@ -46,9 +56,10 @@ public class SuccessfulAuction implements Serializable {
         
     }
 
-    public SuccessfulAuction(String successfulAuctionName, String successfulAuctionDetails) {
+    public SuccessfulAuction(String successfulAuctionName, String successfulAuctionDetails, String successfulAuctionDeliveryAddress) {
         this.successfulAuctionName = successfulAuctionName;
         this.successfulAuctionDetails = successfulAuctionDetails;
+        this.successfulAuctionDeliveryAddress = successfulAuctionDeliveryAddress;
     }
     
     public Long getId() {
@@ -152,6 +163,20 @@ public class SuccessfulAuction implements Serializable {
      */
     public void setAuction(Auction auction) {
         this.auction = auction;
+    }
+
+    /**
+     * @return the successfulAuctionDeliveryAddress
+     */
+    public String getSuccessfulAuctionDeliveryAddress() {
+        return successfulAuctionDeliveryAddress;
+    }
+
+    /**
+     * @param successfulAuctionDeliveryAddress the successfulAuctionDeliveryAddress to set
+     */
+    public void setSuccessfulAuctionDeliveryAddress(String successfulAuctionDeliveryAddress) {
+        this.successfulAuctionDeliveryAddress = successfulAuctionDeliveryAddress;
     }
     
 }

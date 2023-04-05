@@ -10,7 +10,7 @@ import java.util.List;
 import javax.ejb.Local;
 import util.exception.EmployeeNotFoundException;
 import util.exception.InvalidLoginCredentialException;
-import util.exception.UnknownPersistenceException;
+import util.exception.GeneralException;
 import util.exception.UpdateEmployeeException;
 
 /**
@@ -26,11 +26,11 @@ public interface EmployeeSessionBeanLocal {
 
     Employee employeeLogin(String username, String password) throws InvalidLoginCredentialException;
 
-    Long createNewEmployee(Employee newEmployee) throws UnknownPersistenceException;
+    Long createNewEmployee(Employee newEmployee) throws GeneralException;
 
     void changePassword(Long employeeId, String newPassword) throws EmployeeNotFoundException;
 
-    void deleteEmployee(Long employeeId) throws EmployeeNotFoundException;
+    void deleteEmployee(Long deletedEmployee) throws EmployeeNotFoundException;
 
     List<Employee> retrieveAllEmployees();
 

@@ -13,9 +13,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -29,12 +29,19 @@ public class Address implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false, length = 32)
+    @NotNull
+    @Size(min = 1, max = 32)
     private String addressLine1;
     @Column(nullable = false, length = 32)
+    @NotNull
+    @Size(min = 1, max = 32)
     private String addressLine2;
-    @Column(nullable = false, length = 32)
+    @Column(nullable = false, length = 6)
+    @NotNull
+    @Size(min = 6, max = 6)
     private String postalCode;
     @Column(nullable = false)
+    @NotNull
     private Boolean isDisabled;
     
     @OneToMany(mappedBy = "address")

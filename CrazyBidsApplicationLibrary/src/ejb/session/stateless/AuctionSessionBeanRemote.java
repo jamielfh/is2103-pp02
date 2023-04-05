@@ -11,7 +11,7 @@ import javax.ejb.Remote;
 import util.exception.AuctionHasBidsException;
 import util.exception.AuctionIsDisabledException;
 import util.exception.AuctionNotFoundException;
-import util.exception.UnknownPersistenceException;
+import util.exception.GeneralException;
 import util.exception.UpdateAuctionException;
 
 /**
@@ -25,7 +25,7 @@ public interface AuctionSessionBeanRemote {
 
     List<Auction> retrieveAllAuctions();
 
-    Long createAuction(Auction newAuction) throws UnknownPersistenceException;
+    Long createAuction(Auction newAuction) throws GeneralException;
 
     void updateAuction(Auction updatedAuction) throws AuctionNotFoundException, UpdateAuctionException;
 
@@ -34,5 +34,7 @@ public interface AuctionSessionBeanRemote {
     void disableAuction(Long auctionId) throws AuctionNotFoundException, AuctionIsDisabledException;
     
     List<Auction> retrieveAllAuctionsWithBidsBelowReservePrice();
+    
+    List<Auction> retrieveAllActiveAuctions();
     
 }

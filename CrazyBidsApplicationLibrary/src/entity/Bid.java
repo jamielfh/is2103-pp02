@@ -19,22 +19,29 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
 
 /**
  *
  * @author Bransome Tan Yi Hao
  */
 @Entity
-public class Bid implements Serializable {
+public class Bid implements Comparable<Bid>, Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false, precision = 18, scale = 4)
+    @NotNull
+    @Digits(integer = 14, fraction = 4)
+    @DecimalMin("0.05")
     private BigDecimal bidAmount;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
+    @NotNull
     private Date bidDateTime;
     
     @ManyToOne(optional = false)
@@ -45,9 +52,12 @@ public class Bid implements Serializable {
     @JoinColumn(nullable = false)
     private Auction auction;
     
-    @OneToOne(mappedBy = "bid")
-    private CreditTransaction creditTransaction;
+    @OneToOne(optional = false, mappedBy = "bid")
+    @JoinColumn(nullable = false)
+    private CreditTransaction bidTransaction;
    
+    @OneToOne(mappedBy = "refundedBid")
+    private CreditTransaction refundTransaction;
 
     public Bid() {
         
@@ -148,17 +158,36 @@ public class Bid implements Serializable {
     }
 
     /**
-     * @return the creditTransaction
+     * @return the bidTransaction
      */
-    public CreditTransaction getCreditTransaction() {
-        return creditTransaction;
+    public CreditTransaction getBidTransaction() {
+        return bidTransaction;
     }
 
     /**
-     * @param creditTransaction the creditTransaction to set
+     * @param bidTransaction the bidTransaction to set
      */
-    public void setCreditTransaction(CreditTransaction creditTransaction) {
-        this.creditTransaction = creditTransaction;
+    public void setBidTransaction(CreditTransaction bidTransaction) {
+        this.bidTransaction = bidTransaction;
+    }
+
+    @Override
+    public int compareTo(Bid other) {
+        return other.getBidAmount().compareTo(this.getBidAmount());
+    }
+
+    /**
+     * @return the refundTransaction
+     */
+    public CreditTransaction getRefundTransaction() {
+        return refundTransaction;
+    }
+
+    /**
+     * @param refundTransaction the refundTransaction to set
+     */
+    public void setRefundTransaction(CreditTransaction refundTransaction) {
+        this.refundTransaction = refundTransaction;
     }
     
 }

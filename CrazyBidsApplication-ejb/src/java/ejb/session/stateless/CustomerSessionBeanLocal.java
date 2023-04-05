@@ -5,12 +5,14 @@
  */
 package ejb.session.stateless;
 
+import entity.CreditTransaction;
 import entity.Customer;
 import java.util.List;
 import javax.ejb.Local;
+import util.exception.CreditPackageNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InvalidLoginCredentialException;
-import util.exception.UnknownPersistenceException;
+import util.exception.GeneralException;
 import util.exception.UpdateCustomerException;
 
 /**
@@ -28,8 +30,12 @@ public interface CustomerSessionBeanLocal {
 
     List<Customer> retrieveAllCustomers();
 
-    Long createNewCustomer(Customer newCustomer) throws UnknownPersistenceException;
+    Long createNewCustomer(Customer newCustomer) throws GeneralException;
 
     void updateCustomer(Customer customer) throws CustomerNotFoundException, UpdateCustomerException;
+
+    List<CreditTransaction> retrieveAllCreditTransactionByCustomerId(Long customerId) throws CustomerNotFoundException;
+
+    void purchaseCreditPackage(Long creditPackageId, Long customerId, Long quantity) throws CustomerNotFoundException, CreditPackageNotFoundException;
     
 }

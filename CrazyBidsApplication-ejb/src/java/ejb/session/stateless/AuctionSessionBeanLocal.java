@@ -11,7 +11,7 @@ import javax.ejb.Local;
 import util.exception.AuctionHasBidsException;
 import util.exception.AuctionIsDisabledException;
 import util.exception.AuctionNotFoundException;
-import util.exception.UnknownPersistenceException;
+import util.exception.GeneralException;
 import util.exception.UpdateAuctionException;
 
 /**
@@ -25,14 +25,16 @@ public interface AuctionSessionBeanLocal {
 
     List<Auction> retrieveAllAuctions();
 
-    Long createAuction(Auction newAuction) throws UnknownPersistenceException;
+    Long createAuction(Auction newAuction) throws GeneralException;
 
     void updateAuction(Auction updatedAuction) throws AuctionNotFoundException, UpdateAuctionException;
 
     void deleteAuction(Long auctionId) throws AuctionNotFoundException, AuctionHasBidsException;
 
-    public void disableAuction(Long auctionId) throws AuctionNotFoundException, AuctionIsDisabledException;
+    void disableAuction(Long auctionId) throws AuctionNotFoundException, AuctionIsDisabledException;
 
-    public List<Auction> retrieveAllAuctionsWithBidsBelowReservePrice();
+    List<Auction> retrieveAllAuctionsWithBidsBelowReservePrice();
+
+    List<Auction> retrieveAllActiveAuctions();
     
 }

@@ -6,12 +6,14 @@
 package ejb.session.stateless;
 
 import entity.Address;
+import entity.Auction;
 import java.util.List;
 import javax.ejb.Remote;
 import util.exception.AddressIsAssociatedWithWinningBidException;
 import util.exception.AddressIsDisabledException;
 import util.exception.AddressNotFoundException;
-import util.exception.UnknownPersistenceException;
+import util.exception.CustomerNotFoundException;
+import util.exception.GeneralException;
 import util.exception.UpdateAddressException;
 
 /**
@@ -20,15 +22,16 @@ import util.exception.UpdateAddressException;
  */
 @Remote
 public interface AddressSessionBeanRemote {
-    void deleteAddress(Long addressId) throws AddressNotFoundException, AddressIsAssociatedWithWinningBidException;
-
+    
     Address retrieveAddressbyId(Long addressId) throws AddressNotFoundException;
 
-    List<Address> retrieveAllAddresses();
-
+    List<Address> retrieveAllAddressesByCustomerId(Long customerId) throws CustomerNotFoundException;
+    
     void updateAddress(Address updatedAddress) throws AddressNotFoundException, UpdateAddressException;
 
-    Long createAddress(Address newAddress) throws UnknownPersistenceException;
-    
+    Long createAddress(Address newAddress, Long customerId) throws GeneralException, CustomerNotFoundException;
+
     void disableAddress(Long addressId) throws AddressNotFoundException, AddressIsDisabledException;
+    
+    void deleteAddress(Long addressId, Long customerId) throws AddressNotFoundException, AddressIsAssociatedWithWinningBidException, CustomerNotFoundException;
 }

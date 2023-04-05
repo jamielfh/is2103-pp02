@@ -6,12 +6,13 @@
 package ejb.session.stateless;
 
 import entity.CreditPackage;
+import java.math.BigDecimal;
 import java.util.List;
 import javax.ejb.Remote;
 import util.exception.CreditPackageIsDisabledException;
 import util.exception.CreditPackageIsUsedException;
 import util.exception.CreditPackageNotFoundException;
-import util.exception.UnknownPersistenceException;
+import util.exception.GeneralException;
 import util.exception.UpdateCreditPackageException;
 
 /**
@@ -23,14 +24,16 @@ public interface CreditPackageSessionBeanRemote {
 
     CreditPackage retrieveCreditPackagebyId(Long creditPackageId) throws CreditPackageNotFoundException;
 
-    Long createCreditPackage(CreditPackage newCreditPackage) throws UnknownPersistenceException;
+    Long createCreditPackage(CreditPackage newCreditPackage) throws GeneralException;
 
     void deleteCreditPackage(Long creditPackageId) throws CreditPackageNotFoundException, CreditPackageIsUsedException;
 
     List<CreditPackage> retrieveAllCreditPackages();
 
-    void updateCreditPackage(CreditPackage updatedCP) throws CreditPackageNotFoundException, UpdateCreditPackageException;
+    void updateCreditPackage(CreditPackage updateCP, BigDecimal newAmount) throws CreditPackageNotFoundException, UpdateCreditPackageException;
     
     void disableCreditPackage(Long creditPackageId) throws CreditPackageNotFoundException, CreditPackageIsDisabledException;
+    
+     List<CreditPackage> retrieveAllActiveCreditPackages();
     
 }

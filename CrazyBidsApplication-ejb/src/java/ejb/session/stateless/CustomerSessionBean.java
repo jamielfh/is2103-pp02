@@ -5,8 +5,13 @@
  */
 package ejb.session.stateless;
 
+import entity.CreditPackage;
+import entity.CreditTransaction;
 import entity.Customer;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -14,9 +19,11 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import util.enumeration.CreditTransactionEnum;
+import util.exception.CreditPackageNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InvalidLoginCredentialException;
-import util.exception.UnknownPersistenceException;
+import util.exception.GeneralException;
 import util.exception.UpdateCustomerException;
 
 /**
@@ -25,6 +32,9 @@ import util.exception.UpdateCustomerException;
  */
 @Stateless
 public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerSessionBeanLocal {
+
+    @EJB
+    private CreditPackageSessionBeanLocal creditPackageSessionBeanLocal;
 
     @PersistenceContext(unitName = "CrazyBidsApplication-ejbPU")
     private EntityManager em;
@@ -69,7 +79,7 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
             throw ex;
         }
     }
-
+    
     @Override
     public List<Customer> retrieveAllCustomers() {
         Query query = em.createQuery("SELECT c FROM Customer c");
@@ -78,7 +88,7 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
     }
 
     @Override
-    public Long createNewCustomer(Customer newCustomer) throws UnknownPersistenceException {
+    public Long createNewCustomer(Customer newCustomer) throws GeneralException {
         try {
             em.persist(newCustomer);
             em.flush();
@@ -87,12 +97,12 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
         } catch (PersistenceException ex) {
             if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
                 if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
-                    throw new UnknownPersistenceException("Customer with username " + newCustomer.getUsername() + " already exists!");
+                    throw new GeneralException("Customer with username " + newCustomer.getUsername() + " already exists!");
                 } else {
-                    throw new UnknownPersistenceException(ex.getMessage());
+                    throw new GeneralException(ex.getMessage());
                 }
             } else {
-                throw new UnknownPersistenceException(ex.getMessage());
+                throw new GeneralException(ex.getMessage());
             }
         }
     }
@@ -126,5 +136,31 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
         }
     }
     
+    @Override
+    public List<CreditTransaction> retrieveAllCreditTransactionByCustomerId(Long customerId) throws CustomerNotFoundException {
+        Customer customer = retrieveCustomerbyId(customerId);
+        customer.getCreditTransactions().size();
+        List<CreditTransaction> customerCreditTransactions = customer.getCreditTransactions();
+        return customerCreditTransactions;
+    }
+    
+    @Override
+    public void purchaseCreditPackage(Long creditPackageId, Long customerId, Long quantity) throws CustomerNotFoundException, CreditPackageNotFoundException {
+        Customer customer = retrieveCustomerbyId(customerId);
+        CreditPackage creditPackage = creditPackageSessionBeanLocal.retrieveCreditPackagebyId(creditPackageId);
+        
+        //update new credit balance immediately
+        customer.setCreditBalance(customer.getCreditBalance().add(creditPackage.getCreditPackageAmount().multiply(new BigDecimal(quantity))));
+        //create new credit transaction of purchase type
+        CreditTransaction newCreditTransaction = new CreditTransaction(creditPackage.getCreditPackageAmount().multiply(new BigDecimal(quantity)), CreditTransactionEnum.PURCHASE, new Date());
+        
+        //relationship association
+        creditPackage.getCreditTransactions().add(newCreditTransaction);
+        customer.getCreditTransactions().add(newCreditTransaction);
+        newCreditTransaction.setCreditPackage(creditPackage);
+        newCreditTransaction.setCustomer(customer);
+        
+        em.persist(newCreditTransaction);
+    }
     
 }

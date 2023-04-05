@@ -7,18 +7,22 @@ package ejb.session.stateless;
 
 import entity.Auction;
 import entity.Bid;
+import entity.CreditTransaction;
 import entity.Customer;
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import util.enumeration.CreditTransactionEnum;
 import util.exception.AuctionHasBidsException;
 import util.exception.AuctionIsDisabledException;
 import util.exception.AuctionNotFoundException;
-import util.exception.UnknownPersistenceException;
+import util.exception.GeneralException;
 import util.exception.UpdateAuctionException;
 
 /**
@@ -38,6 +42,7 @@ public class AuctionSessionBean implements AuctionSessionBeanRemote, AuctionSess
     public Auction retrieveAuctionbyId(Long auctionId) throws AuctionNotFoundException {
         Auction auction = em.find(Auction.class, auctionId);
         if (auction != null) {
+            auction.getBids().size();
             return auction;
         } else {
             throw new AuctionNotFoundException("Auction ID " + auctionId + " not found in system!");
@@ -46,27 +51,34 @@ public class AuctionSessionBean implements AuctionSessionBeanRemote, AuctionSess
 
     @Override
     public List<Auction> retrieveAllAuctions() {
-        Query query = em.createQuery("SELECT a from Auction a ORDER BY a.auctionStartDateTime ASC");
+        Query query = em.createQuery("SELECT a from Auction a ORDER BY a.startDateTime ASC");
+        return query.getResultList();
+    }
+    
+    @Override
+    public List<Auction> retrieveAllActiveAuctions() {
+        Query query = em.createQuery("SELECT a from Auction a WHERE a.startDateTime <= :inStartDate AND a.endDateTime >= :inEndDate AND a.isDisabled = false ORDER BY a.startDateTime ASC");
+        Date currentDate = new Date();
+        query.setParameter("inStartDate", currentDate);
+        query.setParameter("inEndDate", currentDate);
         return query.getResultList();
     }
     
     @Override
     public List<Auction> retrieveAllAuctionsWithBidsBelowReservePrice() {
-        // Not sure if this is correct but can try out
-        Query query = em.createQuery("SELECT a FROM Auction a JOIN a.bids b WHERE b.bidAmount < a.reservePrice ORDER BY a.auctionStartDateTime ASC");
+        Query query = em.createQuery("SELECT a FROM Auction a WHERE a.manualIntervention = true ORDER BY a.endDateTime ASC");
         return query.getResultList();
     }
-    
 
     @Override
-    public Long createAuction(Auction newAuction) throws UnknownPersistenceException {
+    public Long createAuction(Auction newAuction) throws GeneralException {
         try {
             em.persist(newAuction);
             em.flush();
             
             return newAuction.getId();
         } catch (PersistenceException ex) {
-            throw new UnknownPersistenceException(ex.getMessage());
+            throw new GeneralException(ex.getMessage());
         }
     }
 
@@ -79,19 +91,24 @@ public class AuctionSessionBean implements AuctionSessionBeanRemote, AuctionSess
             
             if(auctionToUpdate.getName().equals(updatedAuction.getName()))
             {
+                // Only allowed to update the general details of auction in this business method.
                 auctionToUpdate.setName(updatedAuction.getName());
                 auctionToUpdate.setDetails(updatedAuction.getDetails());
-                auctionToUpdate.setReservePrice(updatedAuction.getReservePrice());
-                //auctionToUpdate.setStartDateTime(updatedAuction.getStartDateTime());
-                //auctionToUpdate.setEndDateTime(updatedAuction.getEndDateTime());
-                //auctionToUpdate.setStartingBid(updatedAuction.getStartingBid());
+                
+                // Not allowed to change startDateTime, endDateTime, startingBid and reservePrice if a customer has already bidded.
+                if(auctionToUpdate.getBids().isEmpty())
+                {
+                    auctionToUpdate.setStartDateTime(updatedAuction.getStartDateTime());
+                    auctionToUpdate.setEndDateTime(updatedAuction.getEndDateTime());
+                    auctionToUpdate.setStartingBid(updatedAuction.getStartingBid());
+                    auctionToUpdate.setReservePrice(updatedAuction.getReservePrice());
+                }
+                
                 //auctionToUpdate.setIsDisabled(updatedAuction.getIsDisabled());
                 //auctionToUpdate.setManualIntervention(updatedAuction.getManualIntervention());
                 
-                // Only allow to update the general details of auction in this business method.
-                // Not allowed to change starting bid and startDateTime if a customer has already bidded?
-                // ManualIntervention is set automatically when highest bid is the same as or below the reserve price (when timer runs out)
-                // isDisabled is set under disabledAuction
+                // ManualIntervention is set automatically when highest bid is the same as or below the reserve price (when timer runs out).
+                // isDisabled is set under disabledAuction.
             }
             else
             {
@@ -112,7 +129,7 @@ public class AuctionSessionBean implements AuctionSessionBeanRemote, AuctionSess
             em.remove(auction);
         } else {
             // if auction already have bids, throw an error to tell users they cannot delete the auction
-            throw new AuctionHasBidsException("Auction have existing bids and you are not allowed to delete it. You can opt to disable it.");
+            throw new AuctionHasBidsException("Auction has existing bids and you are not allowed to delete it. You can opt to disable it.");
         }
     }
     
@@ -121,13 +138,39 @@ public class AuctionSessionBean implements AuctionSessionBeanRemote, AuctionSess
         Auction auction = retrieveAuctionbyId(auctionId);
         
         if (!auction.getIsDisabled()) {
-             // if active listing is disabled, refund credits to all customers
-            // Create new credit transactions with enum type : REFUND for each customer
+            // refund credit to customer with highest bid (other bids should have been refunded already)
+            List<Bid> bids = auction.getBids();
+            Collections.sort(bids);
+            
+            Bid highestBid = bids.get(0);
+            doRefund(highestBid);
+            
             auction.setIsDisabled(true);
+            
         } else {
              throw new AuctionIsDisabledException("Auction is already disabled.");
         }
      
+    }
+    
+    private void doRefund(Bid bid)
+    {
+        BigDecimal bidAmount = bid.getBidAmount();
+        Customer customer = bid.getCustomer();
+        Date currentDate = new Date();
+
+        CreditTransaction newRefundTransaction = new CreditTransaction(bidAmount, CreditTransactionEnum.REFUND, currentDate);
+        newRefundTransaction.setBid(bid);
+        bid.setRefundTransaction(newRefundTransaction);
+
+        BigDecimal customerBalance = customer.getCreditBalance();
+        customerBalance.add(bidAmount);
+        customer.setCreditBalance(customerBalance);
+
+        newRefundTransaction.setCustomer(customer);
+        List<CreditTransaction> customerTransactions = customer.getCreditTransactions();
+        customerTransactions.add(newRefundTransaction);
+        customer.setCreditTransactions(customerTransactions);
     }
     
 }
