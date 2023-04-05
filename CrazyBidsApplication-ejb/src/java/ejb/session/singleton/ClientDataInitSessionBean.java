@@ -23,7 +23,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import util.exception.AuctionNotFoundException;
 import util.exception.CustomerNotFoundException;
-import util.exception.UnknownPersistenceException;
+import util.exception.GeneralException;
 
 /**
  *
@@ -73,7 +73,7 @@ public class ClientDataInitSessionBean {
                 auctionSessionBeanLocal.createAuction(new Auction("book3", "life of book 3", currentDate, newDate, new BigDecimal(20), new BigDecimal(70), false, false));
                 auctionSessionBeanLocal.createAuction(new Auction("book4", "life of book 4", currentDate, newDate, new BigDecimal(30), new BigDecimal(80), false, false));
                 auctionSessionBeanLocal.createAuction(new Auction("book5", "life of book 5", currentDate, newDate, new BigDecimal(40), new BigDecimal(90), false, false));
-            } catch (UnknownPersistenceException ex) {
+            } catch (GeneralException ex) {
                 ex.printStackTrace();
             }
         }
@@ -85,7 +85,7 @@ public class ClientDataInitSessionBean {
                 creditPackageSessionBeanLocal.createCreditPackage(new CreditPackage(new BigDecimal(300), false));
                 creditPackageSessionBeanLocal.createCreditPackage(new CreditPackage(new BigDecimal(400), false));
                 creditPackageSessionBeanLocal.createCreditPackage(new CreditPackage(new BigDecimal(500), false));
-            } catch (UnknownPersistenceException ex) {
+            } catch (GeneralException ex) {
                 ex.printStackTrace();
             }
         }
@@ -94,7 +94,7 @@ public class ClientDataInitSessionBean {
             try {
                 successfulAuctionSessionBeanLocal.createNewSuccessfulAuction(new SuccessfulAuction("book1", "life of book1", "-"), new Long(1), new Long(1));
                 successfulAuctionSessionBeanLocal.createNewSuccessfulAuction(new SuccessfulAuction("book2", "life of book2", "-"), new Long(1), new Long(2));
-            } catch (UnknownPersistenceException ex) {
+            } catch (GeneralException ex) {
                  ex.printStackTrace();
             } catch (CustomerNotFoundException ex) {
                  ex.printStackTrace();

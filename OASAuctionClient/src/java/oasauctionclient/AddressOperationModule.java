@@ -15,8 +15,8 @@ import util.exception.AddressIsAssociatedWithWinningBidException;
 import util.exception.AddressIsDisabledException;
 import util.exception.AddressNotFoundException;
 import util.exception.CustomerNotFoundException;
-import util.exception.InvalidAddressCredentialException;
-import util.exception.UnknownPersistenceException;
+import util.exception.InvalidAddressCreationException;
+import util.exception.GeneralException;
 import util.exception.UpdateAddressException;
 
 /**
@@ -61,7 +61,7 @@ public class AddressOperationModule {
                 {
                     try {
                         doCreateAddress();
-                    } catch (InvalidAddressCredentialException ex) {
+                    } catch (InvalidAddressCreationException ex) {
                        System.out.println("\nInvalid Address Credential: " + ex.getMessage() + "\n");
                     }
                 }
@@ -90,7 +90,7 @@ public class AddressOperationModule {
         }
     }
 
-    private void doCreateAddress() throws InvalidAddressCredentialException {
+    private void doCreateAddress() throws InvalidAddressCreationException {
         Scanner scanner = new Scanner(System.in);
         String addressLine1 = "";
         String addressLine2 = "";
@@ -113,7 +113,7 @@ public class AddressOperationModule {
                 Long addressId = addressSessionBeanRemote.createAddress(newAddress, currentCustomer.getId());
                 System.out.println("\nNew Address created successfully!: " + addressId + "\n");
         
-            } catch (UnknownPersistenceException ex) {
+            } catch (GeneralException ex) {
                 System.out.println("\nAn unknown error has occurred while creating the new address!: " + ex.getMessage() + "\n");
             } catch (CustomerNotFoundException ex) {
                 System.out.println(ex.getMessage());
@@ -121,7 +121,7 @@ public class AddressOperationModule {
         }
         else
         {
-            throw new InvalidAddressCredentialException("\nMissing Address credential!");
+            throw new InvalidAddressCreationException("\nMissing Address credential!");
         }
         
     }

@@ -13,7 +13,7 @@ import util.exception.AuctionNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.DeliveryAddressExistException;
 import util.exception.SuccessfulAuctionNotFoundException;
-import util.exception.UnknownPersistenceException;
+import util.exception.GeneralException;
 import util.exception.UpdateDeliveryAddressException;
 
 /**
@@ -27,7 +27,7 @@ public interface SuccessfulAuctionSessionBeanLocal {
 
     List<SuccessfulAuction> retrieveAllSuccessfulAuctions();
 
-    Long createNewSuccessfulAuction(SuccessfulAuction newSuccessfulAuction, Long customerId, Long auctionId) throws UnknownPersistenceException, CustomerNotFoundException, AuctionNotFoundException;
+    Long createNewSuccessfulAuction(SuccessfulAuction newSuccessfulAuction, Long customerId, Long auctionId) throws GeneralException, CustomerNotFoundException, AuctionNotFoundException;
 
     void updateDeliveryAddress(Long successfulAuctionId, Long addressId) throws DeliveryAddressExistException, UpdateDeliveryAddressException, SuccessfulAuctionNotFoundException, AddressNotFoundException;
 

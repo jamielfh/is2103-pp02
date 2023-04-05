@@ -19,6 +19,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -32,9 +35,13 @@ public class Bid implements Comparable<Bid>, Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false, precision = 18, scale = 4)
+    @NotNull
+    @Digits(integer = 14, fraction = 4)
+    @DecimalMin("0.05")
     private BigDecimal bidAmount;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
+    @NotNull
     private Date bidDateTime;
     
     @ManyToOne(optional = false)

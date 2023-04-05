@@ -14,7 +14,7 @@ import util.exception.CreditPackageIsDisabledException;
 import util.exception.CreditPackageIsUsedException;
 import util.exception.CreditPackageNotFoundException;
 import util.exception.InvalidCreditPackageCreationException;
-import util.exception.UnknownPersistenceException;
+import util.exception.GeneralException;
 import util.exception.UpdateCreditPackageException;
 
 /**
@@ -105,7 +105,7 @@ public class FinanceOperationModule {
                 Long creditPackageId = creditPackageSessionBeanRemote.createCreditPackage(newCreditPackage);
                 System.out.println("\nCredit package created successfully!: " + creditPackageId + "\n");
             }
-            catch (UnknownPersistenceException ex)
+            catch (GeneralException ex)
             {
                 System.out.println("\nAn unknown error has occurred while creating the new employee!: " + ex.getMessage() + "\n");
             }
@@ -195,24 +195,22 @@ public class FinanceOperationModule {
     }
     
     private void doUpdateCreditPackage(CreditPackage updateCreditPackage) {
-        Scanner scanner = new Scanner(System.in);        
-        BigDecimal creditPackageAmount;
+        Scanner scanner = new Scanner(System.in);
+        BigDecimal newAmount;
         
         System.out.println("\n*** Crazy Bids OAS Administration Panel :: Update Credit Package ***\n");
         System.out.print("Enter credit package amount (in the format 0.00, enter 0 if no change)> ");
-        creditPackageAmount = scanner.nextBigDecimal();
+        newAmount = scanner.nextBigDecimal();
 
-        if (creditPackageAmount.compareTo(new BigDecimal(0)) == 1)
-        {
-            updateCreditPackage.setCreditPackageAmount(creditPackageAmount);
-        }      
-        
         try
         {
-            creditPackageSessionBeanRemote.updateCreditPackage(updateCreditPackage);
-            System.out.println("\nCredit package updated successfully!\n");
+            if (newAmount.compareTo(new BigDecimal(0)) == 1)
+            {
+                creditPackageSessionBeanRemote.updateCreditPackage(updateCreditPackage, newAmount);
+                System.out.println("\nCredit package updated successfully!\n");
+            }      
         }
-        catch (CreditPackageNotFoundException ex) 
+        catch (CreditPackageNotFoundException | UpdateCreditPackageException ex) 
         {
             System.out.println("\nAn error has occurred while updating credit package: " + ex.getMessage() + "\n");
         }

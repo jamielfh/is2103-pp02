@@ -17,7 +17,7 @@ import util.exception.AddressIsAssociatedWithWinningBidException;
 import util.exception.AddressIsDisabledException;
 import util.exception.AddressNotFoundException;
 import util.exception.CustomerNotFoundException;
-import util.exception.UnknownPersistenceException;
+import util.exception.GeneralException;
 import util.exception.UpdateAddressException;
 
 /**
@@ -59,7 +59,7 @@ public class AddressSessionBean implements AddressSessionBeanRemote, AddressSess
     }
 
     @Override
-    public Long createAddress(Address newAddress, Long customerId) throws UnknownPersistenceException, CustomerNotFoundException {
+    public Long createAddress(Address newAddress, Long customerId) throws GeneralException, CustomerNotFoundException {
         try {
             em.persist(newAddress);
             em.flush();
@@ -70,7 +70,7 @@ public class AddressSessionBean implements AddressSessionBeanRemote, AddressSess
             
             return newAddress.getId();
         } catch (PersistenceException ex) {
-            throw new UnknownPersistenceException(ex.getMessage());
+            throw new GeneralException(ex.getMessage());
         }
     }
 

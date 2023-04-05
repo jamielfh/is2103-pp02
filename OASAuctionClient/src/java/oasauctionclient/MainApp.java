@@ -14,8 +14,8 @@ import entity.Customer;
 import java.math.BigDecimal;
 import java.util.Scanner;
 import util.exception.InvalidLoginCredentialException;
-import util.exception.InvalidRegisterCredentialException;
-import util.exception.UnknownPersistenceException;
+import util.exception.InvalidRegistrationException;
+import util.exception.GeneralException;
 
 /**
  *
@@ -72,11 +72,11 @@ public class MainApp {
                         doRegister();
                         System.out.println("\nRegistered successful!\n");
                     }
-                    catch(InvalidRegisterCredentialException ex) 
+                    catch(InvalidRegistrationException ex) 
                     {
                         System.out.println("\nInvalid Register credential: " + ex.getMessage() + "\n");
                     }
-                    catch(UnknownPersistenceException ex) 
+                    catch(GeneralException ex) 
                     {
                         System.out.println(ex.getMessage() + "\n");
                     }
@@ -140,7 +140,7 @@ public class MainApp {
         }
     }
     
-     private void doRegister() throws InvalidRegisterCredentialException, UnknownPersistenceException
+     private void doRegister() throws InvalidRegistrationException, GeneralException
     {
         Scanner scanner = new Scanner(System.in);
         String firstName = "";
@@ -172,7 +172,7 @@ public class MainApp {
         }
         else
         {
-            throw new InvalidRegisterCredentialException("Missing Register credential!");
+            throw new InvalidRegistrationException("Missing Register credential!");
         }
     }
      

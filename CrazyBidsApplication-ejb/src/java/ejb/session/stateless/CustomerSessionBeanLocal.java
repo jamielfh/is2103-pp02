@@ -12,7 +12,7 @@ import javax.ejb.Local;
 import util.exception.CreditPackageNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InvalidLoginCredentialException;
-import util.exception.UnknownPersistenceException;
+import util.exception.GeneralException;
 import util.exception.UpdateCustomerException;
 
 /**
@@ -30,7 +30,7 @@ public interface CustomerSessionBeanLocal {
 
     List<Customer> retrieveAllCustomers();
 
-    Long createNewCustomer(Customer newCustomer) throws UnknownPersistenceException;
+    Long createNewCustomer(Customer newCustomer) throws GeneralException;
 
     void updateCustomer(Customer customer) throws CustomerNotFoundException, UpdateCustomerException;
 

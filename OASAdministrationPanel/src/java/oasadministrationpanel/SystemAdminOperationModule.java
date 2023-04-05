@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Scanner;
 import util.enumeration.AccessRightEnum;
 import util.exception.EmployeeNotFoundException;
-import util.exception.InvalidEmployeeCredentialException;
-import util.exception.UnknownPersistenceException;
+import util.exception.InvalidEmployeeCreationException;
+import util.exception.GeneralException;
 import util.exception.UpdateEmployeeException;
 
 /**
@@ -57,7 +57,7 @@ public class SystemAdminOperationModule {
                     {
                         doCreateNewEmployee();
                     }
-                    catch (InvalidEmployeeCredentialException ex)
+                    catch (InvalidEmployeeCreationException ex)
                     {
                         System.out.println("\nInvalid Employee Credential: " + ex.getMessage() + "\n");
                     }
@@ -87,7 +87,7 @@ public class SystemAdminOperationModule {
         }
     }
     
-    private void doCreateNewEmployee() throws InvalidEmployeeCredentialException
+    private void doCreateNewEmployee() throws InvalidEmployeeCreationException
     {
         Scanner scanner = new Scanner(System.in);
         String firstName = "";
@@ -144,14 +144,14 @@ public class SystemAdminOperationModule {
                 Long employeeId = employeeSessionBeanRemote.createNewEmployee(newEmployee);
                 System.out.println("\nEmployee created successfully!: " + employeeId);
             }
-            catch (UnknownPersistenceException ex)
+            catch (GeneralException ex)
             {
                 System.out.println("\nAn unknown error has occurred while creating the new employee!: " + ex.getMessage() + "\n");
             }
         }
         else
         {
-            throw new InvalidEmployeeCredentialException("\nMissing Employee credential!");
+            throw new InvalidEmployeeCreationException("\nMissing Employee credential!");
         }
     }
     

@@ -16,7 +16,7 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import util.exception.EmployeeNotFoundException;
 import util.exception.InvalidLoginCredentialException;
-import util.exception.UnknownPersistenceException;
+import util.exception.GeneralException;
 import util.exception.UpdateEmployeeException;
 
 /**
@@ -78,7 +78,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
     }
 
     @Override
-    public Long createNewEmployee(Employee newEmployee) throws UnknownPersistenceException {
+    public Long createNewEmployee(Employee newEmployee) throws GeneralException {
         try {
             em.persist(newEmployee);
             em.flush();
@@ -87,12 +87,12 @@ public class EmployeeSessionBean implements EmployeeSessionBeanRemote, EmployeeS
         } catch (PersistenceException ex) {
             if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
                 if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
-                    throw new UnknownPersistenceException("Employee with username " + newEmployee.getUsername() + " already exists!");
+                    throw new GeneralException("Employee with username " + newEmployee.getUsername() + " already exists!");
                 } else {
-                    throw new UnknownPersistenceException(ex.getMessage());
+                    throw new GeneralException(ex.getMessage());
                 }
             } else {
-                throw new UnknownPersistenceException(ex.getMessage());
+                throw new GeneralException(ex.getMessage());
             }
         }
     }

@@ -15,7 +15,7 @@ import javax.ejb.Startup;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import util.enumeration.AccessRightEnum;
-import util.exception.UnknownPersistenceException;
+import util.exception.GeneralException;
 
 /**
  *
@@ -41,7 +41,7 @@ public class AdminDataInitSessionBean {
         if(em.find(Employee.class, 1l) == null) {
             try {
                 employeeSessionBeanLocal.createNewEmployee(new Employee("System", "Admin 1", AccessRightEnum.SYSTEMADMIN, "systemadmin1", "password"));
-            } catch (UnknownPersistenceException ex) {
+            } catch (GeneralException ex) {
                 ex.printStackTrace();
             }
         }

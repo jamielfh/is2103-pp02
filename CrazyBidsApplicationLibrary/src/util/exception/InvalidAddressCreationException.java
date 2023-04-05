@@ -9,22 +9,22 @@ package util.exception;
  *
  * @author Bransome Tan Yi Hao
  */
-public class InvalidRegisterCredentialException extends Exception{
+public class InvalidAddressCreationException extends Exception {
 
     /**
-     * Creates a new instance of <code>InvalidRegisterCredentialException</code>
+     * Creates a new instance of <code>InvalidAddressCredentialException</code>
      * without detail message.
      */
-    public InvalidRegisterCredentialException() {
+    public InvalidAddressCreationException() {
     }
 
     /**
-     * Constructs an instance of <code>InvalidRegisterCredentialException</code>
+     * Constructs an instance of <code>InvalidAddressCredentialException</code>
      * with the specified detail message.
      *
      * @param msg the detail message.
      */
-    public InvalidRegisterCredentialException(String msg) {
+    public InvalidAddressCreationException(String msg) {
         super(msg);
     }
 }

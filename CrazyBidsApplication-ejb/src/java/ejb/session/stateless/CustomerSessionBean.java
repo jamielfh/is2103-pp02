@@ -23,7 +23,7 @@ import util.enumeration.CreditTransactionEnum;
 import util.exception.CreditPackageNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InvalidLoginCredentialException;
-import util.exception.UnknownPersistenceException;
+import util.exception.GeneralException;
 import util.exception.UpdateCustomerException;
 
 /**
@@ -88,7 +88,7 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
     }
 
     @Override
-    public Long createNewCustomer(Customer newCustomer) throws UnknownPersistenceException {
+    public Long createNewCustomer(Customer newCustomer) throws GeneralException {
         try {
             em.persist(newCustomer);
             em.flush();
@@ -97,12 +97,12 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
         } catch (PersistenceException ex) {
             if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
                 if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
-                    throw new UnknownPersistenceException("Customer with username " + newCustomer.getUsername() + " already exists!");
+                    throw new GeneralException("Customer with username " + newCustomer.getUsername() + " already exists!");
                 } else {
-                    throw new UnknownPersistenceException(ex.getMessage());
+                    throw new GeneralException(ex.getMessage());
                 }
             } else {
-                throw new UnknownPersistenceException(ex.getMessage());
+                throw new GeneralException(ex.getMessage());
             }
         }
     }

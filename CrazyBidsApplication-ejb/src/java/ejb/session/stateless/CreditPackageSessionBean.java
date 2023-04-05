@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.CreditPackage;
+import java.math.BigDecimal;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -15,7 +16,7 @@ import javax.persistence.Query;
 import util.exception.CreditPackageIsDisabledException;
 import util.exception.CreditPackageIsUsedException;
 import util.exception.CreditPackageNotFoundException;
-import util.exception.UnknownPersistenceException;
+import util.exception.GeneralException;
 import util.exception.UpdateCreditPackageException;
 
 /**
@@ -56,28 +57,35 @@ public class CreditPackageSessionBean implements CreditPackageSessionBeanRemote,
     }
 
     @Override
-    public Long createCreditPackage(CreditPackage newCreditPackage) throws UnknownPersistenceException {
+    public Long createCreditPackage(CreditPackage newCreditPackage) throws GeneralException {
         try {
             em.persist(newCreditPackage);
             em.flush();
             
             return newCreditPackage.getId();
         } catch (PersistenceException ex) {
-            throw new UnknownPersistenceException(ex.getMessage());
+            throw new GeneralException(ex.getMessage());
         }
     }
 
     @Override
-    public void updateCreditPackage(CreditPackage updatedCP) throws CreditPackageNotFoundException 
+    public void updateCreditPackage(CreditPackage updateCP, BigDecimal newAmount) throws CreditPackageNotFoundException, UpdateCreditPackageException
     {
-        if(updatedCP != null && updatedCP.getId() != null)
+        if(updateCP != null && updateCP.getId() != null)
         {
-            CreditPackage cpToUpdate = retrieveCreditPackagebyId(updatedCP.getId());
+            CreditPackage cpToUpdate = retrieveCreditPackagebyId(updateCP.getId());
             
-            cpToUpdate.setCreditPackageAmount(updatedCP.getCreditPackageAmount());
-                
-            //cp.setIsDisabled(updatedCP.getIsDisabled());
-            // Disable Credit Package are deliberately NOT updated to demonstrate that client is not allowed to update account credential through this business method
+            if(updateCP.getCreditPackageAmount().equals(cpToUpdate.getCreditPackageAmount()))
+            {
+                cpToUpdate.setCreditPackageAmount(newAmount);
+
+                //cp.setIsDisabled(updatedCP.getIsDisabled());
+                // Disable Credit Package are deliberately NOT updated to demonstrate that client is not allowed to update account credential through this business method
+            }
+            else
+            {
+                throw new UpdateCreditPackageException("Amount of credit package to be updated does not match the existing record");
+            }
         }
         else
         {

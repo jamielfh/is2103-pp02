@@ -17,7 +17,7 @@ import util.exception.AuctionHasBidsException;
 import util.exception.AuctionIsDisabledException;
 import util.exception.AuctionNotFoundException;
 import util.exception.InvalidAuctionCreationException;
-import util.exception.UnknownPersistenceException;
+import util.exception.GeneralException;
 import util.exception.UpdateAuctionException;
 
 /**
@@ -181,7 +181,7 @@ public class SalesOperationModule {
                 Long auctionId = auctionSessionBeanRemote.createAuction(newAuction);
                 System.out.println("\nAuction listing created successfully!: " + auctionId + "\n");
             }
-            catch (UnknownPersistenceException ex)
+            catch (GeneralException ex)
             {
                 System.out.println("\nAn unknown error has occurred while creating the new auction listing!: " + ex.getMessage() + "\n");
             }

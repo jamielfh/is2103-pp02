@@ -9,22 +9,22 @@ package util.exception;
  *
  * @author jamielee
  */
-public class UnknownPersistenceException extends Exception {
+public class InvalidEmployeeCreationException extends Exception {
 
     /**
-     * Creates a new instance of <code>UnknownPersistenceException</code>
+     * Creates a new instance of <code>InvalidAddressCredentialException</code>
      * without detail message.
      */
-    public UnknownPersistenceException() {
+    public InvalidEmployeeCreationException() {
     }
 
     /**
-     * Constructs an instance of <code>UnknownPersistenceException</code> with
-     * the specified detail message.
+     * Constructs an instance of <code>InvalidAddressCredentialException</code>
+     * with the specified detail message.
      *
      * @param msg the detail message.
      */
-    public UnknownPersistenceException(String msg) {
+    public InvalidEmployeeCreationException(String msg) {
         super(msg);
     }
 }

@@ -13,7 +13,7 @@ import util.exception.AddressIsDisabledException;
 import util.exception.AddressNotFoundException;
 import util.exception.AuctionIsDisabledException;
 import util.exception.CustomerNotFoundException;
-import util.exception.UnknownPersistenceException;
+import util.exception.GeneralException;
 import util.exception.UpdateAddressException;
 
 /**
@@ -29,7 +29,7 @@ public interface AddressSessionBeanLocal {
 
     void updateAddress(Address updatedAddress) throws AddressNotFoundException, UpdateAddressException;
 
-    Long createAddress(Address newAddress, Long customerId) throws UnknownPersistenceException, CustomerNotFoundException;
+    Long createAddress(Address newAddress, Long customerId) throws GeneralException, CustomerNotFoundException;
 
     void disableAddress(Long addressId) throws AddressNotFoundException, AddressIsDisabledException;
 

@@ -7,24 +7,24 @@ package util.exception;
 
 /**
  *
- * @author jamielee
+ * @author Bransome Tan Yi Hao
  */
-public class InvalidEmployeeCredentialException extends Exception {
+public class InvalidRegistrationException extends Exception{
 
     /**
-     * Creates a new instance of <code>InvalidAddressCredentialException</code>
+     * Creates a new instance of <code>InvalidRegisterCredentialException</code>
      * without detail message.
      */
-    public InvalidEmployeeCredentialException() {
+    public InvalidRegistrationException() {
     }
 
     /**
-     * Constructs an instance of <code>InvalidAddressCredentialException</code>
+     * Constructs an instance of <code>InvalidRegisterCredentialException</code>
      * with the specified detail message.
      *
      * @param msg the detail message.
      */
-    public InvalidEmployeeCredentialException(String msg) {
+    public InvalidRegistrationException(String msg) {
         super(msg);
     }
 }

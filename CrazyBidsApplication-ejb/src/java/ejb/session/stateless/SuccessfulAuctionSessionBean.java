@@ -21,7 +21,7 @@ import util.exception.AuctionNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.DeliveryAddressExistException;
 import util.exception.SuccessfulAuctionNotFoundException;
-import util.exception.UnknownPersistenceException;
+import util.exception.GeneralException;
 import util.exception.UpdateDeliveryAddressException;
 
 /**
@@ -68,7 +68,7 @@ public class SuccessfulAuctionSessionBean implements SuccessfulAuctionSessionBea
     }
 
     @Override
-    public Long createNewSuccessfulAuction(SuccessfulAuction newSuccessfulAuction, Long customerId, Long auctionId) throws UnknownPersistenceException, CustomerNotFoundException, AuctionNotFoundException {
+    public Long createNewSuccessfulAuction(SuccessfulAuction newSuccessfulAuction, Long customerId, Long auctionId) throws GeneralException, CustomerNotFoundException, AuctionNotFoundException {
         try {
              
             Customer customer = customerSessionBeanLocal.retrieveCustomerbyId(customerId);
@@ -84,7 +84,7 @@ public class SuccessfulAuctionSessionBean implements SuccessfulAuctionSessionBea
             
             return newSuccessfulAuction.getId();
         } catch (PersistenceException ex) {
-            throw new UnknownPersistenceException(ex.getMessage());
+            throw new GeneralException(ex.getMessage());
         }
     }
     

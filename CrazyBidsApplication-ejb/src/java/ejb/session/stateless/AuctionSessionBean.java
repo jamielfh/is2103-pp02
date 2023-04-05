@@ -22,7 +22,7 @@ import util.enumeration.CreditTransactionEnum;
 import util.exception.AuctionHasBidsException;
 import util.exception.AuctionIsDisabledException;
 import util.exception.AuctionNotFoundException;
-import util.exception.UnknownPersistenceException;
+import util.exception.GeneralException;
 import util.exception.UpdateAuctionException;
 
 /**
@@ -71,14 +71,14 @@ public class AuctionSessionBean implements AuctionSessionBeanRemote, AuctionSess
     }
 
     @Override
-    public Long createAuction(Auction newAuction) throws UnknownPersistenceException {
+    public Long createAuction(Auction newAuction) throws GeneralException {
         try {
             em.persist(newAuction);
             em.flush();
             
             return newAuction.getId();
         } catch (PersistenceException ex) {
-            throw new UnknownPersistenceException(ex.getMessage());
+            throw new GeneralException(ex.getMessage());
         }
     }
 
