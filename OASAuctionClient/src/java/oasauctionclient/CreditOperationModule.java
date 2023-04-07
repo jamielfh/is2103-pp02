@@ -156,7 +156,7 @@ public class CreditOperationModule {
                 System.out.printf("Enter quantity to purchase Credit Package (ID: %s)> ", creditPackageId);
                 quantity = scanner.nextLong();
                 customerSessionBeanRemote.purchaseCreditPackage(creditPackageId, currentCustomer.getId(), quantity);
-                System.out.printf("\nYou have successfully purchase Credit Package (ID: %s) of quantity %s", creditPackageId, quantity);
+                System.out.printf("\nYou have successfully purchase Credit Package (ID: %s) of quantity %s\n", creditPackageId, quantity);
             } catch (CreditPackageNotFoundException ex) {
                 System.out.printf("Credit Package (ID: %s) does not exist!> ", creditPackageId);
             } catch (CustomerNotFoundException ex) {

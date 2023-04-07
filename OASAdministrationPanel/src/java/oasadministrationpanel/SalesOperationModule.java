@@ -21,6 +21,7 @@ import util.exception.AuctionAssignedNoWinnerException;
 import util.exception.AuctionHasBidsException;
 import util.exception.AuctionIsDisabledException;
 import util.exception.AuctionNotFoundException;
+import util.exception.BidNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InvalidAuctionCreationException;
 import util.exception.GeneralException;
@@ -485,6 +486,10 @@ public class SalesOperationModule {
                         System.out.println("\nAuction listing disabled successfully!\n");
                     } 
                     catch (AuctionNotFoundException | AuctionIsDisabledException ex1) {
+                        System.out.println("\nAn error has occurred while disabling the auction listing: " + ex1.getMessage() + "\n");
+                    } catch (BidNotFoundException ex1) {
+                        System.out.println("\nAn error has occurred while disabling the auction listing: " + ex1.getMessage() + "\n");
+                    } catch (CustomerNotFoundException ex1) {
                         System.out.println("\nAn error has occurred while disabling the auction listing: " + ex1.getMessage() + "\n");
                     }
                 } else {
