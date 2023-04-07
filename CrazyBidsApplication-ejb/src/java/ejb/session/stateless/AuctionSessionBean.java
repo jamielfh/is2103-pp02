@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -22,7 +23,10 @@ import util.enumeration.CreditTransactionEnum;
 import util.exception.AuctionHasBidsException;
 import util.exception.AuctionIsDisabledException;
 import util.exception.AuctionNotFoundException;
+import util.exception.BidNotFoundException;
+import util.exception.CustomerNotFoundException;
 import util.exception.GeneralException;
+import util.exception.InvalidBidException;
 import util.exception.UpdateAuctionException;
 
 /**
@@ -31,6 +35,9 @@ import util.exception.UpdateAuctionException;
  */
 @Stateless
 public class AuctionSessionBean implements AuctionSessionBeanRemote, AuctionSessionBeanLocal {
+
+    @EJB
+    private CustomerSessionBeanLocal customerSessionBeanLocal;
 
     @PersistenceContext(unitName = "CrazyBidsApplication-ejbPU")
     private EntityManager em;
@@ -134,7 +141,7 @@ public class AuctionSessionBean implements AuctionSessionBeanRemote, AuctionSess
     }
     
     @Override
-    public void disableAuction(Long auctionId) throws AuctionNotFoundException, AuctionIsDisabledException{
+    public void disableAuction(Long auctionId) throws AuctionNotFoundException, AuctionIsDisabledException, BidNotFoundException, CustomerNotFoundException {
         Auction auction = retrieveAuctionbyId(auctionId);
         
         if (!auction.getIsDisabled()) {
@@ -153,24 +160,76 @@ public class AuctionSessionBean implements AuctionSessionBeanRemote, AuctionSess
      
     }
     
-    private void doRefund(Bid bid)
+    @Override
+    public void doRefund(Bid bid) throws BidNotFoundException, CustomerNotFoundException
     {
-        BigDecimal bidAmount = bid.getBidAmount();
-        Customer customer = bid.getCustomer();
+        
+        Bid refundBid = em.find(Bid.class, bid.getId());
+        
+        if (bid == null) {
+           throw new BidNotFoundException("Bid ID " + bid.getId() + " not found in system!");
+        }     
+        
+        Customer customer = customerSessionBeanLocal.retrieveCustomerbyId(refundBid.getCustomer().getId());
+        
+        BigDecimal bidAmount = refundBid.getBidAmount();
+
         Date currentDate = new Date();
 
         CreditTransaction newRefundTransaction = new CreditTransaction(bidAmount, CreditTransactionEnum.REFUND, currentDate);
-        newRefundTransaction.setBid(bid);
+        newRefundTransaction.setBid(refundBid);
         bid.setRefundTransaction(newRefundTransaction);
 
         BigDecimal customerBalance = customer.getCreditBalance();
-        customerBalance.add(bidAmount);
-        customer.setCreditBalance(customerBalance);
+        customer.setCreditBalance(customerBalance.add(bidAmount));
 
         newRefundTransaction.setCustomer(customer);
         List<CreditTransaction> customerTransactions = customer.getCreditTransactions();
         customerTransactions.add(newRefundTransaction);
         customer.setCreditTransactions(customerTransactions);
+        
+        em.persist(newRefundTransaction);
+    }
+    
+    @Override
+    public BigDecimal bidConverter(Auction auction) {
+        // Bid Converter
+        BigDecimal bidAmount;
+        BigDecimal bidIncrement;
+        
+        if (auction.getBids().isEmpty()) {
+            // if no bids yet, get starting bids
+            bidAmount = auction.getStartingBid();
+        } else {
+            // if there are bids, get the highest bidding price
+            List<Bid> bids = auction.getBids();
+            Collections.sort(bids);
+            bidAmount = bids.get(0).getBidAmount();
+        }
+        
+        if (bidAmount.doubleValue() >= 0.01 && bidAmount.doubleValue() <= 0.99) {
+            bidIncrement = new BigDecimal(0.05);
+        } else if (bidAmount.doubleValue() >= 1.00 && bidAmount.doubleValue() <= 4.99) {
+            bidIncrement = new BigDecimal(0.25);
+        } else if (bidAmount.doubleValue() >= 5.00 && bidAmount.doubleValue() <= 24.99) {
+            bidIncrement = new BigDecimal(0.50);
+        } else if (bidAmount.doubleValue() >= 25.00 && bidAmount.doubleValue() <= 99.99) {
+            bidIncrement = new BigDecimal(1.00);
+        } else if (bidAmount.doubleValue() >= 100.00 && bidAmount.doubleValue() <= 249.99) {
+            bidIncrement = new BigDecimal(2.50);
+        } else if (bidAmount.doubleValue() >= 250.00 && bidAmount.doubleValue() <= 499.99) {
+            bidIncrement = new BigDecimal(5.00);
+        } else if (bidAmount.doubleValue() >= 500.00 && bidAmount.doubleValue() <= 999.99) {
+            bidIncrement = new BigDecimal(10.00);
+        } else if (bidAmount.doubleValue() >= 1000 && bidAmount.doubleValue() <= 2499.99) {
+            bidIncrement = new BigDecimal(25.00);
+        } else if (bidAmount.doubleValue() >= 2500 && bidAmount.doubleValue() <= 4999.99) {
+            bidIncrement = new BigDecimal(50.00);
+        } else {
+            bidIncrement = new BigDecimal(100.00);
+        } 
+        
+        return bidIncrement;
     }
     
 }

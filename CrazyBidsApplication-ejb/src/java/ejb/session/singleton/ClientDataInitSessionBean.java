@@ -61,14 +61,14 @@ public class ClientDataInitSessionBean {
         calendar.setTime(currentDate);
 
         // Add 2 hours to the calendar
-        calendar.add(Calendar.HOUR_OF_DAY, 2);
+        calendar.add(Calendar.HOUR_OF_DAY, 10);
 
         // Get the new date with 2 hours added
         Date newDate = calendar.getTime();
         
         if(em.find(Auction.class, 1l) == null) {
             try {
-                auctionSessionBeanLocal.createAuction(new Auction("book1", "life of book 1", currentDate, newDate, new BigDecimal(0), new BigDecimal(50), false, false));
+                auctionSessionBeanLocal.createAuction(new Auction("book1", "life of book 1", currentDate, newDate, new BigDecimal(5), new BigDecimal(50), false, false));
                 auctionSessionBeanLocal.createAuction(new Auction("book2", "life of book 2", currentDate, newDate, new BigDecimal(10), new BigDecimal(60), false, false));
                 auctionSessionBeanLocal.createAuction(new Auction("book3", "life of book 3", currentDate, newDate, new BigDecimal(20), new BigDecimal(70), false, false));
                 auctionSessionBeanLocal.createAuction(new Auction("book4", "life of book 4", currentDate, newDate, new BigDecimal(30), new BigDecimal(80), false, false));

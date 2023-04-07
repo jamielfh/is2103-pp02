@@ -6,11 +6,15 @@
 package ejb.session.stateless;
 
 import entity.Auction;
+import entity.Bid;
+import java.math.BigDecimal;
 import java.util.List;
 import javax.ejb.Remote;
 import util.exception.AuctionHasBidsException;
 import util.exception.AuctionIsDisabledException;
 import util.exception.AuctionNotFoundException;
+import util.exception.BidNotFoundException;
+import util.exception.CustomerNotFoundException;
 import util.exception.GeneralException;
 import util.exception.UpdateAuctionException;
 
@@ -31,10 +35,14 @@ public interface AuctionSessionBeanRemote {
 
     void deleteAuction(Long auctionId) throws AuctionNotFoundException, AuctionHasBidsException;
 
-    void disableAuction(Long auctionId) throws AuctionNotFoundException, AuctionIsDisabledException;
+    void disableAuction(Long auctionId) throws AuctionNotFoundException, AuctionIsDisabledException, BidNotFoundException, CustomerNotFoundException;
     
     List<Auction> retrieveAllAuctionsWithBidsBelowReservePrice();
     
     List<Auction> retrieveAllActiveAuctions();
+    
+    void doRefund(Bid bid) throws BidNotFoundException, CustomerNotFoundException;
+    
+    public BigDecimal bidConverter(Auction auction);
     
 }

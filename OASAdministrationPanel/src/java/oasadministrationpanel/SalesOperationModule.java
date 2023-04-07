@@ -13,9 +13,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import util.exception.AuctionHasBidsException;
 import util.exception.AuctionIsDisabledException;
 import util.exception.AuctionNotFoundException;
+import util.exception.BidNotFoundException;
+import util.exception.CustomerNotFoundException;
 import util.exception.InvalidAuctionCreationException;
 import util.exception.GeneralException;
 import util.exception.UpdateAuctionException;
@@ -438,6 +442,10 @@ public class SalesOperationModule {
                         System.out.println("\nAuction listing disabled successfully!\n");
                     } 
                     catch (AuctionNotFoundException | AuctionIsDisabledException ex1) {
+                        System.out.println("\nAn error has occurred while disabling the auction listing: " + ex1.getMessage() + "\n");
+                    } catch (BidNotFoundException ex1) {
+                        System.out.println("\nAn error has occurred while disabling the auction listing: " + ex1.getMessage() + "\n");
+                    } catch (CustomerNotFoundException ex1) {
                         System.out.println("\nAn error has occurred while disabling the auction listing: " + ex1.getMessage() + "\n");
                     }
                 } else {
