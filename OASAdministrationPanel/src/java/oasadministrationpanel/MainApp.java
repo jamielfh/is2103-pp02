@@ -8,6 +8,7 @@ package oasadministrationpanel;
 import ejb.session.stateless.AuctionSessionBeanRemote;
 import ejb.session.stateless.CreditPackageSessionBeanRemote;
 import ejb.session.stateless.EmployeeSessionBeanRemote;
+import ejb.session.stateless.SuccessfulAuctionSessionBeanRemote;
 import entity.Employee;
 import java.text.ParseException;
 import java.util.Scanner;
@@ -23,6 +24,7 @@ public class MainApp {
     private EmployeeSessionBeanRemote employeeSessionBeanRemote;
     private CreditPackageSessionBeanRemote creditPackageSessionBeanRemote;
     private AuctionSessionBeanRemote auctionSessionBeanRemote;
+    private SuccessfulAuctionSessionBeanRemote successfulAuctionSessionBeanRemote;
     
     private SystemAdminOperationModule systemAdminOperationModule;
     private FinanceOperationModule financeOperationModule;
@@ -34,10 +36,11 @@ public class MainApp {
     {        
     }
 
-    public MainApp(EmployeeSessionBeanRemote employeeSessionBeanRemote, CreditPackageSessionBeanRemote creditPackageSessionBeanRemote, AuctionSessionBeanRemote auctionSessionBeanRemote) {
+    public MainApp(EmployeeSessionBeanRemote employeeSessionBeanRemote, CreditPackageSessionBeanRemote creditPackageSessionBeanRemote, AuctionSessionBeanRemote auctionSessionBeanRemote, SuccessfulAuctionSessionBeanRemote successfulAuctionSessionBeanRemote) {
         this.employeeSessionBeanRemote = employeeSessionBeanRemote;
         this.creditPackageSessionBeanRemote = creditPackageSessionBeanRemote;
         this.auctionSessionBeanRemote = auctionSessionBeanRemote;
+        this.successfulAuctionSessionBeanRemote = successfulAuctionSessionBeanRemote;
     }
     
     public void runApp() throws ParseException {
@@ -66,7 +69,7 @@ public class MainApp {
 
                         systemAdminOperationModule = new SystemAdminOperationModule(employeeSessionBeanRemote, currentEmployee);
                         financeOperationModule = new FinanceOperationModule(creditPackageSessionBeanRemote);
-                        salesOperationModule = new SalesOperationModule(auctionSessionBeanRemote);
+                        salesOperationModule = new SalesOperationModule(auctionSessionBeanRemote, successfulAuctionSessionBeanRemote);
                         
                         menuMain();
                     }

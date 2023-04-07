@@ -19,6 +19,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import util.enumeration.CreditTransactionEnum;
+import util.exception.AuctionAssignedNoWinnerException;
 import util.exception.AuctionHasBidsException;
 import util.exception.AuctionIsDisabledException;
 import util.exception.AuctionNotFoundException;
@@ -108,7 +109,7 @@ public class AuctionSessionBean implements AuctionSessionBeanRemote, AuctionSess
                 //auctionToUpdate.setManualIntervention(updatedAuction.getManualIntervention());
                 
                 // ManualIntervention is set automatically when highest bid is the same as or below the reserve price (when timer runs out).
-                // isDisabled is set under disabledAuction.
+                // isDisabled is set under disableAuction.
             }
             else
             {
@@ -139,10 +140,7 @@ public class AuctionSessionBean implements AuctionSessionBeanRemote, AuctionSess
         
         if (!auction.getIsDisabled()) {
             // refund credit to customer with highest bid (other bids should have been refunded already)
-            List<Bid> bids = auction.getBids();
-            Collections.sort(bids);
-            
-            Bid highestBid = bids.get(0);
+            Bid highestBid = getHighestBid(auction);
             doRefund(highestBid);
             
             auction.setIsDisabled(true);
@@ -151,6 +149,29 @@ public class AuctionSessionBean implements AuctionSessionBeanRemote, AuctionSess
              throw new AuctionIsDisabledException("Auction is already disabled.");
         }
      
+    }
+    
+    @Override
+    public void assignNoWinner(Long auctionId) throws AuctionNotFoundException, AuctionAssignedNoWinnerException {
+        Auction auction = retrieveAuctionbyId(auctionId);
+        
+        if (auction.getAssignedNoWinner() == true)
+        {
+            throw new AuctionAssignedNoWinnerException("Auction has already been marked as having no winning bid!");
+        }
+        else
+        {
+            auction.setAssignedNoWinner(true);
+            auction.setManualIntervention(false);
+        }
+    }
+    
+    @Override
+    public Bid getHighestBid(Auction auction) {
+        List<Bid> bids = auction.getBids();
+        Collections.sort(bids);
+        Bid highestBid = bids.get(0);
+        return highestBid;
     }
     
     private void doRefund(Bid bid)
@@ -172,5 +193,5 @@ public class AuctionSessionBean implements AuctionSessionBeanRemote, AuctionSess
         customerTransactions.add(newRefundTransaction);
         customer.setCreditTransactions(customerTransactions);
     }
-    
+
 }

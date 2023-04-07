@@ -7,9 +7,11 @@ package ejb.session.singleton;
 
 import ejb.session.stateless.AuctionSessionBeanLocal;
 import ejb.session.stateless.CreditPackageSessionBeanLocal;
+import ejb.session.stateless.CustomerSessionBeanLocal;
 import ejb.session.stateless.SuccessfulAuctionSessionBeanLocal;
 import entity.Auction;
 import entity.CreditPackage;
+import entity.Customer;
 import entity.SuccessfulAuction;
 import java.math.BigDecimal;
 import java.util.Calendar;
@@ -36,6 +38,9 @@ import util.exception.GeneralException;
 public class ClientDataInitSessionBean {
 
     @EJB
+    private CustomerSessionBeanLocal customerSessionBeanLocal;
+
+    @EJB
     private SuccessfulAuctionSessionBeanLocal successfulAuctionSessionBeanLocal;
 
     @EJB
@@ -53,6 +58,14 @@ public class ClientDataInitSessionBean {
     @PostConstruct
     public void postConstruct()
     {
+        if(em.find(Customer.class, 1l) == null) {
+            try {
+                customerSessionBeanLocal.createNewCustomer(new Customer("Customer", "One", "customer1", "password", "customer1@email.com", "91234567", new BigDecimal(0)));
+            } catch (GeneralException ex) {
+                ex.printStackTrace();
+            }
+        }
+        
         // Get the current date
         Date currentDate = new Date();
 
@@ -68,11 +81,11 @@ public class ClientDataInitSessionBean {
         
         if(em.find(Auction.class, 1l) == null) {
             try {
-                auctionSessionBeanLocal.createAuction(new Auction("book1", "life of book 1", currentDate, newDate, new BigDecimal(0), new BigDecimal(50), false, false));
-                auctionSessionBeanLocal.createAuction(new Auction("book2", "life of book 2", currentDate, newDate, new BigDecimal(10), new BigDecimal(60), false, false));
-                auctionSessionBeanLocal.createAuction(new Auction("book3", "life of book 3", currentDate, newDate, new BigDecimal(20), new BigDecimal(70), false, false));
-                auctionSessionBeanLocal.createAuction(new Auction("book4", "life of book 4", currentDate, newDate, new BigDecimal(30), new BigDecimal(80), false, false));
-                auctionSessionBeanLocal.createAuction(new Auction("book5", "life of book 5", currentDate, newDate, new BigDecimal(40), new BigDecimal(90), false, false));
+                auctionSessionBeanLocal.createAuction(new Auction("book1", "life of book 1", currentDate, newDate, new BigDecimal(10), new BigDecimal(50), false, false, false));
+                auctionSessionBeanLocal.createAuction(new Auction("book2", "life of book 2", currentDate, newDate, new BigDecimal(20), new BigDecimal(60), false, false, false));
+                auctionSessionBeanLocal.createAuction(new Auction("book3", "life of book 3", currentDate, newDate, new BigDecimal(30), new BigDecimal(70), false, false, false));
+                auctionSessionBeanLocal.createAuction(new Auction("book4", "life of book 4", currentDate, newDate, new BigDecimal(40), new BigDecimal(80), false, false, false));
+                auctionSessionBeanLocal.createAuction(new Auction("book5", "life of book 5", currentDate, newDate, new BigDecimal(50), new BigDecimal(90), false, false, false));
             } catch (GeneralException ex) {
                 ex.printStackTrace();
             }

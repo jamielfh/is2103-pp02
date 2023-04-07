@@ -40,13 +40,10 @@ OASAuctionClient/nbproject/private/
 OASAuctionClient/build/
 OASAuctionClient/dist/
 
-ProxyBiddingAgent/nbproject/private/
-ProxyBiddingAgent/build/
-ProxyBiddingAgent/dist/
-
 CrazyBidsApplicationLibrary/nbproject/private/
 CrazyBidsApplicationLibrary/build/
 CrazyBidsApplicationLibrary/dist/
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+/AISGAgent/nbproject/private/

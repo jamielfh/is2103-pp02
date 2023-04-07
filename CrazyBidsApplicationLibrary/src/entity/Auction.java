@@ -66,6 +66,9 @@ public class Auction implements Serializable {
     @Column(nullable = false)
     @NotNull
     private Boolean manualIntervention;
+    @Column(nullable = false)
+    @NotNull
+    private Boolean assignedNoWinner;
     
     @OneToOne(mappedBy = "auction")
     private SuccessfulAuction successfulAuction;
@@ -77,7 +80,7 @@ public class Auction implements Serializable {
         bids = new ArrayList<>();
     }
 
-    public Auction(String name, String details, Date startDateTime, Date endDateTime, BigDecimal startingBid, BigDecimal reservePrice, Boolean isDisabled, Boolean manualIntervention) {
+    public Auction(String name, String details, Date startDateTime, Date endDateTime, BigDecimal startingBid, BigDecimal reservePrice, Boolean isDisabled, Boolean manualIntervention, Boolean assignedNoWinner) {
         this();
         
         this.name = name;
@@ -88,6 +91,7 @@ public class Auction implements Serializable {
         this.reservePrice = reservePrice;
         this.isDisabled = isDisabled;
         this.manualIntervention = manualIntervention;
+        this.assignedNoWinner = assignedNoWinner;
     }
 
     public Long getId() {
@@ -262,6 +266,20 @@ public class Auction implements Serializable {
      */
     public void setBids(List<Bid> bids) {
         this.bids = bids;
+    }
+
+    /**
+     * @return the assignedNoWinner
+     */
+    public Boolean getAssignedNoWinner() {
+        return assignedNoWinner;
+    }
+
+    /**
+     * @param assignedNoWinner the assignedNoWinner to set
+     */
+    public void setAssignedNoWinner(Boolean assignedNoWinner) {
+        this.assignedNoWinner = assignedNoWinner;
     }
     
 }

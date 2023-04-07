@@ -6,8 +6,10 @@
 package ejb.session.stateless;
 
 import entity.Auction;
+import entity.Bid;
 import java.util.List;
 import javax.ejb.Local;
+import util.exception.AuctionAssignedNoWinnerException;
 import util.exception.AuctionHasBidsException;
 import util.exception.AuctionIsDisabledException;
 import util.exception.AuctionNotFoundException;
@@ -36,5 +38,9 @@ public interface AuctionSessionBeanLocal {
     List<Auction> retrieveAllAuctionsWithBidsBelowReservePrice();
 
     List<Auction> retrieveAllActiveAuctions();
+
+    Bid getHighestBid(Auction auction);
+
+    void assignNoWinner(Long auctionId) throws AuctionNotFoundException, AuctionAssignedNoWinnerException;
     
 }

@@ -8,6 +8,7 @@ package oasadministrationpanel;
 import ejb.session.stateless.AuctionSessionBeanRemote;
 import ejb.session.stateless.CreditPackageSessionBeanRemote;
 import ejb.session.stateless.EmployeeSessionBeanRemote;
+import ejb.session.stateless.SuccessfulAuctionSessionBeanRemote;
 import java.text.ParseException;
 import javax.ejb.EJB;
 
@@ -16,6 +17,9 @@ import javax.ejb.EJB;
  * @author jamielee
  */
 public class Main {
+
+    @EJB
+    private static SuccessfulAuctionSessionBeanRemote successfulAuctionSessionBeanRemote;
     
     @EJB
     private static EmployeeSessionBeanRemote employeeSessionBeanRemote;
@@ -30,7 +34,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws ParseException {
-        MainApp mainApp = new MainApp(employeeSessionBeanRemote, creditPackageSessionBeanRemote, auctionSessionBeanRemote);
+        MainApp mainApp = new MainApp(employeeSessionBeanRemote, creditPackageSessionBeanRemote, auctionSessionBeanRemote, successfulAuctionSessionBeanRemote);
         mainApp.runApp();
     }
     

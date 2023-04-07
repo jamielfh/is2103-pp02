@@ -6,16 +6,22 @@
 package oasadministrationpanel;
 
 import ejb.session.stateless.AuctionSessionBeanRemote;
+import ejb.session.stateless.SuccessfulAuctionSessionBeanRemote;
 import entity.Auction;
+import entity.Bid;
+import entity.Customer;
+import entity.SuccessfulAuction;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import util.exception.AuctionAssignedNoWinnerException;
 import util.exception.AuctionHasBidsException;
 import util.exception.AuctionIsDisabledException;
 import util.exception.AuctionNotFoundException;
+import util.exception.CustomerNotFoundException;
 import util.exception.InvalidAuctionCreationException;
 import util.exception.GeneralException;
 import util.exception.UpdateAuctionException;
@@ -27,12 +33,14 @@ import util.exception.UpdateAuctionException;
 public class SalesOperationModule {
     
     private AuctionSessionBeanRemote auctionSessionBeanRemote;
+    private SuccessfulAuctionSessionBeanRemote successfulAuctionSessionBeanRemote;
 
     public SalesOperationModule() {
     }
 
-    public SalesOperationModule(AuctionSessionBeanRemote auctionSessionBeanRemote) {
+    public SalesOperationModule(AuctionSessionBeanRemote auctionSessionBeanRemote, SuccessfulAuctionSessionBeanRemote successfulAuctionSessionBeanRemote) {
         this.auctionSessionBeanRemote = auctionSessionBeanRemote;
+        this.successfulAuctionSessionBeanRemote = successfulAuctionSessionBeanRemote;
     }
     
     public void menuSalesOperation() throws ParseException {
@@ -111,55 +119,8 @@ public class SalesOperationModule {
         System.out.print("Enter auction details> ");
         details = scanner.nextLine().trim();
         
-        while (true)
-        {
-            System.out.print("Enter start date (in the format DD-MM-YYYY)> ");
-            String startDate = scanner.nextLine().trim();
-            System.out.print("Enter start hour (00 to 23)> ");
-            String startTime = scanner.nextLine().trim();
-            
-            if (Integer.parseInt(startTime) > 23)
-            {
-                System.out.println("Please enter a valid hour!");
-                continue;
-            }
-            
-            try
-            {
-                SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH");
-                startDateTime = formatter.parse(startDate + " " + startTime);
-                break;
-            }
-            catch (ParseException ex)
-            {
-                System.out.println("Start date & time could not be parsed! Please enter date & time in given format.");
-            }
-        }
-        
-        while (true)
-        {
-            System.out.print("Enter end date (in the format DD-MM-YYYY)> ");
-            String endDate = scanner.nextLine().trim();
-            System.out.print("Enter end hour (00 to 23)> ");
-            String endTime = scanner.nextLine().trim();
-            
-            if (Integer.parseInt(endTime) > 23)
-            {
-                System.out.println("Please enter a valid hour!");
-                continue;
-            }
-            
-            try
-            {
-                SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH");
-                endDateTime = formatter.parse(endDate + " " + endTime);
-                break;
-            }
-            catch (ParseException ex)
-            {
-                System.out.println("End date & time could not be parsed! Please enter date & time in given format.");
-            }
-        }
+        startDateTime = createStartDateTime();
+        endDateTime = createEndDateTime();
         
         System.out.print("Enter starting bid> ");
         startingBid = scanner.nextBigDecimal();
@@ -174,7 +135,7 @@ public class SalesOperationModule {
                 reservePrice = null;
             }
             
-            Auction newAuction = new Auction(name, details, startDateTime, endDateTime, startingBid, reservePrice, false, false);
+            Auction newAuction = new Auction(name, details, startDateTime, endDateTime, startingBid, reservePrice, false, false, false);
 
             try
             {
@@ -189,6 +150,80 @@ public class SalesOperationModule {
         else
         {
             throw new InvalidAuctionCreationException("\nMissing details to create auction!");
+        }
+    }
+    
+    private Date createStartDateTime() {
+        Scanner scanner = new Scanner(System.in);
+        
+        while (true)
+        {
+            System.out.print("Enter start date (in the format DD-MM-YYYY)> ");
+            String startDate = scanner.nextLine().trim();
+            
+            System.out.print("Enter start hour (00 to 23)> ");
+            String startHour = scanner.nextLine().trim();
+            if (Integer.parseInt(startHour) > 23)
+            {
+                System.out.println("Please enter a valid hour!");
+                continue;
+            }
+            
+            System.out.print("Enter start minute (00 to 59)> ");
+            String startMinute = scanner.nextLine().trim();
+            if (Integer.parseInt(startMinute) > 59)
+            {
+                System.out.println("Please enter a valid minute!");
+                continue;
+            }
+            
+            try
+            {
+                SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+                Date startDateTime = formatter.parse(startDate + " " + startHour + ":" + startMinute);
+                return startDateTime;
+            }
+            catch (ParseException ex)
+            {
+                System.out.println("Start date & time could not be parsed! Please enter date & time in given format.");
+            }
+        }
+    }
+    
+    private Date createEndDateTime() {
+        Scanner scanner = new Scanner(System.in);
+        
+        while (true)
+        {
+            System.out.print("Enter end date (in the format DD-MM-YYYY)> ");
+            String endDate = scanner.nextLine().trim();
+            
+            System.out.print("Enter end hour (00 to 23)> ");
+            String endHour = scanner.nextLine().trim();
+            if (Integer.parseInt(endHour) > 23)
+            {
+                System.out.println("Please enter a valid hour!");
+                continue;
+            }
+            
+            System.out.print("Enter end minute (00 to 59)> ");
+            String endMinute = scanner.nextLine().trim();
+            if (Integer.parseInt(endMinute) > 59)
+            {
+                System.out.println("Please enter a valid minute!");
+                continue;
+            }
+            
+            try
+            {
+                SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+                Date endDateTime = formatter.parse(endDate + " " + endHour + ":" + endMinute);
+                return endDateTime;
+            }
+            catch (ParseException ex)
+            {
+                System.out.println("End date & time could not be parsed! Please enter date & time in given format.");
+            }
         }
     }
     
@@ -287,12 +322,60 @@ public class SalesOperationModule {
         
         if (!auctions.isEmpty())
         {
-            System.out.printf("%10s%20s%20s%20s%20s%20s%20s%20s\n", "Auction ID", "Auction Name", "Details", "Start Date & Time", "End Date & Time", "Starting Bid", "Reserve Price", "Is Disabled");        
-
             for(Auction auction : auctions)
             {
+                System.out.printf("%10s%20s%20s%20s%20s%20s%20s%20s\n", "Auction ID", "Auction Name", "Details", "Start Date & Time", "End Date & Time", "Starting Bid", "Reserve Price", "Is Disabled");
+                
                 String reservePrice = auction.getReservePrice() == null ? "-" : auction.getReservePrice().toString();
                 System.out.printf("%10s%20s%20s%20s%20s%20s%20s%20s\n", auction.getId().toString(), auction.getName(),auction.getDetails(), auction.getStartDateTime().toString(), auction.getEndDateTime().toString(), auction.getStartingBid().toString(), reservePrice, auction.getIsDisabled());
+                
+                System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
+                
+                Bid highestBid = auctionSessionBeanRemote.getHighestBid(auction);
+                Customer winner = highestBid.getCustomer();
+                System.out.println("*** Highest Bid ***");
+                System.out.printf("%10s%20s%20s\n", "Bid ID", "Customer Username", "Bid Amount");
+                System.out.printf("%10s%20s%20s\n", highestBid.getId(), winner.getUsername(), highestBid.getBidAmount());
+                
+                while(true)
+                {
+                    System.out.println("Mark highest bid as winning bid?");
+                    System.out.print("Enter 'Y' to assign winner, 'N' to mark auction listing as having no winning bid> ");
+                    String input = scanner.nextLine().trim();
+
+                    if (input.equals("Y"))
+                    {
+                        SuccessfulAuction successfulAuction = new SuccessfulAuction();
+                        successfulAuction.setSuccessfulAuctionName(auction.getName());
+                        successfulAuction.setSuccessfulAuctionDetails(auction.getDetails());
+                        
+                        try
+                        {
+                            Long successfulAuctionId = successfulAuctionSessionBeanRemote.createNewSuccessfulAuction(successfulAuction, winner.getId(), auction.getId());
+                            System.out.println("\nWinning bid assigned successfully! Successful auction created with ID: " + successfulAuctionId + "\n");
+                        }
+                        catch(GeneralException | CustomerNotFoundException | AuctionNotFoundException ex)
+                        {
+                            System.out.println("An error occurred while creating successful auction: " + ex.getMessage());
+                        }
+                    }
+                    else if (input.equals("N"))
+                    {
+                        try
+                        {
+                            auctionSessionBeanRemote.assignNoWinner(auction.getId());
+                            System.out.println("Auction listing successfully marked as having no winning bid!");
+                        }
+                        catch(AuctionNotFoundException | AuctionAssignedNoWinnerException ex)
+                        {
+                            System.out.println("An error occurred while marking auction listing as having no winning bid: " + ex.getMessage());
+                        }
+                    }
+                    else
+                    {
+                        System.out.println("Invalid option, please try again!\n");
+                    }
+                }
             }
         }
         else
@@ -302,8 +385,6 @@ public class SalesOperationModule {
         System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
         System.out.print("Press any key to continue...> ");
         scanner.nextLine();
-        
-        // assign winning bid
     }
     
     private void doUpdateAuctionListing(Auction updateAuction) {
@@ -332,25 +413,8 @@ public class SalesOperationModule {
         
             if(input.equals("Y"))
             {
-                while(true)
-                {
-                    System.out.print("Enter start date (in the format DD-MM-YYYY)> ");
-                    String startDate = scanner.nextLine().trim();
-                    System.out.print("Enter start hour (00 to 23)> ");
-                    String startTime = scanner.nextLine().trim();
-
-                    try
-                    {
-                        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH");
-                        Date startDateTime = formatter.parse(startDate + " " + startTime);
-                        updateAuction.setStartDateTime(startDateTime);
-                        break;
-                    }
-                    catch (ParseException ex)
-                    {
-                        System.out.println("Start date & time could not be parsed! Please enter date & time in given format.");
-                    }
-                }
+                Date startDateTime = createStartDateTime();
+                updateAuction.setStartDateTime(startDateTime);
             }
             
             System.out.printf("Change end date & time? (Enter 'Y' to change, 'N' to skip)> ");
@@ -358,25 +422,8 @@ public class SalesOperationModule {
         
             if(input.equals("Y"))
             {
-                while(true)
-                {
-                    System.out.print("Enter end date (in the format DD-MM-YYYY)> ");
-                    String endDate = scanner.nextLine().trim();
-                    System.out.print("Enter end hour (00 to 23)> ");
-                    String endTime = scanner.nextLine().trim();
-
-                    try
-                    {
-                        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH");
-                        Date endDateTime = formatter.parse(endDate + " " + endTime);
-                        updateAuction.setEndDateTime(endDateTime);
-                        break;
-                    }
-                    catch (ParseException ex)
-                    {
-                        System.out.println("End date & time could not be parsed! Please enter date & time in given format.");
-                    }
-                }
+                Date endDateTime = createEndDateTime();
+                updateAuction.setEndDateTime(endDateTime);
             }
             
             System.out.print("Enter starting bid (enter 0 if no change)> ");

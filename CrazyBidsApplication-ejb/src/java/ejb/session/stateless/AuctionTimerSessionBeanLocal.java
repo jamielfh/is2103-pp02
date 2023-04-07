@@ -3,12 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package dummy;
+package ejb.session.stateless;
+
+import javax.ejb.Local;
 
 /**
  *
  * @author jamielee
  */
-public class dummy {
+@Local
+public interface AuctionTimerSessionBeanLocal {
+
+    void checkForClosedAuctionsTimer();
     
 }
