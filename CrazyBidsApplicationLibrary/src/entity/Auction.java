@@ -75,9 +75,17 @@ public class Auction implements Serializable {
     
     @OneToMany(mappedBy = "auction")
     private List<Bid> bids;
+    
+    @OneToMany(mappedBy = "auction")
+    private List<ProxyBid> proxyBids;
+    
+    @OneToMany(mappedBy = "auction")
+    private List<Snipe> snipes;
 
     public Auction() {
         bids = new ArrayList<>();
+        proxyBids = new ArrayList<>();
+        snipes = new ArrayList<>();
     }
 
     public Auction(String name, String details, Date startDateTime, Date endDateTime, BigDecimal startingBid, BigDecimal reservePrice, Boolean isDisabled, Boolean manualIntervention, Boolean assignedNoWinner) {
@@ -280,6 +288,34 @@ public class Auction implements Serializable {
      */
     public void setAssignedNoWinner(Boolean assignedNoWinner) {
         this.assignedNoWinner = assignedNoWinner;
+    }
+
+    /**
+     * @return the proxyBids
+     */
+    public List<ProxyBid> getProxyBids() {
+        return proxyBids;
+    }
+
+    /**
+     * @param proxyBids the proxyBids to set
+     */
+    public void setProxyBids(List<ProxyBid> proxyBids) {
+        this.proxyBids = proxyBids;
+    }
+
+    /**
+     * @return the snipes
+     */
+    public List<Snipe> getSnipes() {
+        return snipes;
+    }
+
+    /**
+     * @param snipes the snipes to set
+     */
+    public void setSnipes(List<Snipe> snipes) {
+        this.snipes = snipes;
     }
     
 }

@@ -191,6 +191,10 @@ public class MainApp {
             while(true) 
             {
                 System.out.println("\n*** Crazy Bids OAS Administration Panel :: Change Password ***\n");
+                
+                // Need to update currentemployee record
+                currentEmployee = employeeSessionBeanRemote.retrieveEmployeebyId(currentEmployee.getId());
+                
                 System.out.print("Enter current password> ");
                 currentPassword = scanner.nextLine().trim();
 

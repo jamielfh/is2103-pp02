@@ -23,6 +23,7 @@ import javax.ejb.LocalBean;
 import javax.ejb.Startup;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import util.enumeration.CustomerTierEnum;
 import util.exception.AuctionNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.GeneralException;
@@ -60,7 +61,7 @@ public class ClientDataInitSessionBean {
     {
         if(em.find(Customer.class, 1l) == null) {
             try {
-                customerSessionBeanLocal.createNewCustomer(new Customer("Customer", "One", "customer1", "password", "customer1@email.com", "91234567", new BigDecimal(0)));
+                customerSessionBeanLocal.createNewCustomer(new Customer("Customer", "One", "customer1", "password", "customer1@email.com", "91234567", new BigDecimal(0), CustomerTierEnum.STANDARD));
             } catch (GeneralException ex) {
                 ex.printStackTrace();
             }

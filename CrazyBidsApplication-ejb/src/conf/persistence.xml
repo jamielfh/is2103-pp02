@@ -10,6 +10,8 @@
     <class>entity.CreditPackage</class>
     <class>entity.CreditTransaction</class>
     <class>entity.SuccessfulAuction</class>
+    <class>entity.ProxyBid</class>
+    <class>entity.Snipe</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>

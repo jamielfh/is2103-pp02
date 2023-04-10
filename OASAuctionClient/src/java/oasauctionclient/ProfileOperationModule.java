@@ -83,10 +83,10 @@ public class ProfileOperationModule {
         try
         {
             Customer customer = customerSessionBeanRemote.retrieveCustomerbyId(currentCustomer.getId());
-            System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.printf("%8s%20s%20s%20s%20s%20s%20s\n", "Customer ID", "First Name", "Last Name", "Username", "Password", "Email", "Mobile Number");
-            System.out.printf("%8s%20s%20s%20s%20s%20s%20s\n", customer.getId().toString(), customer.getFirstName(), customer.getLastName(), customer.getUsername(), customer.getPassword(), customer.getEmail(), customer.getMobileNumber());         
-            System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
+            System.out.println("--------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            System.out.printf("%8s%20s%20s%20s%20s%20s%20s%20s\n", "Customer ID", "First Name", "Last Name", "Username", "Password", "Email", "Mobile Number", "Customer Tier");
+            System.out.printf("%8s%20s%20s%20s%20s%20s%20s%20s\n", customer.getId().toString(), customer.getFirstName(), customer.getLastName(), customer.getUsername(), customer.getPassword(), customer.getEmail(), customer.getMobileNumber(), customer.getCustomerTierEnum().toString());         
+            System.out.println("--------------------------------------------------------------------------------------------------------------------------------------------------------------------");
             System.out.print("Press any key to go back...>");
             scanner.nextLine();
 
@@ -109,8 +109,8 @@ public class ProfileOperationModule {
         {
             Customer customer = customerSessionBeanRemote.retrieveCustomerbyUsername(customerUsername);
             System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.printf("%8s%20s%20s%20s%20s\n", "Customer ID", "First Name", "Last Name", "Email", "Mobile Number");
-            System.out.printf("%8s%20s%20s%20s%20s\n", customer.getId().toString(), customer.getFirstName(), customer.getLastName(), customer.getEmail(), customer.getMobileNumber());         
+            System.out.printf("%8s%20s%20s%20s%20s%20s\n", "Customer ID", "First Name", "Last Name", "Email", "Mobile Number", "Customer Tier");
+            System.out.printf("%8s%20s%20s%20s%20s%20s\n", customer.getId().toString(), customer.getFirstName(), customer.getLastName(), customer.getEmail(), customer.getMobileNumber(), customer.getCustomerTierEnum().toString());         
             System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
             System.out.print("Press any key to go back...>");
             scanner.nextLine();

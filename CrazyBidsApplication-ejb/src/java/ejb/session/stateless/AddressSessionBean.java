@@ -80,19 +80,12 @@ public class AddressSessionBean implements AddressSessionBeanRemote, AddressSess
         if(updatedAddress != null && updatedAddress.getId() != null)
         {
             Address addressToUpdate = retrieveAddressbyId(updatedAddress.getId());
-            
-            if(addressToUpdate.getPostalCode().equals(updatedAddress.getPostalCode()))
-            {
-                addressToUpdate.setAddressLine1(updatedAddress.getAddressLine1());
-                addressToUpdate.setAddressLine2(updatedAddress.getAddressLine2());
-                addressToUpdate.setPostalCode(updatedAddress.getPostalCode());
-                
-                // Only allow to update the general details of address in this business method.
-            }
-            else
-            {
-                throw new UpdateAddressException("Name of address record to be updated does not match the existing record");
-            }
+       
+            addressToUpdate.setAddressLine1(updatedAddress.getAddressLine1());
+            addressToUpdate.setAddressLine2(updatedAddress.getAddressLine2());
+            addressToUpdate.setPostalCode(updatedAddress.getPostalCode());
+
+            // Only allow to update the general details of address in this business method.
         }
         else
         {

@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import entity.SuccessfulAuction;
 import java.util.List;
 import javax.ejb.Local;
+import util.exception.AddressIsDisabledException;
 import util.exception.AddressNotFoundException;
 import util.exception.AuctionNotFoundException;
 import util.exception.CustomerNotFoundException;
@@ -29,7 +30,7 @@ public interface SuccessfulAuctionSessionBeanLocal {
 
     Long createNewSuccessfulAuction(SuccessfulAuction newSuccessfulAuction, Long customerId, Long auctionId) throws GeneralException, CustomerNotFoundException, AuctionNotFoundException;
 
-    void updateDeliveryAddress(Long successfulAuctionId, Long addressId) throws DeliveryAddressExistException, UpdateDeliveryAddressException, SuccessfulAuctionNotFoundException, AddressNotFoundException;
+    void updateDeliveryAddress(Long successfulAuctionId, Long addressId) throws DeliveryAddressExistException, UpdateDeliveryAddressException, SuccessfulAuctionNotFoundException, AddressNotFoundException, AddressIsDisabledException;
 
     List<SuccessfulAuction> retrieveAllSuccessfulAuctionByCustomerId(Long customerId) throws CustomerNotFoundException;
     

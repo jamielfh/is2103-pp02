@@ -16,6 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import util.exception.AddressIsDisabledException;
 import util.exception.AddressNotFoundException;
 import util.exception.AuctionNotFoundException;
 import util.exception.CustomerNotFoundException;
@@ -89,16 +90,21 @@ public class SuccessfulAuctionSessionBean implements SuccessfulAuctionSessionBea
     }
     
     @Override
-    public void updateDeliveryAddress(Long successfulAuctionId, Long addressId) throws DeliveryAddressExistException, UpdateDeliveryAddressException, SuccessfulAuctionNotFoundException, AddressNotFoundException
+    public void updateDeliveryAddress(Long successfulAuctionId, Long addressId) throws DeliveryAddressExistException, UpdateDeliveryAddressException, SuccessfulAuctionNotFoundException, AddressNotFoundException, AddressIsDisabledException
     {
         if(successfulAuctionId != null && addressId != null)
         {
             SuccessfulAuction successfulAuctionToUpdate = retrieveSuccessfulAuctionbyId(successfulAuctionId);
             Address address = addressSessionBeanLocal.retrieveAddressbyId(addressId);
             
+            if (address.getIsDisabled()) {
+                throw new AddressIsDisabledException("You are not allowed to use a disabled address!");
+            }
+            
             if(successfulAuctionToUpdate.getAddress() == null)
             {
                 successfulAuctionToUpdate.setAddress(address);
+                address.getSuccessfulAuctions().add(successfulAuctionToUpdate);
                 String deliveryAddress = address.getAddressLine1() + " " + address.getAddressLine2() + ", Postal Code: " + address.getPostalCode();
                 successfulAuctionToUpdate.setSuccessfulAuctionDeliveryAddress(deliveryAddress);
             }

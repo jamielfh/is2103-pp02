@@ -139,8 +139,8 @@ public class AddressOperationModule {
         {
             Address address = addressSessionBeanRemote.retrieveAddressbyId(addressId);
             System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.printf("%10s%20s%20s%20s%b\n", "Address ID", "Address Line 1", "Address Line 2", "Postal Code", "isDisabled");
-            System.out.printf("%10s%20s%20s%20s%b\n", address.getId().toString(), address.getAddressLine1(), address.getAddressLine2(), address.getPostalCode(), address.getIsDisabled());
+            System.out.printf("%10s%20s%20s%20s%20s\n", "Address ID", "Address Line 1", "Address Line 2", "Postal Code", "isDisabled");
+            System.out.printf("%10s%20s%20s%20s%20b\n", address.getId().toString(), address.getAddressLine1(), address.getAddressLine2(), address.getPostalCode(), address.getIsDisabled());
             System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
             System.out.println("1: Update Address");
             System.out.println("2: Delete Address");
@@ -173,11 +173,11 @@ public class AddressOperationModule {
         try {
             addresses = addressSessionBeanRemote.retrieveAllAddressesByCustomerId(currentCustomer.getId());
             System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.printf("%10s%20s%20s%20s%s\n", "Address ID", "Address Line 1", "Address Line 2", "Postal Code", "isDisabled");
+            System.out.printf("%10s%20s%20s%20s%20s\n", "Address ID", "Address Line 1", "Address Line 2", "Postal Code", "isDisabled");
 
             for(Address address: addresses)
             {
-                System.out.printf("%10s%20s%20s%20s%b\n", address.getId().toString(), address.getAddressLine1(), address.getAddressLine2(), address.getPostalCode(), address.getIsDisabled());
+                System.out.printf("%10s%20s%20s%20s%20b\n", address.getId().toString(), address.getAddressLine1(), address.getAddressLine2(), address.getPostalCode(), address.getIsDisabled());
             }
             System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
             System.out.print("Press any key to continue...> ");

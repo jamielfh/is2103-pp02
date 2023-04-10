@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import util.exception.AddressIsDisabledException;
 import util.exception.AddressNotFoundException;
 import util.exception.AuctionNotFoundException;
 import util.exception.BidNotFoundException;
@@ -92,13 +93,13 @@ public class AuctionOperationModule {
         System.out.println("*** Crazy Bids Auction Client System :: Browse All Auction Listings ***\n");
 
         List<Auction> auctions = auctionSessionBeanRemote.retrieveAllActiveAuctions();
-        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
-        System.out.printf("%10s%20s%20s%20s%20s%20s%20s\n", "Auction ID", "Auction Name", "Auction Details", "Auction Start Date Time", "Auction End Date Time", "Auction Starting Bid", "Auction Reserve Price");
+        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.printf("%10s%20s%20s%30s%30s%25s%25s\n", "Auction ID", "Auction Name", "Auction Details", "Auction Start Date Time", "Auction End Date Time", "Auction Starting Bid", "Auction Reserve Price");
 
         for (Auction auction : auctions) {
-            System.out.printf("%10s%20s%20s%20s%20s%20s%20s\n", auction.getId(), auction.getName(), auction.getDetails(), auction.getStartDateTime(), auction.getEndDateTime(), NumberFormat.getCurrencyInstance().format(auction.getStartingBid()), NumberFormat.getCurrencyInstance().format(auction.getReservePrice()));
+            System.out.printf("%10s%20s%20s%30s%30s%25s%25s\n", auction.getId(), auction.getName(), auction.getDetails(), auction.getStartDateTime(), auction.getEndDateTime(), NumberFormat.getCurrencyInstance().format(auction.getStartingBid()), NumberFormat.getCurrencyInstance().format(auction.getReservePrice()));
         }
-        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
         if (auctions.isEmpty()) {
             System.out.println("There are currently no auctions available");
         }
@@ -125,17 +126,17 @@ public class AuctionOperationModule {
             Auction auction = auctionSessionBeanRemote.retrieveAuctionbyId(auctionId);
             List<Bid> bids = auction.getBids();
             System.out.println("Auction");
-            System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.printf("%10s%20s%20s%20s%20s%20s%20s\n", "Auction ID", "Auction Name", "Auction Details", "Auction Start Date Time", "Auction End Date Time", "Auction Starting Bid", "Auction Reserve Price");
-            System.out.printf("%10s%20s%20s%20s%20s%20s%20s\n", auction.getId(), auction.getName(), auction.getDetails(), auction.getStartDateTime(), auction.getEndDateTime(), NumberFormat.getCurrencyInstance().format(auction.getStartingBid()), NumberFormat.getCurrencyInstance().format(auction.getReservePrice()));
-            System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
+            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            System.out.printf("%10s%20s%20s%30s%30s%25s%25s\n", "Auction ID", "Auction Name", "Auction Details", "Auction Start Date Time", "Auction End Date Time", "Auction Starting Bid", "Auction Reserve Price");
+            System.out.printf("%10s%20s%20s%30s%30s%25s%25s\n", auction.getId(), auction.getName(), auction.getDetails(), auction.getStartDateTime(), auction.getEndDateTime(), NumberFormat.getCurrencyInstance().format(auction.getStartingBid()), NumberFormat.getCurrencyInstance().format(auction.getReservePrice()));
+            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
             System.out.println("Bids (Number of Bids: " + bids.size() + ")");
-            System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
+            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
             System.out.printf("%10s%20s%20s%20s\n", "Bid ID", "Bid Amount", "Bid Date", "Bidder Username"); 
             for (Bid bid : bids) {
                 System.out.printf("%10s%20s%20s%20s\n", bid.getId(), NumberFormat.getCurrencyInstance().format(bid.getBidAmount()), bid.getBidDateTime(), bid.getCustomer().getUsername());
             }   
-            System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
+            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
             System.out.println("1: Place New Bid");
             System.out.println("2: Refresh Auction Listing Bids");
             System.out.println("3: Back\n");
@@ -172,6 +173,8 @@ public class AuctionOperationModule {
 
             if (successfulAuctions.isEmpty()) {
                 System.out.println("You do not have any won auction listings available");
+                System.out.print("\nPress any key to go back...> ");
+                scanner.nextLine();
             } else {
 
                 System.out.println("1: Select Delivery Address for a Won Auction Listing");
@@ -253,6 +256,8 @@ public class AuctionOperationModule {
         } catch (SuccessfulAuctionNotFoundException ex) {
             System.out.println("\n" + ex.getMessage() + "\n");
         } catch (AddressNotFoundException ex) {
+            System.out.println("\n" + ex.getMessage() + "\n");
+        } catch (AddressIsDisabledException ex) {
             System.out.println("\n" + ex.getMessage() + "\n");
         }
 

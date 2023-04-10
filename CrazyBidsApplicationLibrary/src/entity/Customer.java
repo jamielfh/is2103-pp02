@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,6 +21,7 @@ import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import util.enumeration.CustomerTierEnum;
 
 /**
  *
@@ -60,6 +63,10 @@ public class Customer implements Serializable {
     @Digits(integer = 14, fraction = 4)
     @DecimalMin("0.00")
     private BigDecimal creditBalance;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @NotNull
+    private CustomerTierEnum customerTierEnum;
     
     @OneToMany
     private List<Address> addresses;
@@ -72,15 +79,23 @@ public class Customer implements Serializable {
     
     @OneToMany(mappedBy = "customer")
     private List<CreditTransaction> creditTransactions;
+    
+    @OneToMany(mappedBy = "customer")
+    private List<ProxyBid> proxyBids;
+    
+    @OneToMany(mappedBy = "customer")
+    private List<Snipe> snipes;
 
     public Customer() {
          addresses = new ArrayList<>();
          successfulAuctions = new ArrayList<>();
          bids = new ArrayList<>();
          creditTransactions = new ArrayList<>();
+         proxyBids = new ArrayList<>();
+         snipes = new ArrayList<>();
     }
 
-    public Customer(String firstName, String lastName, String username, String password, String email, String mobileNumber, BigDecimal creditBalance) {
+    public Customer(String firstName, String lastName, String username, String password, String email, String mobileNumber, BigDecimal creditBalance, CustomerTierEnum customerTierEnum) {
         this();
         
         this.firstName = firstName;
@@ -90,6 +105,7 @@ public class Customer implements Serializable {
         this.email = email;
         this.mobileNumber = mobileNumber;
         this.creditBalance = creditBalance;
+        this.customerTierEnum = customerTierEnum;
     }
     
 
@@ -278,6 +294,48 @@ public class Customer implements Serializable {
      */
     public void setCreditTransactions(List<CreditTransaction> creditTransactions) {
         this.creditTransactions = creditTransactions;
+    }
+
+    /**
+     * @return the customerTierEnum
+     */
+    public CustomerTierEnum getCustomerTierEnum() {
+        return customerTierEnum;
+    }
+
+    /**
+     * @param customerTierEnum the customerTierEnum to set
+     */
+    public void setCustomerTierEnum(CustomerTierEnum customerTierEnum) {
+        this.customerTierEnum = customerTierEnum;
+    }
+
+    /**
+     * @return the proxyBids
+     */
+    public List<ProxyBid> getProxyBids() {
+        return proxyBids;
+    }
+
+    /**
+     * @param proxyBids the proxyBids to set
+     */
+    public void setProxyBids(List<ProxyBid> proxyBids) {
+        this.proxyBids = proxyBids;
+    }
+
+    /**
+     * @return the snipes
+     */
+    public List<Snipe> getSnipes() {
+        return snipes;
+    }
+
+    /**
+     * @param snipes the snipes to set
+     */
+    public void setSnipes(List<Snipe> snipes) {
+        this.snipes = snipes;
     }
     
 }

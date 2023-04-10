@@ -97,8 +97,7 @@ public class AuctionSessionBean implements AuctionSessionBeanRemote, AuctionSess
         {
             Auction auctionToUpdate = retrieveAuctionbyId(updatedAuction.getId());
             
-            if(auctionToUpdate.getName().equals(updatedAuction.getName()))
-            {
+            
                 // Only allowed to update the general details of auction in this business method.
                 auctionToUpdate.setName(updatedAuction.getName());
                 auctionToUpdate.setDetails(updatedAuction.getDetails());
@@ -117,11 +116,8 @@ public class AuctionSessionBean implements AuctionSessionBeanRemote, AuctionSess
                 
                 // ManualIntervention is set automatically when highest bid is the same as or below the reserve price (when timer runs out).
                 // isDisabled is set under disableAuction.
-            }
-            else
-            {
-                throw new UpdateAuctionException("Name of auction record to be updated does not match the existing record");
-            }
+            
+            
         }
         else
         {

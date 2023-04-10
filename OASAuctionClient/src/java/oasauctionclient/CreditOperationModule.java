@@ -147,7 +147,9 @@ public class CreditOperationModule {
         }
         System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
         if (creditPackages.isEmpty()) {
-            System.out.println("\nThere are currently no credit packages available\n");
+            System.out.println("\nThere are currently no credit packages available");
+            System.out.print("\nPress any key to go back...> ");
+            scanner.nextLine();
         } else {
             System.out.print("Enter the Credit Package ID to purchase> ");
             creditPackageId = scanner.nextLong();

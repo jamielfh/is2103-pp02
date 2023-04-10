@@ -13,6 +13,7 @@ import ejb.session.stateless.SuccessfulAuctionSessionBeanRemote;
 import entity.Customer;
 import java.math.BigDecimal;
 import java.util.Scanner;
+import util.enumeration.CustomerTierEnum;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.InvalidRegistrationException;
 import util.exception.GeneralException;
@@ -167,7 +168,7 @@ public class MainApp {
         
         if(username.length() > 0 && password.length() > 0 && firstName.length() > 0 && lastName.length() > 0 && email.length() > 0 && mobileNumber.length() > 0)
         {
-            Customer newCustomer = new Customer(firstName, lastName, username, password, email, mobileNumber, creditBalance);
+            Customer newCustomer = new Customer(firstName, lastName, username, password, email, mobileNumber, creditBalance, CustomerTierEnum.STANDARD);
             customerSessionBeanRemote.createNewCustomer(newCustomer);
         }
         else
