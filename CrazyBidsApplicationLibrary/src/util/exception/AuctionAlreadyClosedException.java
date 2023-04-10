@@ -9,14 +9,14 @@ package util.exception;
  *
  * @author Bransome Tan Yi Hao
  */
-public class AuctionAssignedNoWinnerException extends Exception{
+public class AuctionAlreadyClosedException extends Exception{
 
     /**
      * Creates a new instance of
      * <code>AddressIsAssociatedWithWinningBidException</code> without detail
      * message.
      */
-    public AuctionAssignedNoWinnerException() {
+    public AuctionAlreadyClosedException() {
     }
 
     /**
@@ -26,7 +26,7 @@ public class AuctionAssignedNoWinnerException extends Exception{
      *
      * @param msg the detail message.
      */
-    public AuctionAssignedNoWinnerException(String msg) {
+    public AuctionAlreadyClosedException(String msg) {
         super(msg);
     }
 }

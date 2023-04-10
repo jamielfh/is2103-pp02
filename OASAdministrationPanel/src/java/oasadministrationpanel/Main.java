@@ -9,7 +9,6 @@ import ejb.session.stateless.AuctionSessionBeanRemote;
 import ejb.session.stateless.CreditPackageSessionBeanRemote;
 import ejb.session.stateless.EmployeeSessionBeanRemote;
 import ejb.session.stateless.SuccessfulAuctionSessionBeanRemote;
-import java.text.ParseException;
 import javax.ejb.EJB;
 
 /**
@@ -33,7 +32,7 @@ public class Main {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) {
         MainApp mainApp = new MainApp(employeeSessionBeanRemote, creditPackageSessionBeanRemote, auctionSessionBeanRemote, successfulAuctionSessionBeanRemote);
         mainApp.runApp();
     }

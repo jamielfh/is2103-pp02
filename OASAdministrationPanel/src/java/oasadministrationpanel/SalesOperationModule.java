@@ -17,7 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
-import util.exception.AuctionAssignedNoWinnerException;
+import util.exception.AuctionAlreadyClosedException;
 import util.exception.AuctionHasBidsException;
 import util.exception.AuctionIsDisabledException;
 import util.exception.AuctionNotFoundException;
@@ -44,13 +44,13 @@ public class SalesOperationModule {
         this.successfulAuctionSessionBeanRemote = successfulAuctionSessionBeanRemote;
     }
     
-    public void menuSalesOperation() throws ParseException {
+    public void menuSalesOperation() {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
         
-        while(true)
+        while (true)
         {
-            System.out.println("\n*** Crazy Bids OAS Administration Panel :: Sales Staff Operation ***\n");
+            System.out.println("\n*** Crazy Bids OAS Administration Panel :: Sales Operations ***\n");
             System.out.println("1: Create New Auction Listing");
             System.out.println("2: View Auction Listing Details");
             System.out.println("3: View All Auction Listings");
@@ -72,7 +72,7 @@ public class SalesOperationModule {
                     }
                     catch (InvalidAuctionCreationException ex)
                     {
-                        System.out.println("\nInvalid Auction Creation: " + ex.getMessage() + "\n");
+                        System.out.println("\nAn error has occurred while creating the new auction: " + ex.getMessage() + "\n");
                     }
                 }
                 else if (response == 2)
@@ -85,7 +85,7 @@ public class SalesOperationModule {
                 }
                 else if (response == 4)
                 {
-                    doViewAllAuctionListingsWithBidsBelowReservePrice();
+                    doViewAllAuctionListingsWithBidsButBelowReservePrice();
                 }
                 else if (response == 5)
                 {
@@ -114,27 +114,70 @@ public class SalesOperationModule {
         BigDecimal startingBid;
         BigDecimal reservePrice;
         
-        System.out.println("*** Crazy Bids OAS Administration Panel :: Create New Auction Listing ***\n");
+        System.out.println("\n*** Crazy Bids OAS Administration Panel :: Create New Auction Listing ***\n");
         System.out.print("Enter auction name> ");
         name = scanner.nextLine().trim();
         System.out.print("Enter auction details> ");
         details = scanner.nextLine().trim();
         
         startDateTime = createStartDateTime();
-        endDateTime = createEndDateTime();
         
-        System.out.print("Enter starting bid> ");
-        startingBid = scanner.nextBigDecimal();
-        
-        System.out.print("Enter reserve price (enter 0 if no reserve price)> ");
-        reservePrice = scanner.nextBigDecimal();
-        
-        if (name.length() > 0 && details.length() > 0 && startingBid.compareTo(new BigDecimal(0.01)) != -1 && reservePrice.compareTo(new BigDecimal(0)) != -1)
+        while (true)
         {
-            if (reservePrice.compareTo(new BigDecimal(0)) == 0)
+            endDateTime = createEndDateTime();
+            
+            if (!endDateTime.after(startDateTime))
             {
-                reservePrice = null;
+                System.out.println("\nEnd date time must be later than start date time!\n");
             }
+            else
+            {
+                break;
+            }
+        }
+        
+        while (true)
+        {
+            System.out.print("Enter starting bid (up to 4 decimal places)> ");
+            startingBid = new BigDecimal(scanner.nextLine().trim());
+            
+            if (startingBid.compareTo(new BigDecimal("0.01")) != -1)
+            {
+                break;
+            }
+            else
+            {
+                System.out.println("Starting bid must be at least 0.01!");
+            }
+        }
+        
+        System.out.printf("Enter reserve price? (Enter 'Y' to confirm, any other key to skip)> ");
+        String input = scanner.nextLine().trim();
+        
+        if(input.equals("Y"))
+        {
+            while (true)
+            {
+                System.out.print("Enter reserve price> ");
+                reservePrice = new BigDecimal(scanner.nextLine().trim());
+                
+                if (reservePrice.compareTo(new BigDecimal("0.01")) != -1)
+                {
+                    break;
+                }
+                else
+                {
+                    System.out.println("Reserve price must be at least 0.01!");
+                }
+            }
+        }
+        else
+        {
+            reservePrice = null;
+        }
+        
+        if (name.length() > 0 && details.length() > 0)
+        {
             
             Auction newAuction = new Auction(name, details, startDateTime, endDateTime, startingBid, reservePrice, false, false, false);
 
@@ -145,7 +188,7 @@ public class SalesOperationModule {
             }
             catch (GeneralException ex)
             {
-                System.out.println("\nAn unknown error has occurred while creating the new auction listing!: " + ex.getMessage() + "\n");
+                System.out.println("\nAn unknown error has occurred while creating the new auction listing: " + ex.getMessage() + "\n");
             }
         }
         else
@@ -164,7 +207,7 @@ public class SalesOperationModule {
             
             System.out.print("Enter start hour (00 to 23)> ");
             String startHour = scanner.nextLine().trim();
-            if (Integer.parseInt(startHour) > 23)
+            if (Integer.parseInt(startHour) < 0 || Integer.parseInt(startHour) > 23)
             {
                 System.out.println("Please enter a valid hour!");
                 continue;
@@ -172,7 +215,7 @@ public class SalesOperationModule {
             
             System.out.print("Enter start minute (00 to 59)> ");
             String startMinute = scanner.nextLine().trim();
-            if (Integer.parseInt(startMinute) > 59)
+            if (Integer.parseInt(startMinute) < 0 || Integer.parseInt(startMinute) > 59)
             {
                 System.out.println("Please enter a valid minute!");
                 continue;
@@ -201,7 +244,7 @@ public class SalesOperationModule {
             
             System.out.print("Enter end hour (00 to 23)> ");
             String endHour = scanner.nextLine().trim();
-            if (Integer.parseInt(endHour) > 23)
+            if (Integer.parseInt(endHour) < 0 || Integer.parseInt(endHour) > 23)
             {
                 System.out.println("Please enter a valid hour!");
                 continue;
@@ -209,7 +252,7 @@ public class SalesOperationModule {
             
             System.out.print("Enter end minute (00 to 59)> ");
             String endMinute = scanner.nextLine().trim();
-            if (Integer.parseInt(endMinute) > 59)
+            if (Integer.parseInt(endMinute) < 0 || Integer.parseInt(endMinute) > 59)
             {
                 System.out.println("Please enter a valid minute!");
                 continue;
@@ -232,7 +275,7 @@ public class SalesOperationModule {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
         
-        System.out.println("*** Crazy Bids OAS Administration Panel :: View Auction Listing Details ***\n");
+        System.out.println("\n*** Crazy Bids OAS Administration Panel :: View Auction Listing Details ***\n");
         System.out.print("Enter Auction ID> ");
         Long auctionId = scanner.nextLong();
         
@@ -241,7 +284,7 @@ public class SalesOperationModule {
             Auction auction = auctionSessionBeanRemote.retrieveAuctionbyId(auctionId);
             
             System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.printf("%10s%20s%20s%20s%20s%20s%20s%20s%20s%20s\n", "Auction ID", "Auction Name", "Details", "Start Date & Time", "End Date & Time", "Starting Bid", "Reserve Price", "Is Disabled", "Manual Intervention", "Has Winner");
+            System.out.printf("%10s%20s%20s%20s%20s%20s%20s%20s%20s%20s\n", "Auction ID", "Auction Name", "Details", "Start Date & Time", "End Date & Time", "Starting Bid", "Reserve Price", "Is Disabled", "Manual Intervention", "Closed");
             
             String reservePrice = auction.getReservePrice() == null ? "-" : auction.getReservePrice().toString();
             Boolean hasWinner = auction.getSuccessfulAuction() != null;
@@ -285,7 +328,7 @@ public class SalesOperationModule {
     {
         Scanner scanner = new Scanner(System.in);
         
-        System.out.println("*** Crazy Bids OAS Administration Panel :: View All Auction Listings ***\n");
+        System.out.println("\n*** Crazy Bids OAS Administration Panel :: View All Auction Listings ***\n");
         
         List<Auction> auctions = auctionSessionBeanRemote.retrieveAllAuctions();
         
@@ -311,13 +354,13 @@ public class SalesOperationModule {
     }
     
     
-    private void doViewAllAuctionListingsWithBidsBelowReservePrice()
+    private void doViewAllAuctionListingsWithBidsButBelowReservePrice()
     {
         Scanner scanner = new Scanner(System.in);
         
-        System.out.println("*** Crazy Bids OAS Administration Panel :: View All Auction Listings With Bids But Below Reserve Price ***\n");
+        System.out.println("\n*** Crazy Bids OAS Administration Panel :: View All Auction Listings With Bids But Below Reserve Price ***\n");
         
-        List<Auction> auctions = auctionSessionBeanRemote.retrieveAllAuctionsWithBidsBelowReservePrice();
+        List<Auction> auctions = auctionSessionBeanRemote.retrieveAllAuctionsWithBidsButBelowReservePrice();
         
         System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
         
@@ -325,22 +368,22 @@ public class SalesOperationModule {
         {
             for(Auction auction : auctions)
             {
-                System.out.printf("%10s%20s%20s%20s%20s%20s%20s%20s\n", "Auction ID", "Auction Name", "Details", "Start Date & Time", "End Date & Time", "Starting Bid", "Reserve Price", "Is Disabled");
+                System.out.printf("%10s%20s%20s%20s%20s%20s%20s\n", "Auction ID", "Auction Name", "Details", "Start Date & Time", "End Date & Time", "Starting Bid", "Reserve Price");
                 
                 String reservePrice = auction.getReservePrice() == null ? "-" : auction.getReservePrice().toString();
-                System.out.printf("%10s%20s%20s%20s%20s%20s%20s%20s\n", auction.getId().toString(), auction.getName(),auction.getDetails(), auction.getStartDateTime().toString(), auction.getEndDateTime().toString(), auction.getStartingBid().toString(), reservePrice, auction.getIsDisabled());
+                System.out.printf("%10s%20s%20s%20s%20s%20s%20s\n", auction.getId().toString(), auction.getName(),auction.getDetails(), auction.getStartDateTime().toString(), auction.getEndDateTime().toString(), auction.getStartingBid().toString(), reservePrice);
                 
                 System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
                 
                 Bid highestBid = auctionSessionBeanRemote.getHighestBid(auction);
                 Customer winner = highestBid.getCustomer();
-                System.out.println("*** Highest Bid ***");
+                System.out.println("\n*** Highest Bid ***");
                 System.out.printf("%10s%20s%20s\n", "Bid ID", "Customer Username", "Bid Amount");
                 System.out.printf("%10s%20s%20s\n", highestBid.getId(), winner.getUsername(), highestBid.getBidAmount());
                 
-                while(true)
+                while (true)
                 {
-                    System.out.println("Mark highest bid as winning bid?");
+                    System.out.println("\nMark highest bid as winning bid?");
                     System.out.print("Enter 'Y' to assign winner, 'N' to mark auction listing as having no winning bid> ");
                     String input = scanner.nextLine().trim();
 
@@ -353,21 +396,34 @@ public class SalesOperationModule {
                         try
                         {
                             Long successfulAuctionId = successfulAuctionSessionBeanRemote.createNewSuccessfulAuction(successfulAuction, winner.getId(), auction.getId());
-                            System.out.println("\nWinning bid assigned successfully! Successful auction created with ID: " + successfulAuctionId + "\n");
+                            try
+                            {
+                                auctionSessionBeanRemote.manuallyCloseAuction(auction.getId());
+                                System.out.println("\nWinning bid assigned successfully! Successful auction created with ID: " + successfulAuctionId + "\n");
+                            }
+                            catch (AuctionAlreadyClosedException | AuctionNotFoundException ex1)
+                            {
+                                System.out.println("An error occurred while creating successful auction: " + ex1.getMessage());
+                            }
                         }
                         catch(GeneralException | CustomerNotFoundException | AuctionNotFoundException ex)
                         {
                             System.out.println("An error occurred while creating successful auction: " + ex.getMessage());
+                        }
+                        finally
+                        {
+                            break;
                         }
                     }
                     else if (input.equals("N"))
                     {
                         try
                         {
-                            auctionSessionBeanRemote.assignNoWinner(auction.getId());
+                            auctionSessionBeanRemote.manuallyCloseAuction(auction.getId());
                             System.out.println("Auction listing successfully marked as having no winning bid!");
+                            break;
                         }
-                        catch(AuctionNotFoundException | AuctionAssignedNoWinnerException ex)
+                        catch(AuctionNotFoundException | AuctionAlreadyClosedException ex)
                         {
                             System.out.println("An error occurred while marking auction listing as having no winning bid: " + ex.getMessage());
                         }
@@ -409,7 +465,7 @@ public class SalesOperationModule {
         
         if(updateAuction.getBids().isEmpty())
         {
-            System.out.printf("Change start date & time? (Enter 'Y' to confirm, 'N' to skip)> ");
+            System.out.printf("Change start date & time? (Enter 'Y' to confirm, any other key to skip)> ");
             input = scanner.nextLine().trim();
         
             if(input.equals("Y"))
@@ -418,30 +474,74 @@ public class SalesOperationModule {
                 updateAuction.setStartDateTime(startDateTime);
             }
             
-            System.out.printf("Change end date & time? (Enter 'Y' to change, 'N' to skip)> ");
+            System.out.printf("Change end date & time? (Enter 'Y' to change, any other key to skip)> ");
             input = scanner.nextLine().trim();
         
             if(input.equals("Y"))
             {
-                Date endDateTime = createEndDateTime();
-                updateAuction.setEndDateTime(endDateTime);
+                while (true)
+                {
+                    Date endDateTime = createEndDateTime();
+
+                    if (!endDateTime.after(updateAuction.getStartDateTime()))
+                    {
+                        System.out.println("\nEnd date time must be later than start date time!\n");
+                    }
+                    else
+                    {
+                        updateAuction.setEndDateTime(endDateTime);
+                        break;
+                    }
+                }
             }
             
-            System.out.print("Enter starting bid (enter 0 if no change)> ");
-            BigDecimal input1 = scanner.nextBigDecimal();
-
-            if (input1.compareTo(new BigDecimal(0)) == 1)
+            System.out.printf("Change starting bid? (Enter 'Y' to change, any other key to skip)> ");
+            input = scanner.nextLine().trim();
+            
+            if(input.equals("Y"))
             {
-                updateAuction.setStartingBid(input1);
-            }
-                   
-            System.out.print("Enter reserve price (enter 0 if no change)> ");
-            input1 = scanner.nextBigDecimal();
+                while (true)
+                {
+                    System.out.print("Enter starting bid (up to 4 decimal places)> ");
+                    BigDecimal input1 = new BigDecimal(scanner.nextLine().trim());
 
-            if (input1.compareTo(new BigDecimal(0)) == 1)
-            {
-                updateAuction.setReservePrice(input1);
+                    if (input1.compareTo(new BigDecimal("0.01")) != -1)
+                    {
+                        updateAuction.setStartingBid(input1);
+                        break;
+                    }
+                    else
+                    {
+                        System.out.println("Starting bid must be at least 0.01!");
+                    }
+                }
             }
+            
+            System.out.printf("Change reserve price? (Enter 'Y' to change, any other key to skip)> ");
+            input = scanner.nextLine().trim();
+            
+            if(input.equals("Y"))
+            {
+                while (true)
+                {
+                    System.out.print("Enter reserve price (up to 4 decimal places)> ");
+                    BigDecimal input1 = new BigDecimal(scanner.nextLine().trim());
+
+                    if (input1.compareTo(new BigDecimal("0.01")) != -1)
+                    {
+                        updateAuction.setReservePrice(input1);
+                        break;
+                    }
+                    else
+                    {
+                        System.out.println("Reserve price must be at least 0.01!");
+                    }
+                }
+            }
+        }
+        else
+        {
+            System.out.println("Start date & time, end date & time, starting bid and reserve price cannot be changed as there are bids associated with auction!");
         }
         
         try
@@ -460,7 +560,7 @@ public class SalesOperationModule {
         String input = "";
         
         System.out.println("\n*** Crazy Bids Auction Client System :: Delete Auction Listing ***\n");
-        System.out.printf("Confirm Delete Auction Listing (Address ID: %s) (Enter 'Y' to Delete)> ", deleteAuction.getId());
+        System.out.printf("Confirm Delete Auction Listing (Auction ID: %s) (Enter 'Y' to Delete)> ", deleteAuction.getId());
         input = scanner.nextLine().trim();
         
         if(input.equals("Y"))

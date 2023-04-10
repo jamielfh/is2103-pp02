@@ -59,7 +59,7 @@ public class SystemAdminOperationModule {
                     }
                     catch (InvalidEmployeeCreationException ex)
                     {
-                        System.out.println("\nInvalid Employee Credential: " + ex.getMessage() + "\n");
+                        System.out.println("\nAn error has occurred while creating the new employee: " + ex.getMessage() + "\n");
                     }
                 }
                 else if (response == 2)
@@ -96,7 +96,7 @@ public class SystemAdminOperationModule {
         String username = "";
         String password = "";
         
-        System.out.println("*** Crazy Bids OAS Administration Panel :: Create New Employee ***\n");
+        System.out.println("\n*** Crazy Bids OAS Administration Panel :: Create New Employee ***\n");
         System.out.print("Enter first name> ");
         firstName = scanner.nextLine().trim();
         System.out.print("Enter last name> ");
@@ -106,14 +106,14 @@ public class SystemAdminOperationModule {
         System.out.print("Enter password> ");
         password = scanner.nextLine().trim();
         
-        System.out.println("Select employee access right:");
-        System.out.println("1: SYSTEMADMIN");
-        System.out.println("2: FINANCESTAFF");
-        System.out.println("3: SALESSTAFF");
         Integer response = 0;
         
         while (response < 1 || response > 3) 
         {
+            System.out.println("Select employee access right:");
+            System.out.println("1: SYSTEMADMIN");
+            System.out.println("2: FINANCESTAFF");
+            System.out.println("3: SALESSTAFF");
             System.out.println("> ");
             response = scanner.nextInt();
             
@@ -146,12 +146,12 @@ public class SystemAdminOperationModule {
             }
             catch (GeneralException ex)
             {
-                System.out.println("\nAn unknown error has occurred while creating the new employee!: " + ex.getMessage() + "\n");
+                System.out.println("\nAn error has occurred while creating the new employee: " + ex.getMessage() + "\n");
             }
         }
         else
         {
-            throw new InvalidEmployeeCreationException("\nMissing Employee credential!");
+            throw new InvalidEmployeeCreationException("Missing employee details!");
         }
     }
     
@@ -159,7 +159,7 @@ public class SystemAdminOperationModule {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
         
-        System.out.println("*** Crazy Bids OAS Administration Panel :: View Employee Details ***\n");
+        System.out.println("\n*** Crazy Bids OAS Administration Panel :: View Employee Details ***\n");
         System.out.print("Enter Employee ID> ");
         Long employeeId = scanner.nextLong();
         
@@ -187,7 +187,14 @@ public class SystemAdminOperationModule {
                 }
                 else if (response == 2)
                 {
-                    doDeleteEmployee(employee);
+                    if (currentEmployee.equals(employee))
+                    {
+                        System.out.println("\nCannot delete employee while employee is logged in!");
+                    }
+                    else
+                    {
+                        doDeleteEmployee(employee);
+                    }
                 }
                 else if (response == 3)
                 {
@@ -209,7 +216,7 @@ public class SystemAdminOperationModule {
     {
         Scanner scanner = new Scanner(System.in);
         
-        System.out.println("*** Crazy Bids OAS Administration Panel :: View All Employees ***\n");
+        System.out.println("\n*** Crazy Bids OAS Administration Panel :: View All Employees ***\n");
         
         List<Employee> employees;
         
@@ -231,7 +238,7 @@ public class SystemAdminOperationModule {
         Scanner scanner = new Scanner(System.in);        
         String input = "";
         
-        System.out.println("*** Crazy Bids OAS Administration Panel :: Update Employee ***\n");
+        System.out.println("\n*** Crazy Bids OAS Administration Panel :: Update Employee ***\n");
         System.out.print("Enter first name (blank if no change)> ");
         input = scanner.nextLine().trim();
         if(input.length() > 0)
@@ -258,6 +265,10 @@ public class SystemAdminOperationModule {
             System.out.println("> ");
             response = scanner.nextInt();
             
+            if (response == 0)
+            {
+                continue;
+            }
             if (response == 1) 
             {
                 updateEmployee.setAccessRightEnum(AccessRightEnum.SYSTEMADMIN);
@@ -279,6 +290,12 @@ public class SystemAdminOperationModule {
         try
         {
             employeeSessionBeanRemote.updateEmployee(updateEmployee);
+            
+            if (currentEmployee.equals(updateEmployee))
+            {
+                currentEmployee = employeeSessionBeanRemote.retrieveEmployeebyId(currentEmployee.getId());
+            }
+            
             System.out.println("\nEmployee updated successfully!\n");
         }
         catch (EmployeeNotFoundException | UpdateEmployeeException ex) 
@@ -291,7 +308,7 @@ public class SystemAdminOperationModule {
         Scanner scanner = new Scanner(System.in);     
         String input = "";
         
-        System.out.println("*** Crazy Bids OAS Administration Panel :: Delete Employee ***\n");
+        System.out.println("\n*** Crazy Bids OAS Administration Panel :: Delete Employee ***\n");
         System.out.printf("Confirm Delete Employee (Employee ID: %s) (Enter 'Y' to Delete)> ", deleteEmployee.getId());
         input = scanner.nextLine().trim();
         

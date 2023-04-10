@@ -38,7 +38,7 @@ public class FinanceOperationModule {
         
         while(true)
         {
-            System.out.println("\n*** Crazy Bids OAS Administration Panel :: Finance Staff Operations ***\n");
+            System.out.println("\n*** Crazy Bids OAS Administration Panel :: Finance Operations ***\n");
             System.out.println("1: Create New Credit Package");
             System.out.println("2: View Credit Package Details");
             System.out.println("3: View All Credit Packages");
@@ -59,7 +59,7 @@ public class FinanceOperationModule {
                     }
                     catch (InvalidCreditPackageCreationException ex)
                     {
-                        System.out.println("\nInvalid credit package creation: " + ex.getMessage() + "\n");
+                        System.out.println("\nAn error has occurred while creating the new credit package: " + ex.getMessage() + "\n");
                     }
                 }
                 else if (response == 2)
@@ -93,10 +93,10 @@ public class FinanceOperationModule {
         BigDecimal creditPackageAmount;
         
         System.out.println("\n*** Crazy Bids OAS Administration Panel :: Create New Credit Package ***\n");
-        System.out.print("Enter credit package amount (in the format 0.00)> ");
-        creditPackageAmount = scanner.nextBigDecimal();
+        System.out.print("Enter credit package amount (up to 4 decimal places)> ");
+        creditPackageAmount = new BigDecimal(scanner.nextLine().trim());
 
-        if (creditPackageAmount.compareTo(new BigDecimal(0)) == 1)
+        if (creditPackageAmount.compareTo(new BigDecimal("0.05")) != -1)
         {
             CreditPackage newCreditPackage = new CreditPackage(creditPackageAmount, false);
 
@@ -107,12 +107,12 @@ public class FinanceOperationModule {
             }
             catch (GeneralException ex)
             {
-                System.out.println("\nAn unknown error has occurred while creating the new employee!: " + ex.getMessage() + "\n");
+                System.out.println("\nAn unknown error has occurred while creating the new credit package: " + ex.getMessage() + "\n");
             }
         }
         else
         {
-            throw new InvalidCreditPackageCreationException("\nCredit package amount must be more than 0!");
+            throw new InvalidCreditPackageCreationException("Credit package amount must be at least 0.05!");
         }
     }
     
@@ -120,7 +120,7 @@ public class FinanceOperationModule {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
         
-        System.out.println("*** Crazy Bids OAS Administration Panel :: View Credit Package Details ***\n");
+        System.out.println("\n*** Crazy Bids OAS Administration Panel :: View Credit Package Details ***\n");
         System.out.print("Enter Credit Package ID> ");
         Long creditPackageId = scanner.nextLong();
         
@@ -143,7 +143,14 @@ public class FinanceOperationModule {
 
                 if (response == 1)
                 {
-                    doUpdateCreditPackage(creditPackage);
+                    try 
+                    {
+                        doUpdateCreditPackage(creditPackage);
+                    } 
+                    catch (InvalidCreditPackageCreationException ex) 
+                    {
+                        System.out.println("\nAn error has occurred while updating credit package: " + ex.getMessage() + "\n");
+                    }
                 }
                 else if (response == 2)
                 {
@@ -169,7 +176,7 @@ public class FinanceOperationModule {
     {
         Scanner scanner = new Scanner(System.in);
         
-        System.out.println("*** Crazy Bids OAS Administration Panel :: View All Credit Packages ***\n");
+        System.out.println("\n*** Crazy Bids OAS Administration Panel :: View All Credit Packages ***\n");
         
         List<CreditPackage> creditPackages;
         
@@ -194,21 +201,25 @@ public class FinanceOperationModule {
         scanner.nextLine();
     }
     
-    private void doUpdateCreditPackage(CreditPackage updateCreditPackage) {
+    private void doUpdateCreditPackage(CreditPackage updateCreditPackage) throws InvalidCreditPackageCreationException {
         Scanner scanner = new Scanner(System.in);
         BigDecimal newAmount;
         
         System.out.println("\n*** Crazy Bids OAS Administration Panel :: Update Credit Package ***\n");
-        System.out.print("Enter credit package amount (in the format 0.00, enter 0 if no change)> ");
-        newAmount = scanner.nextBigDecimal();
+        System.out.print("Enter credit package amount (up to 4 decimal places)> ");
+        newAmount = new BigDecimal(scanner.nextLine().trim());
 
         try
         {
-            if (newAmount.compareTo(new BigDecimal(0)) == 1)
+            if (newAmount.compareTo(new BigDecimal("0.05")) != -1)
             {
                 creditPackageSessionBeanRemote.updateCreditPackage(updateCreditPackage, newAmount);
                 System.out.println("\nCredit package updated successfully!\n");
-            }      
+            }
+            else
+            {
+                throw new InvalidCreditPackageCreationException("Credit package amount must be at least 0.05!");
+            }
         }
         catch (CreditPackageNotFoundException | UpdateCreditPackageException ex) 
         {
@@ -221,7 +232,7 @@ public class FinanceOperationModule {
         String input = "";
         
         System.out.println("\n*** Crazy Bids Auction Client System :: Delete Credit Package ***\n");
-        System.out.printf("Confirm Delete Credit Package (Address ID: %s) (Enter 'Y' to Delete)> ", deleteCreditPackage.getId());
+        System.out.printf("Confirm Delete Credit Package (Credit Package ID: %s) (Enter 'Y' to Delete)> ", deleteCreditPackage.getId());
         input = scanner.nextLine().trim();
         
         if(input.equals("Y"))
@@ -233,17 +244,18 @@ public class FinanceOperationModule {
             } 
             catch (CreditPackageNotFoundException ex) 
             {
-                System.out.println("\nAn error has occurred while deleting the address: " + ex.getMessage() + "\n");
+                System.out.println("\nAn error has occurred while deleting the credit package: " + ex.getMessage() + "\n");
             }
             catch (CreditPackageIsUsedException ex) 
             {
-                System.out.printf("\nCannot delete credit package (Address ID: %s) as it has been used before! Do you want to disable the credit package instead? (Enter 'Y' to Disable))> ", deleteCreditPackage.getId());
+                System.out.printf("\nCannot delete credit package (Credit Package ID: %s) as it has been used before! Do you want to disable the credit package instead? (Enter 'Y' to Disable))> ", deleteCreditPackage.getId());
                 input = scanner.nextLine().trim();
                 
                 if (input.equals("Y")) {
                     try
                     {
                         creditPackageSessionBeanRemote.disableCreditPackage(deleteCreditPackage.getId());
+                        System.out.println("Credit package disabled successfully!\n");
                     } 
                     catch (CreditPackageNotFoundException | CreditPackageIsDisabledException ex1) {
                         System.out.println("\nAn error has occurred while disabling the credit package: " + ex1.getMessage() + "\n");

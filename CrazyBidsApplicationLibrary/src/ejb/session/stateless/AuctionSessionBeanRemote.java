@@ -10,7 +10,7 @@ import entity.Bid;
 import java.math.BigDecimal;
 import java.util.List;
 import javax.ejb.Remote;
-import util.exception.AuctionAssignedNoWinnerException;
+import util.exception.AuctionAlreadyClosedException;
 import util.exception.AuctionHasBidsException;
 import util.exception.AuctionIsDisabledException;
 import util.exception.AuctionNotFoundException;
@@ -38,16 +38,16 @@ public interface AuctionSessionBeanRemote {
 
     void disableAuction(Long auctionId) throws AuctionNotFoundException, AuctionIsDisabledException, BidNotFoundException, CustomerNotFoundException;
     
-    List<Auction> retrieveAllAuctionsWithBidsBelowReservePrice();
+    List<Auction> retrieveAllAuctionsWithBidsButBelowReservePrice();
     
     List<Auction> retrieveAllActiveAuctions();
 
     Bid getHighestBid(Auction auction);
 
-    void assignNoWinner(Long auctionId) throws AuctionNotFoundException, AuctionAssignedNoWinnerException;
+    void manuallyCloseAuction(Long auctionId) throws AuctionNotFoundException, AuctionAlreadyClosedException;
     
     void doRefund(Bid bid) throws BidNotFoundException, CustomerNotFoundException;
     
     public BigDecimal bidConverter(Auction auction);
-    
+
 }

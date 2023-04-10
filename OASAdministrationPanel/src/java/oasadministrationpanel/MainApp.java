@@ -10,7 +10,6 @@ import ejb.session.stateless.CreditPackageSessionBeanRemote;
 import ejb.session.stateless.EmployeeSessionBeanRemote;
 import ejb.session.stateless.SuccessfulAuctionSessionBeanRemote;
 import entity.Employee;
-import java.text.ParseException;
 import java.util.Scanner;
 import util.enumeration.AccessRightEnum;
 import util.exception.EmployeeNotFoundException;
@@ -43,7 +42,7 @@ public class MainApp {
         this.successfulAuctionSessionBeanRemote = successfulAuctionSessionBeanRemote;
     }
     
-    public void runApp() throws ParseException {
+    public void runApp() {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
         
@@ -79,6 +78,7 @@ public class MainApp {
                     }
                 }
                 else if (response == 2) {
+                    currentEmployee = null;
                     break;
                 }
                 else
@@ -117,7 +117,7 @@ public class MainApp {
         }
     }     
      
-    private void menuMain() throws ParseException
+    private void menuMain()
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -126,7 +126,7 @@ public class MainApp {
         {
             System.out.println("\n*** Welcome to Crazy Bids OAS Administration Panel ***\n");
             System.out.println("You are login as " + currentEmployee.getFirstName() + " " + currentEmployee.getLastName() + "\n");
-            System.out.println("1: View and Manage Admin Operations");
+            System.out.println("1: View and Manage Operations");
             System.out.println("2: Change Password");
             System.out.println("3: Logout\n");
             response = 0;
@@ -205,6 +205,7 @@ public class MainApp {
                     if (newPassword.equals(confirmNewPassword)) 
                     {
                         employeeSessionBeanRemote.changePassword(currentEmployee.getId(), newPassword);
+                        currentEmployee = employeeSessionBeanRemote.retrieveEmployeebyId(currentEmployee.getId());
                         System.out.println("\nPassword successfully changed!");
                         break;
                     } 
@@ -215,7 +216,7 @@ public class MainApp {
                 }
                 else
                 {
-                    System.out.println("Password entered does not match existing password!");
+                    System.out.println("\nPassword entered does not match existing password!");
                 }
             }
         }

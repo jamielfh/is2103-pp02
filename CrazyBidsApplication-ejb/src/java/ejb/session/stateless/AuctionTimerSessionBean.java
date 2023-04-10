@@ -9,7 +9,6 @@ import entity.Auction;
 import entity.Bid;
 import entity.Customer;
 import entity.SuccessfulAuction;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
@@ -42,15 +41,21 @@ public class AuctionTimerSessionBean implements AuctionTimerSessionBeanRemote, A
     }
 
     @Override
-    @Schedule(hour = "*", minute = "*", info = "checkForClosedAuctionsTimer")
+    @Schedule(hour = "*", minute = "*", info = "CloseAuctionsTimer")
     public void checkForClosedAuctionsTimer() {
-        Query query = em.createQuery("SELECT a from Auction a WHERE a.endDateTime < :currentDateTime AND NOT a.getBids IS EMPTY AND a.successfulAuction = null AND a.manualIntervention = false AND a.assignedNoWinner = false");
+        Query query = em.createQuery("SELECT a from Auction a WHERE a.endDateTime <= :currentDateTime AND a.isClosed = false AND a.manualIntervention = false AND a.isDisabled = false");
         Date currentDateTime = new Date();
         query.setParameter("currentDateTime", currentDateTime);
         List<Auction> auctions = query.getResultList();
         
         for (Auction auction : auctions) 
         {
+            if (auction.getBids().isEmpty())
+            {
+                auction.setIsClosed(true);
+                continue;
+            }
+            
             Bid highestBid = auctionSessionBeanLocal.getHighestBid(auction);
             
             if (auction.getReservePrice() != null)
@@ -70,6 +75,8 @@ public class AuctionTimerSessionBean implements AuctionTimerSessionBeanRemote, A
             try
             {
                 Long successfulAuctionId = successfulAuctionSessionBeanLocal.createNewSuccessfulAuction(successfulAuction, winner.getId(), auction.getId());
+                auction.setIsClosed(true);
+                auction.setSuccessfulAuction(successfulAuction);
                 System.out.println("Successful auction with ID: " + successfulAuctionId + " created successfully!");
             }
             catch(GeneralException | CustomerNotFoundException | AuctionNotFoundException ex)
