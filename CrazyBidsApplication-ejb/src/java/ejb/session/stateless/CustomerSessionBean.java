@@ -10,6 +10,7 @@ import entity.Bid;
 import entity.CreditPackage;
 import entity.CreditTransaction;
 import entity.Customer;
+import entity.ProxyBid;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
@@ -227,6 +228,25 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
         
         em.persist(newBid);
         em.persist(newBidTransaction);
+        em.flush();
+        
+        if (!auction.getProxyBids().isEmpty()) {
+   
+            List<ProxyBid> proxyBids = auction.getProxyBids();
+            Collections.sort(proxyBids);
+            ProxyBid highestProxyBid = proxyBids.get(0);
+            BigDecimal maxProxyBidAmount = highestProxyBid.getMaximumBidAmount();
+            
+            Customer proxyCustomer = highestProxyBid.getCustomer();
+            
+            if (!proxyCustomer.equals(customer) && maxProxyBidAmount.doubleValue() > bidAmount.doubleValue()) {
+                Auction nextAuction = auctionSessionBeanLocal.retrieveAuctionbyId(auctionId);
+                BigDecimal nextBidIncrement = auctionSessionBeanLocal.bidConverter(auction);
+                placeABid(nextAuction.getId(), proxyCustomer.getId(), bidAmount.add(nextBidIncrement));
+            }
+            
+            
+        }
     }
 
 }

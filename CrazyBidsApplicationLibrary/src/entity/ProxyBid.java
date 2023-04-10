@@ -26,7 +26,7 @@ import javax.validation.constraints.NotNull;
  * @author Bransome Tan Yi Hao
  */
 @Entity
-public class ProxyBid implements Serializable {
+public class ProxyBid implements Comparable<ProxyBid>, Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -90,7 +90,16 @@ public class ProxyBid implements Serializable {
     public String toString() {
         return "entity.ProxyBid[ id=" + id + " ]";
     }
-
+    
+    @Override
+    public int compareTo(ProxyBid other) {
+        if (other.getMaximumBidAmount().compareTo(this.getMaximumBidAmount()) != 0) {
+            return other.getMaximumBidAmount().compareTo(this.getMaximumBidAmount());
+        } else {
+            return this.getCreationDateTime().compareTo(other.getCreationDateTime());
+        }
+        
+    }
     /**
      * @return the maximumBidAmount
      */
