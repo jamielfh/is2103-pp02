@@ -67,6 +67,9 @@ public class Customer implements Serializable {
     @Column(nullable = false)
     @NotNull
     private CustomerTierEnum customerTierEnum;
+    @Column(nullable = false)
+    @NotNull
+    private Boolean isLogin;
     
     @OneToMany
     private List<Address> addresses;
@@ -95,7 +98,7 @@ public class Customer implements Serializable {
          snipes = new ArrayList<>();
     }
 
-    public Customer(String firstName, String lastName, String username, String password, String email, String mobileNumber, BigDecimal creditBalance, CustomerTierEnum customerTierEnum) {
+    public Customer(String firstName, String lastName, String username, String password, String email, String mobileNumber, BigDecimal creditBalance, CustomerTierEnum customerTierEnum, Boolean isLogin) {
         this();
         
         this.firstName = firstName;
@@ -106,6 +109,7 @@ public class Customer implements Serializable {
         this.mobileNumber = mobileNumber;
         this.creditBalance = creditBalance;
         this.customerTierEnum = customerTierEnum;
+        this.isLogin = isLogin;
     }
     
 
@@ -336,6 +340,20 @@ public class Customer implements Serializable {
      */
     public void setSnipes(List<Snipe> snipes) {
         this.snipes = snipes;
+    }
+
+    /**
+     * @return the isLogin
+     */
+    public Boolean getIsLogin() {
+        return isLogin;
+    }
+
+    /**
+     * @param isLogin the isLogin to set
+     */
+    public void setIsLogin(Boolean isLogin) {
+        this.isLogin = isLogin;
     }
     
 }

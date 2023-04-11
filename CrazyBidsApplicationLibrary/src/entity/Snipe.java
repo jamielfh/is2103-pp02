@@ -37,9 +37,6 @@ public class Snipe implements Serializable {
     @Column(nullable = false)
     @NotNull
     private Date snipeDateTime;
-    @Column(nullable = false)
-    @NotNull
-    private boolean customerIsLogin;
     
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
@@ -49,10 +46,9 @@ public class Snipe implements Serializable {
     @JoinColumn(nullable = false)
     private Auction auction;
 
-    public Snipe(Date creationDateTime, Date snipeDateTime, boolean customerIsLogin) {
+    public Snipe(Date creationDateTime, Date snipeDateTime) {
         this.creationDateTime = creationDateTime;
         this.snipeDateTime = snipeDateTime;
-        this.customerIsLogin = customerIsLogin;
     }
 
     public Snipe() {
@@ -117,20 +113,6 @@ public class Snipe implements Serializable {
      */
     public void setSnipeDateTime(Date snipeDateTime) {
         this.snipeDateTime = snipeDateTime;
-    }
-
-    /**
-     * @return the customerIsLogin
-     */
-    public boolean isCustomerIsLogin() {
-        return customerIsLogin;
-    }
-
-    /**
-     * @param customerIsLogin the customerIsLogin to set
-     */
-    public void setCustomerIsLogin(boolean customerIsLogin) {
-        this.customerIsLogin = customerIsLogin;
     }
 
     /**

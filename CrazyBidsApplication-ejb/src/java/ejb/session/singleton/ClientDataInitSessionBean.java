@@ -61,7 +61,7 @@ public class ClientDataInitSessionBean {
     {
         if(em.find(Customer.class, 1l) == null) {
             try {
-                customerSessionBeanLocal.createNewCustomer(new Customer("Customer", "One", "customer1", "password", "customer1@email.com", "91234567", new BigDecimal(0), CustomerTierEnum.STANDARD));
+                customerSessionBeanLocal.createNewCustomer(new Customer("Customer", "One", "customer1", "password", "customer1@email.com", "91234567", new BigDecimal(0), CustomerTierEnum.STANDARD, false));
             } catch (GeneralException ex) {
                 ex.printStackTrace();
             }

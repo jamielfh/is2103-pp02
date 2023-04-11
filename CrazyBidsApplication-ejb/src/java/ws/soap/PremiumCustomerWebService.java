@@ -8,12 +8,9 @@ package ws.soap;
 import ejb.session.stateless.AuctionSessionBeanLocal;
 import ejb.session.stateless.CustomerSessionBeanLocal;
 import ejb.session.stateless.SuccessfulAuctionSessionBeanLocal;
-import entity.Address;
 import entity.Auction;
 import entity.Bid;
-import entity.CreditTransaction;
 import entity.Customer;
-import entity.Employee;
 import entity.ProxyBid;
 import entity.Snipe;
 import entity.SuccessfulAuction;
@@ -21,23 +18,15 @@ import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.jws.WebService;
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import util.enumeration.CustomerTierEnum;
 import util.exception.AuctionNotFoundException;
 import util.exception.CustomerNotFoundException;
-import util.exception.EmployeeNotFoundException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.SuccessfulAuctionNotFoundException;
 import util.exception.UpdateCustomerException;
 import java.math.BigDecimal;
-import java.text.NumberFormat;
 import java.util.Collections;
 import util.exception.BidNotFoundException;
 import util.exception.InvalidBidException;
@@ -95,6 +84,9 @@ public class PremiumCustomerWebService {
         return customer;
     }
     
+    public void customerLogout(Long customerId) throws CustomerNotFoundException {
+        customerSessionBeanLocal.customerLogout(customerId);
+    }
    
     public Auction retrieveAuctionbyId(Long auctionId) throws AuctionNotFoundException {
         Auction auction = auctionSessionBeanLocal.retrieveAuctionbyId(auctionId);
@@ -179,7 +171,6 @@ public class PremiumCustomerWebService {
         Auction currAuction = auctionSessionBeanLocal.retrieveAuctionbyId(auction.getId());
         Customer premiumCustomer = customerSessionBeanLocal.retrieveCustomerbyId(customer.getId());
         
-        
         ProxyBid proxyBid = new ProxyBid(maxAmount, new Date());
         
         //Set Relationship
@@ -250,6 +241,5 @@ public class PremiumCustomerWebService {
         successfulAuction.setAuction(null);
         
     } 
-
    
 }
