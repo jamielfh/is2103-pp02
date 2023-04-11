@@ -80,7 +80,6 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
             Customer customer = retrieveCustomerbyUsername(username);
 
             if (customer.getPassword().equals(password)) {
-                customer.setIsLogin(true);
                 return customer;
             } else {
                 throw new InvalidLoginCredentialException("Password is incorrect, please try again!");
@@ -91,7 +90,7 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
             throw ex;
         }
     }
-    
+        
     @Override
     public void customerLogout(Long customerId) throws CustomerNotFoundException {
         Customer customer = retrieveCustomerbyId(customerId);

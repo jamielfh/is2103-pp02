@@ -24,6 +24,10 @@
 
 <xs:element name="customerLoginResponse" type="tns:customerLoginResponse"/>
 
+<xs:element name="customerLogout" type="tns:customerLogout"/>
+
+<xs:element name="customerLogoutResponse" type="tns:customerLogoutResponse"/>
+
 <xs:element name="detachAuction" type="tns:detachAuction"/>
 
 <xs:element name="detachAuctionResponse" type="tns:detachAuctionResponse"/>
@@ -80,6 +84,10 @@
 
 <xs:element name="retrieveSuccessfulAuctionbyIdResponse" type="tns:retrieveSuccessfulAuctionbyIdResponse"/>
 
+<xs:element name="sniping" type="tns:sniping"/>
+
+<xs:element name="snipingResponse" type="tns:snipingResponse"/>
+
 <xs:element name="updatePremiumCustomer" type="tns:updatePremiumCustomer"/>
 
 <xs:element name="updatePremiumCustomerResponse" type="tns:updatePremiumCustomerResponse"/>
@@ -94,11 +102,11 @@
 
 <xs:complexType name="auction">
 <xs:sequence>
-<xs:element name="assignedNoWinner" type="xs:boolean" minOccurs="0"/>
 <xs:element name="bids" type="tns:bid" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="details" type="xs:string" minOccurs="0"/>
 <xs:element name="endDateTime" type="xs:dateTime" minOccurs="0"/>
 <xs:element name="id" type="xs:long" minOccurs="0"/>
+<xs:element name="isClosed" type="xs:boolean" minOccurs="0"/>
 <xs:element name="isDisabled" type="xs:boolean" minOccurs="0"/>
 <xs:element name="manualIntervention" type="xs:boolean" minOccurs="0"/>
 <xs:element name="name" type="xs:string" minOccurs="0"/>
@@ -155,6 +163,7 @@
 <xs:element name="email" type="xs:string" minOccurs="0"/>
 <xs:element name="firstName" type="xs:string" minOccurs="0"/>
 <xs:element name="id" type="xs:long" minOccurs="0"/>
+<xs:element name="isLogin" type="xs:boolean" minOccurs="0"/>
 <xs:element name="lastName" type="xs:string" minOccurs="0"/>
 <xs:element name="mobileNumber" type="xs:string" minOccurs="0"/>
 <xs:element name="password" type="xs:string" minOccurs="0"/>
@@ -203,7 +212,6 @@
 <xs:element name="auction" type="tns:auction" minOccurs="0"/>
 <xs:element name="creationDateTime" type="xs:dateTime" minOccurs="0"/>
 <xs:element name="customer" type="tns:customer" minOccurs="0"/>
-<xs:element name="customerIsLogin" type="xs:boolean"/>
 <xs:element name="id" type="xs:long" minOccurs="0"/>
 <xs:element name="snipeDateTime" type="xs:dateTime" minOccurs="0"/>
 </xs:sequence>
@@ -286,6 +294,12 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="UpdateCustomerException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="detachSuccessfulAuction">
 <xs:sequence>
 <xs:element name="arg0" type="tns:successfulAuction" minOccurs="0"/>
@@ -294,28 +308,6 @@
 
 <xs:complexType name="detachSuccessfulAuctionResponse">
 <xs:sequence/>
-</xs:complexType>
-
-<xs:complexType name="retrieveCustomerbyUsername">
-<xs:sequence>
-<xs:element name="arg0" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="retrieveCustomerbyUsernameResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:customer" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="retrieveAllSuccessfulAuctions">
-<xs:sequence/>
-</xs:complexType>
-
-<xs:complexType name="retrieveAllSuccessfulAuctionsResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:successfulAuction" minOccurs="0" maxOccurs="unbounded"/>
-</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="retrieveSuccessfulAuctionbyId">
@@ -334,6 +326,38 @@
 <xs:sequence>
 <xs:element name="message" type="xs:string" minOccurs="0"/>
 </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveAllSuccessfulAuctions">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="retrieveAllSuccessfulAuctionsResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:successfulAuction" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveCustomerbyUsername">
+<xs:sequence>
+<xs:element name="arg0" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveCustomerbyUsernameResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:customer" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="customerLogout">
+<xs:sequence>
+<xs:element name="arg0" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="customerLogoutResponse">
+<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="getHighestBid">
@@ -378,6 +402,18 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="sniping">
+<xs:sequence>
+<xs:element name="arg0" type="tns:auction" minOccurs="0"/>
+<xs:element name="arg1" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="arg2" type="tns:customer" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="snipingResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="retrieveCustomerbyId">
 <xs:sequence>
 <xs:element name="arg0" type="xs:long" minOccurs="0"/>
@@ -387,18 +423,6 @@
 <xs:complexType name="retrieveCustomerbyIdResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:customer" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="bidConverter">
-<xs:sequence>
-<xs:element name="arg0" type="tns:auction" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="bidConverterResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:decimal" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -422,9 +446,15 @@
 <xs:sequence/>
 </xs:complexType>
 
-<xs:complexType name="UpdateCustomerException">
+<xs:complexType name="bidConverter">
 <xs:sequence>
-<xs:element name="message" type="xs:string" minOccurs="0"/>
+<xs:element name="arg0" type="tns:auction" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="bidConverterResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:decimal" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 

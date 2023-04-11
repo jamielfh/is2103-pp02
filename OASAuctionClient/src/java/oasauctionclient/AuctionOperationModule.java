@@ -17,8 +17,6 @@ import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import util.exception.AddressIsDisabledException;
 import util.exception.AddressNotFoundException;
 import util.exception.AuctionNotFoundException;

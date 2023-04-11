@@ -219,14 +219,6 @@ public class MainApp {
                 }
                 else if (response == 5)
                 {
-                    try 
-                    {
-                        customerSessionBeanRemote.customerLogout(currentCustomer.getId());
-                    }
-                    catch (CustomerNotFoundException ex)
-                    {
-                        System.out.println("An error occurred while logging out customer: " + ex.getMessage() + "\n");
-                    }
                     currentCustomer = null;
                     break;
                 }

@@ -164,6 +164,7 @@ public class MainApp {
                 }
                 else if (response == 3)
                 {
+                    currentEmployee = null;
                     break;
                 }
                 else

@@ -6,11 +6,17 @@
 package aisgagent;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.InvalidRegistrationException;
 import ws.soap.PremiumCustomer.Auction;
@@ -126,7 +132,7 @@ public class MainApp {
                     System.out.println("\nLogin successful!\n");
                     menuMain();
                 }
-            } catch (CustomerNotFoundException_Exception ex) {
+            } catch (CustomerNotFoundException_Exception | UpdateCustomerException_Exception ex) {
                  System.out.println("An error has occurred while retrieving customer: " + ex.getMessage() + "\n");
             }
         }
@@ -214,6 +220,15 @@ public class MainApp {
                 }
                 else if (response == 5)
                 {
+                    try
+                    {
+                        premiumCustomerWebServicePort.customerLogout(currentPremiumCustomer.getId());
+                        currentPremiumCustomer = null;
+                    }
+                    catch (CustomerNotFoundException_Exception ex)
+                    {
+                        System.out.println("An error occurred while logging out customer: " + ex.getMessage() + "\n");
+                    }
                     break;
                 }
                 else
@@ -298,7 +313,7 @@ public class MainApp {
     private void doBrowseAllAuctionListings() {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("*** Crazy Bids Auction Client System :: Browse All Auction Listing ***\n");
+        System.out.println("*** Premium Bidding cum Sniping Agent System :: Browse All Auction Listing ***\n");
 
         List<Auction> auctions = premiumCustomerWebServicePort.retrieveAllActiveAuctions();
         System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
@@ -320,7 +335,7 @@ public class MainApp {
         Scanner scanner = new Scanner(System.in);
         int response = 0;
 
-         System.out.println("*** Crazy Bids Auction Client System :: View All Won Auction Listing ***\n");
+         System.out.println("*** Premium Bidding cum Sniping Agent System :: View All Won Auction Listing ***\n");
 
         try {
 
@@ -353,7 +368,7 @@ public class MainApp {
         BigDecimal highestBidAmount;
         BigDecimal bidIncrement = premiumCustomerWebServicePort.bidConverter(auction);
         
-        System.out.println("*** Crazy Bids Auction Client System :: Configure Proxy Bidding for Auction Listing ***\n");
+        System.out.println("*** Premium Bidding cum Sniping Agent System :: Configure Proxy Bidding for Auction Listing ***\n");
         
         if (auction.getBids().isEmpty()) {
             // if no bids yet, print starting bid
@@ -372,7 +387,6 @@ public class MainApp {
         System.out.print("\nEnter Your Desired Maximum Amount For This Auction> ");
         maxAmount = scanner.nextBigDecimal();
         
-        
         try {
             Customer premiumCustomer = premiumCustomerWebServicePort.retrieveCustomerbyId(currentPremiumCustomer.getId());
             // If customer bid amount > his/her own credit balance, throw this error
@@ -386,23 +400,74 @@ public class MainApp {
                 try {
                     premiumCustomerWebServicePort.proxyBidding(auction, maxAmount, premiumCustomer);
                     System.out.println("\n*** Congratulations! Your Proxy Bidding has been submitted. You do not need to remain login to the agent. ***\n");
-                } catch (AuctionNotFoundException_Exception ex) {
-                    System.out.println("\n" + ex.getMessage() + "\n");
-
-                } catch (CustomerNotFoundException_Exception ex) {
-                    Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (AuctionNotFoundException_Exception | CustomerNotFoundException_Exception ex) {
+                    System.out.println("\nAn error occurred while creating proxy bid: " + ex.getMessage() + "\n");
                 }
             }
         } catch (CustomerNotFoundException_Exception ex) {
-            Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("\nAn error occurred while creating proxy bid: " + ex.getMessage() + "\n");
         }
-         
         
         System.out.print("Press any key to go back...> \n");
         scanner.nextLine();
     }
     
     private void doSniping(Auction auction) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Scanner scanner = new Scanner(System.in);
+        Integer timeDuration;
+        
+        System.out.println("*** Premium Bidding cum Sniping Agent System :: Configure Sniping for Auction Listing ***\n");
+        Date endDateTime = auction.getEndDateTime().toGregorianCalendar().getTime();
+        DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
+        String formattedDate  = formatter.format(endDateTime);
+        System.out.println("\n This auction listing will end on: " + endDateTime);
+        
+        while(true)
+        {
+            System.out.print("\nEnter desired time duration before end of auction to snipe in minutes> ");
+            timeDuration = scanner.nextInt();
+            
+            if (timeDuration < 1)
+            {
+                System.out.println("Time duration must be at least 1 minute!");
+            }
+            else
+            {
+                break;
+            }
+        }
+        
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(endDateTime);
+        calendar.add(Calendar.MINUTE, -timeDuration);
+        Date snipeDateTime = calendar.getTime();
+        
+        try
+        {
+            Customer premiumCustomer = premiumCustomerWebServicePort.retrieveCustomerbyId(currentPremiumCustomer.getId());
+           
+            try
+            {
+                GregorianCalendar c = new GregorianCalendar();
+                c.setTime(snipeDateTime);
+                XMLGregorianCalendar date = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+                try
+                {
+                    premiumCustomerWebServicePort.sniping(auction, date, premiumCustomer);
+                }
+                catch (AuctionNotFoundException_Exception | CustomerNotFoundException_Exception ex)
+                {
+                    System.out.println("\nAn error occurred while creating snipe: " + ex.getMessage() + "\n");
+                }
+            }
+            catch (DatatypeConfigurationException ex)
+            {
+                ex.printStackTrace();
+            }
+        }
+        catch (CustomerNotFoundException_Exception ex)
+        {
+            System.out.println("\nAn error occurred while creating snipe: " + ex.getMessage() + "\n");
+        }
     }
 }

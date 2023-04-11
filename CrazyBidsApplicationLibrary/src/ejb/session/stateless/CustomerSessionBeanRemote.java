@@ -45,4 +45,5 @@ public interface CustomerSessionBeanRemote {
     void placeABid(Long auctionId, Long customerId, BigDecimal bidAmount) throws CustomerNotFoundException, AuctionNotFoundException, NotEnoughCreditException, InvalidBidException, BidNotFoundException;
 
     void customerLogout(Long customerId) throws CustomerNotFoundException;
+
 }
