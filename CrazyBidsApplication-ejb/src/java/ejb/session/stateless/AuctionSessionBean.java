@@ -20,7 +20,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import util.enumeration.CreditTransactionEnum;
-import util.exception.AuctionAssignedNoWinnerException;
+import util.exception.AuctionAlreadyClosedException;
 import util.exception.AuctionHasBidsException;
 import util.exception.AuctionIsDisabledException;
 import util.exception.AuctionNotFoundException;
@@ -65,7 +65,7 @@ public class AuctionSessionBean implements AuctionSessionBeanRemote, AuctionSess
     
     @Override
     public List<Auction> retrieveAllActiveAuctions() {
-        Query query = em.createQuery("SELECT a from Auction a WHERE a.startDateTime <= :inStartDate AND a.endDateTime >= :inEndDate AND a.isDisabled = false ORDER BY a.startDateTime ASC");
+        Query query = em.createQuery("SELECT a from Auction a WHERE a.startDateTime <= :inStartDate AND a.endDateTime > :inEndDate AND a.isDisabled = false ORDER BY a.startDateTime ASC");
         Date currentDate = new Date();
         query.setParameter("inStartDate", currentDate);
         query.setParameter("inEndDate", currentDate);
@@ -73,8 +73,8 @@ public class AuctionSessionBean implements AuctionSessionBeanRemote, AuctionSess
     }
     
     @Override
-    public List<Auction> retrieveAllAuctionsWithBidsBelowReservePrice() {
-        Query query = em.createQuery("SELECT a FROM Auction a WHERE a.manualIntervention = true ORDER BY a.endDateTime ASC");
+    public List<Auction> retrieveAllAuctionsWithBidsButBelowReservePrice() {
+        Query query = em.createQuery("SELECT a FROM Auction a WHERE a.manualIntervention = true AND a.isDisabled = false ORDER BY a.endDateTime ASC");
         return query.getResultList();
     }
 
@@ -102,8 +102,8 @@ public class AuctionSessionBean implements AuctionSessionBeanRemote, AuctionSess
                 auctionToUpdate.setName(updatedAuction.getName());
                 auctionToUpdate.setDetails(updatedAuction.getDetails());
                 
-                // Not allowed to change startDateTime, endDateTime, startingBid and reservePrice if a customer has already bidded.
-                if(auctionToUpdate.getBids().isEmpty())
+                // Not allowed to change startDateTime, endDateTime, startingBid and reservePrice if a customer has already bidded or auction has been closed.
+                if(auctionToUpdate.getBids().isEmpty() && auctionToUpdate.getIsClosed() == false)
                 {
                     auctionToUpdate.setStartDateTime(updatedAuction.getStartDateTime());
                     auctionToUpdate.setEndDateTime(updatedAuction.getEndDateTime());
@@ -155,28 +155,30 @@ public class AuctionSessionBean implements AuctionSessionBeanRemote, AuctionSess
     }
     
     @Override
-    public void assignNoWinner(Long auctionId) throws AuctionNotFoundException, AuctionAssignedNoWinnerException {
+    public void manuallyCloseAuction(Long auctionId) throws AuctionNotFoundException, AuctionAlreadyClosedException {
         Auction auction = retrieveAuctionbyId(auctionId);
         
-        if (auction.getAssignedNoWinner() == true)
+        if (auction.getIsClosed() == true)
         {
-            throw new AuctionAssignedNoWinnerException("Auction has already been marked as having no winning bid!");
+            throw new AuctionAlreadyClosedException("Auction has already been closed!");
         }
         else
         {
-            auction.setAssignedNoWinner(true);
+            auction.setIsClosed(true);
             auction.setManualIntervention(false);
         }
     }
-    
+        
     @Override
-    public Bid getHighestBid(Auction auction) {
+    public Bid getHighestBid(Auction clientAuction) {
+        Auction auction = em.find(Auction.class, clientAuction.getId());
         List<Bid> bids = auction.getBids();
         Collections.sort(bids);
         Bid highestBid = bids.get(0);
         return highestBid;
     }
     
+    @Override
     public void doRefund(Bid bid) throws BidNotFoundException, CustomerNotFoundException
     {
         

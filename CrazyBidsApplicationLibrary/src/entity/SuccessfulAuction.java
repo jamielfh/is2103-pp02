@@ -36,8 +36,7 @@ public class SuccessfulAuction implements Serializable {
     @NotNull
     @Size(min = 1, max = 128)
     private String successfulAuctionDetails;
-    @Column(nullable = false, length = 70)
-    @NotNull
+    @Column(nullable = true, length = 70)
     @Size(min = 1, max = 70)
     private String successfulAuctionDeliveryAddress;
     

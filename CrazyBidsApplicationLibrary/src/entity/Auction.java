@@ -68,7 +68,7 @@ public class Auction implements Serializable {
     private Boolean manualIntervention;
     @Column(nullable = false)
     @NotNull
-    private Boolean assignedNoWinner;
+    private Boolean isClosed;
     
     @OneToOne(mappedBy = "auction")
     private SuccessfulAuction successfulAuction;
@@ -88,7 +88,7 @@ public class Auction implements Serializable {
         snipes = new ArrayList<>();
     }
 
-    public Auction(String name, String details, Date startDateTime, Date endDateTime, BigDecimal startingBid, BigDecimal reservePrice, Boolean isDisabled, Boolean manualIntervention, Boolean assignedNoWinner) {
+    public Auction(String name, String details, Date startDateTime, Date endDateTime, BigDecimal startingBid, BigDecimal reservePrice, Boolean isDisabled, Boolean manualIntervention, Boolean isClosed) {
         this();
         
         this.name = name;
@@ -99,7 +99,7 @@ public class Auction implements Serializable {
         this.reservePrice = reservePrice;
         this.isDisabled = isDisabled;
         this.manualIntervention = manualIntervention;
-        this.assignedNoWinner = assignedNoWinner;
+        this.isClosed = isClosed;
     }
 
     public Long getId() {
@@ -277,17 +277,17 @@ public class Auction implements Serializable {
     }
 
     /**
-     * @return the assignedNoWinner
+     * @return the isClosed
      */
-    public Boolean getAssignedNoWinner() {
-        return assignedNoWinner;
+    public Boolean getIsClosed() {
+        return isClosed;
     }
 
     /**
-     * @param assignedNoWinner the assignedNoWinner to set
+     * @param isClosed the isClosed to set
      */
-    public void setAssignedNoWinner(Boolean assignedNoWinner) {
-        this.assignedNoWinner = assignedNoWinner;
+    public void setIsClosed(Boolean isClosed) {
+        this.isClosed = isClosed;
     }
 
     /**
