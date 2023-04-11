@@ -8,12 +8,9 @@ package ws.soap;
 import ejb.session.stateless.AuctionSessionBeanLocal;
 import ejb.session.stateless.CustomerSessionBeanLocal;
 import ejb.session.stateless.SuccessfulAuctionSessionBeanLocal;
-import entity.Address;
 import entity.Auction;
 import entity.Bid;
-import entity.CreditTransaction;
 import entity.Customer;
-import entity.Employee;
 import entity.ProxyBid;
 import entity.Snipe;
 import entity.SuccessfulAuction;
@@ -21,23 +18,15 @@ import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.jws.WebService;
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import util.enumeration.CustomerTierEnum;
 import util.exception.AuctionNotFoundException;
 import util.exception.CustomerNotFoundException;
-import util.exception.EmployeeNotFoundException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.SuccessfulAuctionNotFoundException;
 import util.exception.UpdateCustomerException;
 import java.math.BigDecimal;
-import java.text.NumberFormat;
 import java.util.Collections;
 import util.exception.BidNotFoundException;
 import util.exception.InvalidBidException;
@@ -87,14 +76,23 @@ public class PremiumCustomerWebService {
         return customer;
     }
 
-    public Customer customerLogin(String username, String password) throws InvalidLoginCredentialException {
+    public Customer customerLogin(String username, String password) throws InvalidLoginCredentialException, CustomerNotFoundException, UpdateCustomerException {
         Customer customer = customerSessionBeanLocal.customerLogin(username, password);
+        customer.setIsLogin(true);
+        updatePremiumCustomer(customer);
+        em.flush();
+        
+        customer = customerSessionBeanLocal.retrieveCustomerbyId(customer.getId());
         
         detachCustomer(customer);
         
         return customer;
     }
     
+    public void customerLogout(Long customerId) throws CustomerNotFoundException {
+        customerSessionBeanLocal.customerLogout(customerId);
+        em.flush();
+    }
    
     public Auction retrieveAuctionbyId(Long auctionId) throws AuctionNotFoundException {
         Auction auction = auctionSessionBeanLocal.retrieveAuctionbyId(auctionId);
@@ -160,6 +158,7 @@ public class PremiumCustomerWebService {
 
             if (customerToUpdate.getUsername().equals(updatedCustomer.getUsername())) {
                 customerToUpdate.setCustomerTierEnum(updatedCustomer.getCustomerTierEnum());
+                customerToUpdate.setIsLogin(updatedCustomer.getIsLogin());
             } else {
                 throw new UpdateCustomerException("Username of customer record to be updated does not match the existing record");
             }
@@ -179,7 +178,6 @@ public class PremiumCustomerWebService {
         Auction currAuction = auctionSessionBeanLocal.retrieveAuctionbyId(auction.getId());
         Customer premiumCustomer = customerSessionBeanLocal.retrieveCustomerbyId(customer.getId());
         
-        
         ProxyBid proxyBid = new ProxyBid(maxAmount, new Date());
         
         //Set Relationship
@@ -189,7 +187,21 @@ public class PremiumCustomerWebService {
         premiumCustomer.getProxyBids().add(proxyBid);
         
         em.persist(proxyBid);
+    }
+    
+    public void sniping(Auction auction, Date snipeDateTime, Customer customer) throws AuctionNotFoundException, CustomerNotFoundException {
+        Auction currAuction = auctionSessionBeanLocal.retrieveAuctionbyId(auction.getId());
+        Customer premiumCustomer = customerSessionBeanLocal.retrieveCustomerbyId(customer.getId());
         
+        Snipe snipe = new Snipe(new Date(), snipeDateTime);
+        
+        //Set Relationship
+        snipe.setAuction(auction);
+        snipe.setCustomer(customer);
+        currAuction.getSnipes().add(snipe);
+        premiumCustomer.getSnipes().add(snipe);
+        
+        em.persist(snipe);
     }
     
     public void placeABid(Long auctionId, Long customerId, BigDecimal bidAmount) throws CustomerNotFoundException, AuctionNotFoundException, NotEnoughCreditException, InvalidBidException, BidNotFoundException {
@@ -222,7 +234,8 @@ public class PremiumCustomerWebService {
                 
         for (Bid bid : auction.getBids()) {
             em.detach(bid);
-            bid.setCustomer(null);
+            //bid.setCustomer(null);
+            detachCustomer(bid.getCustomer());
             bid.setBidTransaction(null);
             bid.setRefundTransaction(null);
             bid.setAuction(null);
@@ -251,5 +264,4 @@ public class PremiumCustomerWebService {
         
     } 
 
-   
 }

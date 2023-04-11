@@ -15,5 +15,7 @@ import javax.ejb.Remote;
 public interface AuctionTimerSessionBeanRemote {
 
     void checkForClosedAuctionsTimer();
+
+    void checkForSnipeTimer();
     
 }

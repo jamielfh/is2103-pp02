@@ -8,7 +8,10 @@ package ejb.session.stateless;
 import entity.Auction;
 import entity.Bid;
 import entity.Customer;
+import entity.Snipe;
 import entity.SuccessfulAuction;
+import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
@@ -18,8 +21,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.AuctionNotFoundException;
+import util.exception.BidNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.GeneralException;
+import util.exception.InvalidBidException;
+import util.exception.NotEnoughCreditException;
 
 /**
  *
@@ -27,6 +33,9 @@ import util.exception.GeneralException;
  */
 @Stateless
 public class AuctionTimerSessionBean implements AuctionTimerSessionBeanRemote, AuctionTimerSessionBeanLocal {
+
+    @EJB
+    private CustomerSessionBeanLocal customerSessionBeanLocal;
 
     @EJB
     private AuctionSessionBeanLocal auctionSessionBeanLocal;
@@ -70,6 +79,7 @@ public class AuctionTimerSessionBean implements AuctionTimerSessionBeanRemote, A
             SuccessfulAuction successfulAuction = new SuccessfulAuction();
             successfulAuction.setSuccessfulAuctionName(auction.getName());
             successfulAuction.setSuccessfulAuctionDetails(auction.getDetails());
+            successfulAuction.setSuccessfulAuctionDeliveryAddress("-");
             Customer winner = highestBid.getCustomer();
             
             try
@@ -86,5 +96,52 @@ public class AuctionTimerSessionBean implements AuctionTimerSessionBeanRemote, A
             
         }
     }
-    
+
+    @Override
+    @Schedule(hour = "*", minute = "*", info = "CheckForSnipesTimer")
+    public void checkForSnipeTimer() {
+        Query query = em.createQuery("SELECT s from Snipe s WHERE s.snipeDateTime >= :startWindow AND s.snipeDateTime <= :endWindow");
+        Date currentDateTime = new Date();
+        
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDateTime);
+        calendar.add(Calendar.SECOND, -1);
+        Date bufferDateTime = calendar.getTime();
+        
+        query.setParameter("startWindow", bufferDateTime);
+        query.setParameter("endWindow", currentDateTime);
+        List<Snipe> snipes = query.getResultList();
+        
+        for (Snipe snipe : snipes)
+        {
+            Customer customer = snipe.getCustomer();
+            
+            if (customer.getIsLogin() == false)
+            {
+                System.out.println("Customer is not logged into the system!");
+                continue;
+            }
+            
+            Auction auction = snipe.getAuction();
+            BigDecimal nextBidIncrement = auctionSessionBeanLocal.bidConverter(auction);
+            BigDecimal snipeBidAmount;
+            
+            if (auction.getBids().isEmpty()) {
+                // if no bids yet, use starting bid
+                snipeBidAmount = auction.getStartingBid().add(nextBidIncrement);
+            } else {
+                // if there are bids, use highest bidding price
+                snipeBidAmount = auctionSessionBeanLocal.getHighestBid(auction).getBidAmount().add(nextBidIncrement);
+            }       
+            
+            try
+            {
+                customerSessionBeanLocal.placeABid(auction.getId(), customer.getId(), snipeBidAmount);
+            }
+            catch (AuctionNotFoundException | BidNotFoundException | CustomerNotFoundException | InvalidBidException | NotEnoughCreditException ex)
+            {
+                System.out.println("\nAn error occurring while placing bid for snipe: " + ex.getMessage() + "\n");
+            }
+        }
+    }
 }

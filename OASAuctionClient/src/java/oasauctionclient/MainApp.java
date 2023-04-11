@@ -14,6 +14,7 @@ import entity.Customer;
 import java.math.BigDecimal;
 import java.util.Scanner;
 import util.enumeration.CustomerTierEnum;
+import util.exception.CustomerNotFoundException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.InvalidRegistrationException;
 import util.exception.GeneralException;
@@ -71,7 +72,7 @@ public class MainApp {
                     try
                     {
                         doRegister();
-                        System.out.println("\nRegistered successful!\n");
+                        System.out.println("\nRegistered successfully!\n");
                     }
                     catch(InvalidRegistrationException ex) 
                     {
@@ -168,12 +169,12 @@ public class MainApp {
         
         if(username.length() > 0 && password.length() > 0 && firstName.length() > 0 && lastName.length() > 0 && email.length() > 0 && mobileNumber.length() > 0)
         {
-            Customer newCustomer = new Customer(firstName, lastName, username, password, email, mobileNumber, creditBalance, CustomerTierEnum.STANDARD);
+            Customer newCustomer = new Customer(firstName, lastName, username, password, email, mobileNumber, creditBalance, CustomerTierEnum.STANDARD, false);
             customerSessionBeanRemote.createNewCustomer(newCustomer);
         }
         else
         {
-            throw new InvalidRegistrationException("Missing Register credential!");
+            throw new InvalidRegistrationException("Missing registration credential!");
         }
     }
      
@@ -218,6 +219,7 @@ public class MainApp {
                 }
                 else if (response == 5)
                 {
+                    currentCustomer = null;
                     break;
                 }
                 else

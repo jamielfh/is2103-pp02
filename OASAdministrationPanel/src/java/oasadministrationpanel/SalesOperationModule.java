@@ -207,7 +207,7 @@ public class SalesOperationModule {
             
             System.out.print("Enter start hour (00 to 23)> ");
             String startHour = scanner.nextLine().trim();
-            if (Integer.parseInt(startHour) < 0 || Integer.parseInt(startHour) > 23)
+            if (startHour.equals("") | Integer.parseInt(startHour) < 0 || Integer.parseInt(startHour) > 23)
             {
                 System.out.println("Please enter a valid hour!");
                 continue;
@@ -215,7 +215,7 @@ public class SalesOperationModule {
             
             System.out.print("Enter start minute (00 to 59)> ");
             String startMinute = scanner.nextLine().trim();
-            if (Integer.parseInt(startMinute) < 0 || Integer.parseInt(startMinute) > 59)
+            if (startMinute.equals("") | Integer.parseInt(startMinute) < 0 || Integer.parseInt(startMinute) > 59)
             {
                 System.out.println("Please enter a valid minute!");
                 continue;

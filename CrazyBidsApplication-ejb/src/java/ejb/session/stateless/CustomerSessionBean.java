@@ -90,6 +90,12 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
             throw ex;
         }
     }
+        
+    @Override
+    public void customerLogout(Long customerId) throws CustomerNotFoundException {
+        Customer customer = retrieveCustomerbyId(customerId);
+        customer.setIsLogin(false);
+    }
 
     @Override
     public List<Customer> retrieveAllCustomers() {
@@ -177,7 +183,6 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
         Bid highestBid;
         BigDecimal highestBidAmount;
         
-        
         // If customer bid amount > his/her own credit balance, throw this error
         if (bidAmount.doubleValue() > customer.getCreditBalance().doubleValue()) {
             throw new NotEnoughCreditException("You do not have sufficient credit balance to place this bid amount!");
@@ -244,8 +249,6 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
                 BigDecimal nextBidIncrement = auctionSessionBeanLocal.bidConverter(auction);
                 placeABid(nextAuction.getId(), proxyCustomer.getId(), bidAmount.add(nextBidIncrement));
             }
-            
-            
         }
     }
 

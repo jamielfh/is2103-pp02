@@ -44,5 +44,7 @@ public interface CustomerSessionBeanLocal {
     void purchaseCreditPackage(Long creditPackageId, Long customerId, Long quantity) throws CustomerNotFoundException, CreditPackageNotFoundException;
 
     void placeABid(Long auctionId, Long customerId, BigDecimal bidAmount) throws CustomerNotFoundException, AuctionNotFoundException, NotEnoughCreditException, InvalidBidException, BidNotFoundException;
+
+    void customerLogout(Long customerId) throws CustomerNotFoundException;
     
 }
