@@ -30,99 +30,79 @@ import ws.soap.PremiumCustomer.PremiumCustomerWebService;
 import ws.soap.PremiumCustomer.SuccessfulAuction;
 import ws.soap.PremiumCustomer.UpdateCustomerException_Exception;
 
-
-
 /**
  *
  * @author Bransome Tan Yi Hao
  */
 public class MainApp {
-    
+
     private PremiumCustomerWebService premiumCustomerWebServicePort;
     private Customer currentPremiumCustomer;
-    
+
     public MainApp() {
     }
-    
+
     public MainApp(PremiumCustomerWebService premiumCustomerWebServicePort) {
         this.premiumCustomerWebServicePort = premiumCustomerWebServicePort;
     }
-    
+
     public void runApp() {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
-        
-        while(true)
-        {
+
+        while (true) {
             System.out.println("*** Welcome to Premium Bidding cum Sniping Agent System ***\n");
             System.out.println("1: Premium Registration");
             System.out.println("2: Login");
             System.out.println("3: Exit\n");
             response = 0;
-            
-            while(response < 1 || response > 3)
-            {
+
+            while (response < 1 || response > 3) {
                 System.out.print("> ");
 
                 response = scanner.nextInt();
 
-                if(response == 1)
-                {
-                    try
-                    {
+                if (response == 1) {
+                    try {
                         doPremiumRegister();
-                    }
-                    catch(InvalidRegistrationException ex) 
-                    {
+                    } catch (InvalidRegistrationException ex) {
                         System.out.println("\nInvalid Register credential: " + ex.getMessage() + "\n");
                     }
-                    
-                }
-                else if (response == 2)
-                {
-                    try
-                    {
+
+                } else if (response == 2) {
+                    try {
                         doLogin();
-                        
-                    }
-                    catch(InvalidLoginCredentialException ex) 
-                    {
+
+                    } catch (InvalidLoginCredentialException ex) {
                         System.out.println("\nInvalid login credential: " + ex.getMessage() + "\n");
                     } catch (InvalidLoginCredentialException_Exception ex) {
                         System.out.println("\nInvalid login credential: " + ex.getMessage() + "\n");
                     }
-                }
-                else if (response == 3) {
+                } else if (response == 3) {
                     break;
-                }
-                else
-                {
-                    System.out.println("Invalid option, please try again!\n");                
+                } else {
+                    System.out.println("Invalid option, please try again!\n");
                 }
             }
-            
-            if(response == 3)
-            {
+
+            if (response == 3) {
                 break;
             }
         }
     }
-    
-    
-     private void doLogin() throws InvalidLoginCredentialException, InvalidLoginCredentialException_Exception
-    {
+
+    private void doLogin() throws InvalidLoginCredentialException, InvalidLoginCredentialException_Exception {
         Scanner scanner = new Scanner(System.in);
         String username = "";
         String password = "";
-        
+
         System.out.println("*** Premium Bidding cum Sniping Agent System :: Login ***\n");
         System.out.print("Enter username> ");
         username = scanner.nextLine().trim();
         System.out.print("Enter password> ");
         password = scanner.nextLine().trim();
-        
-        if(username.length() > 0 && password.length() > 0)
-        {
+
+        if (username.length() > 0 && password.length() > 0) {
             try {
                 Customer pCustomer = premiumCustomerWebServicePort.retrieveCustomerbyUsername(username);
                 if (pCustomer.getCustomerTierEnum().equals(CustomerTierEnum.STANDARD)) {
@@ -135,28 +115,23 @@ public class MainApp {
             } catch (CustomerNotFoundException_Exception | UpdateCustomerException_Exception ex) {
                  System.out.println("An error has occurred while retrieving customer: " + ex.getMessage() + "\n");
             }
-        }
-        else
-        {
+        } else {
             throw new InvalidLoginCredentialException("Missing login credential!");
         }
     }
-    
-     private void doPremiumRegister() throws InvalidRegistrationException
-    {
+
+    private void doPremiumRegister() throws InvalidRegistrationException {
         Scanner scanner = new Scanner(System.in);
         String username = "";
         String password = "";
-        
+
         System.out.println("*** Premium Bidding cum Sniping Agent System :: Premium Registration ***\n");
         System.out.print("To Upgrade to Premium, Enter Your Customer Username> ");
         username = scanner.nextLine().trim();
         System.out.print("Enter Your Password for Verification Purposes> ");
         password = scanner.nextLine().trim();
-       
-        
-        if(username.length() > 0 && password.length() > 0)
-        {
+
+        if (username.length() > 0 && password.length() > 0) {
             try {
                 Customer pCustomer = premiumCustomerWebServicePort.retrieveCustomerbyUsername(username);
                 if (!pCustomer.getPassword().equals(password)) {
@@ -169,24 +144,20 @@ public class MainApp {
                     System.out.println("\nYou are registered as Premium Member successfully!\n");
                 }
             } catch (CustomerNotFoundException_Exception ex) {
-                 System.out.println("\n" + ex.getMessage() + "\n");
+                System.out.println("\n" + ex.getMessage() + "\n");
             } catch (UpdateCustomerException_Exception ex) {
                 System.out.println("An error has occurred while updating: " + ex.getMessage() + "\n");
             }
-        }
-        else
-        {
+        } else {
             throw new InvalidRegistrationException("Missing Register credential!");
         }
     }
 
-    private void menuMain()
-    {
+    private void menuMain() {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
-        
-        while(true)
-        {
+
+        while (true) {
             System.out.println("*** Welcome to Premium Bidding cum Sniping Agent System ***\n");
             System.out.println("You are login as " + currentPremiumCustomer.getFirstName() + " " + currentPremiumCustomer.getLastName() + "\n");
             System.out.println("1: View Credit Balance");
@@ -195,27 +166,19 @@ public class MainApp {
             System.out.println("4: View Won Auction Listings");
             System.out.println("5: Logout\n");
             response = 0;
-            
-            while(response < 1 || response > 5)
-            {
+
+            while (response < 1 || response > 5) {
                 System.out.print("> ");
 
                 response = scanner.nextInt();
 
-                if(response == 1)
-                {
+                if (response == 1) {
                     doViewCreditBalance();
-                }
-                else if(response == 2)
-                {
+                } else if (response == 2) {
                     doViewAuctionListingDetails();
-                }
-                else if (response == 3)
-                {
+                } else if (response == 3) {
                     doBrowseAllAuctionListings();
-                }
-                else if (response == 4)
-                {
+                } else if (response == 4) {
                     doViewWonAuctionListings();
                 }
                 else if (response == 5)
@@ -230,15 +193,12 @@ public class MainApp {
                         System.out.println("An error occurred while logging out customer: " + ex.getMessage() + "\n");
                     }
                     break;
-                }
-                else
-                {
-                    System.out.println("Invalid option, please try again!\n");                
+                } else {
+                    System.out.println("Invalid option, please try again!\n");
                 }
             }
-            
-            if(response == 5)
-            {
+
+            if (response == 5) {
                 break;
             }
         }
@@ -246,26 +206,22 @@ public class MainApp {
 
     private void doViewCreditBalance() {
         Scanner scanner = new Scanner(System.in);
-             
+
         System.out.println("*** Premium Bidding cum Sniping Agent System :: View My Credit Balance ***\n");
- 
-        try
-        {
+
+        try {
             Customer pCustomer = premiumCustomerWebServicePort.retrieveCustomerbyId(currentPremiumCustomer.getId());
             System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
             System.out.printf("%20s\n", "Your Credit Balance");
-            System.out.printf("%20s\n",  NumberFormat.getCurrencyInstance().format(pCustomer.getCreditBalance()));     
+            System.out.printf("%20s\n", NumberFormat.getCurrencyInstance().format(pCustomer.getCreditBalance()));
             System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
-        }
-        catch(CustomerNotFoundException_Exception ex)
-        {
+        } catch (CustomerNotFoundException_Exception ex) {
             System.out.println("An error has occurred while retrieving customer: " + ex.getMessage() + "\n");
         }
-        
+
         System.out.print("Press any key to go back...>");
         scanner.nextLine();
-            
-     
+
     }
 
     private void doViewAuctionListingDetails() {
@@ -274,36 +230,43 @@ public class MainApp {
         long auctionId;
 
         System.out.println("*** Premium Bidding cum Sniping Agent System :: View Auction Listing Details ***\n");
-        
+
         System.out.print("Enter Auction ID> ");
         auctionId = scanner.nextLong();
-        
 
         try {
             Auction auction = premiumCustomerWebServicePort.retrieveAuctionbyId(auctionId);
-            List<Bid> bids = auction.getBids();
-            System.out.println("Auction");
-            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.printf("%10s%20s%20s%30s%30s%25s%25s\n", "Auction ID", "Auction Name", "Auction Details", "Auction Start Date Time", "Auction End Date Time", "Auction Starting Bid", "Auction Reserve Price");
-            System.out.printf("%10s%20s%20s%30s%30s%25s%25s\n", auction.getId(), auction.getName(), auction.getDetails(), auction.getStartDateTime(), auction.getEndDateTime(), NumberFormat.getCurrencyInstance().format(auction.getStartingBid()), NumberFormat.getCurrencyInstance().format(auction.getReservePrice()));
-            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.println("Bids (Number of Bids: " + bids.size() + ")");
-            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.printf("%10s%20s%20s%20s\n", "Bid ID", "Bid Amount", "Bid Date", "Bidder Username"); 
-            for (Bid bid : bids) {
-                System.out.printf("%10s%20s%20s%20s\n", bid.getId(), NumberFormat.getCurrencyInstance().format(bid.getBidAmount()), bid.getBidDateTime(), bid.getCustomer().getUsername());
-            }   
-            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.println("1: Configure Proxy Bidding for Auction Listing");
-            System.out.println("2: Configure Sniping for Auction Listing");
-            System.out.println("3: Back\n");
-            System.out.print("> ");
-            response = scanner.nextInt();
+            if (auction.isIsDisabled() || auction.isManualIntervention()) {
+                System.out.println("\nThis auction is not available for viewing as it is already closed!\n");
+            } else {
+                List<Bid> bids = auction.getBids();
+                System.out.println("Auction");
+                System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                System.out.printf("%10s%20s%20s%30s%30s%25s%25s\n", "Auction ID", "Auction Name", "Auction Details", "Auction Start Date Time", "Auction End Date Time", "Auction Starting Bid", "Auction Reserve Price");
+                if (auction.getReservePrice() == null) {
+                    System.out.printf("%10s%20s%20s%30s%30s%25s%25s\n", auction.getId().toString(), auction.getName(), auction.getDetails(), auction.getStartDateTime().toString(), auction.getEndDateTime().toString(), NumberFormat.getCurrencyInstance().format(auction.getStartingBid()), "-");
+                } else {
+                    System.out.printf("%10s%20s%20s%30s%30s%25s%25s\n", auction.getId().toString(), auction.getName(), auction.getDetails(), auction.getStartDateTime().toString(), auction.getEndDateTime().toString(), NumberFormat.getCurrencyInstance().format(auction.getStartingBid()), NumberFormat.getCurrencyInstance().format(auction.getReservePrice()));
+                }
+                System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                System.out.println("Bids (Number of Bids: " + bids.size() + ")");
+                System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                System.out.printf("%10s%20s%20s%20s\n", "Bid ID", "Bid Amount", "Bid Date", "Bidder Username");
+                for (Bid bid : bids) {
+                    System.out.printf("%10s%20s%20s%20s\n", bid.getId(), NumberFormat.getCurrencyInstance().format(bid.getBidAmount()), bid.getBidDateTime(), bid.getCustomer().getUsername());
+                }
+                System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                System.out.println("1: Configure Proxy Bidding for Auction Listing");
+                System.out.println("2: Configure Sniping for Auction Listing");
+                System.out.println("3: Back\n");
+                System.out.print("> ");
+                response = scanner.nextInt();
 
-            if (response == 1) {
-                doProxyBidding(auction);
-            } else if (response == 2) {
-                doSniping(auction);
+                if (response == 1) {
+                    doProxyBidding(auction);
+                } else if (response == 2) {
+                    doSniping(auction);
+                }
             }
         } catch (AuctionNotFoundException_Exception ex) {
             System.out.println("An error has occurred while retrieving auction: " + ex.getMessage() + "\n");
@@ -320,7 +283,11 @@ public class MainApp {
         System.out.printf("%10s%20s%20s%30s%30s%25s%25s\n", "Auction ID", "Auction Name", "Auction Details", "Auction Start Date Time", "Auction End Date Time", "Auction Starting Bid", "Auction Reserve Price");
 
         for (Auction auction : auctions) {
-            System.out.printf("%10s%20s%20s%30s%30s%25s%25s\n", auction.getId(), auction.getName(), auction.getDetails(), auction.getStartDateTime(), auction.getEndDateTime(), NumberFormat.getCurrencyInstance().format(auction.getStartingBid()), NumberFormat.getCurrencyInstance().format(auction.getReservePrice()));
+            if (auction.getReservePrice() == null) {
+                System.out.printf("%10s%20s%20s%30s%30s%25s%25s\n", auction.getId().toString(), auction.getName(), auction.getDetails(), auction.getStartDateTime().toString(), auction.getEndDateTime().toString(), NumberFormat.getCurrencyInstance().format(auction.getStartingBid()), "-");
+            } else {
+                System.out.printf("%10s%20s%20s%30s%30s%25s%25s\n", auction.getId().toString(), auction.getName(), auction.getDetails(), auction.getStartDateTime().toString(), auction.getEndDateTime().toString(), NumberFormat.getCurrencyInstance().format(auction.getStartingBid()), NumberFormat.getCurrencyInstance().format(auction.getReservePrice()));
+            }
         }
         System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
         if (auctions.isEmpty()) {
@@ -351,19 +318,19 @@ public class MainApp {
 
             if (successfulAuctions.isEmpty()) {
                 System.out.println("You do not have any won auction listings available");
-            } 
+            }
 
         } catch (CustomerNotFoundException_Exception ex) {
             System.out.println("An error has occurred while retrieving successful auction: " + ex.getMessage() + "\n");
         }
-        
+
         System.out.print("\nPress any key to go back...> ");
         scanner.nextLine();
     }
 
     private void doProxyBidding(Auction auction) {
         Scanner scanner = new Scanner(System.in);
-        
+
         BigDecimal maxAmount;
         BigDecimal highestBidAmount;
         BigDecimal bidIncrement = premiumCustomerWebServicePort.bidConverter(auction);
@@ -383,7 +350,7 @@ public class MainApp {
             System.out.println("The Minimum Bid Increment Required: " + NumberFormat.getCurrencyInstance().format(bidIncrement));
             highestBidAmount = highestAmount;
         }
-        
+
         System.out.print("\nEnter Your Desired Maximum Amount For This Auction> ");
         maxAmount = scanner.nextBigDecimal();
         
@@ -392,11 +359,9 @@ public class MainApp {
             // If customer bid amount > his/her own credit balance, throw this error
             if (maxAmount.doubleValue() > premiumCustomer.getCreditBalance().doubleValue()) {
                 System.out.println("\nYou do not have sufficient credit balance to place this maximum amount!\n");
-            }
-            else if (maxAmount.doubleValue() - bidIncrement.doubleValue() < highestBidAmount.doubleValue()) {
+            } else if (maxAmount.doubleValue() - bidIncrement.doubleValue() < highestBidAmount.doubleValue()) {
                 System.out.println("\nYour maximum amount needs to be higher than the minimum bid increment rate!\n");
-            }
-            else {
+            } else {
                 try {
                     premiumCustomerWebServicePort.proxyBidding(auction, maxAmount, premiumCustomer);
                     System.out.println("\n*** Congratulations! Your Proxy Bidding has been submitted. You do not need to remain login to the agent. ***\n");
@@ -411,7 +376,7 @@ public class MainApp {
         System.out.print("Press any key to go back...> \n");
         scanner.nextLine();
     }
-    
+
     private void doSniping(Auction auction) {
         Scanner scanner = new Scanner(System.in);
         Integer timeDuration;
