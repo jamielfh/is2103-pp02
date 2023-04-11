@@ -234,7 +234,8 @@ public class PremiumCustomerWebService {
                 
         for (Bid bid : auction.getBids()) {
             em.detach(bid);
-            bid.setCustomer(null);
+            //bid.setCustomer(null);
+            detachCustomer(bid.getCustomer());
             bid.setBidTransaction(null);
             bid.setRefundTransaction(null);
             bid.setAuction(null);

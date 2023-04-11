@@ -11,6 +11,7 @@ import entity.Customer;
 import entity.Snipe;
 import entity.SuccessfulAuction;
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
@@ -78,6 +79,7 @@ public class AuctionTimerSessionBean implements AuctionTimerSessionBeanRemote, A
             SuccessfulAuction successfulAuction = new SuccessfulAuction();
             successfulAuction.setSuccessfulAuctionName(auction.getName());
             successfulAuction.setSuccessfulAuctionDetails(auction.getDetails());
+            successfulAuction.setSuccessfulAuctionDeliveryAddress("-");
             Customer winner = highestBid.getCustomer();
             
             try
@@ -98,9 +100,16 @@ public class AuctionTimerSessionBean implements AuctionTimerSessionBeanRemote, A
     @Override
     @Schedule(hour = "*", minute = "*", info = "CheckForSnipesTimer")
     public void checkForSnipeTimer() {
-        Query query = em.createQuery("SELECT s from Snipe s WHERE s.snipeDateTime = :currentDateTime");
+        Query query = em.createQuery("SELECT s from Snipe s WHERE s.snipeDateTime >= :startWindow AND s.snipeDateTime <= :endWindow");
         Date currentDateTime = new Date();
-        query.setParameter("currentDateTime", currentDateTime);
+        
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDateTime);
+        calendar.add(Calendar.SECOND, -1);
+        Date bufferDateTime = calendar.getTime();
+        
+        query.setParameter("startWindow", bufferDateTime);
+        query.setParameter("endWindow", currentDateTime);
         List<Snipe> snipes = query.getResultList();
         
         for (Snipe snipe : snipes)
