@@ -236,7 +236,7 @@ public class MainApp {
 
         try {
             Auction auction = premiumCustomerWebServicePort.retrieveAuctionbyId(auctionId);
-            if (auction.isIsDisabled() || auction.isManualIntervention()) {
+            if (auction.isIsDisabled() || auction.isManualIntervention() || auction.isIsClosed()) {
                 System.out.println("\nThis auction is not available for viewing as it is already closed!\n");
             } else {
                 List<Bid> bids = auction.getBids();
@@ -311,7 +311,7 @@ public class MainApp {
             System.out.printf("%10s%30s%30s%20s\n", "Successful Auction ID", "Successful Auction Name", "Sucessful Auction Details", "Delivery Address");
 
             for (SuccessfulAuction successfulAuction : successfulAuctions) {
-                System.out.printf("%10s%30s%30s%20s\n", successfulAuction.getId(), successfulAuction.getSuccessfulAuctionName(), successfulAuction.getSuccessfulAuctionDetails(), successfulAuction.getSuccessfulAuctionDeliveryAddress());
+                System.out.printf("%10s%30s%30s%45s\n", successfulAuction.getId(), successfulAuction.getSuccessfulAuctionName(), successfulAuction.getSuccessfulAuctionDetails(), successfulAuction.getSuccessfulAuctionDeliveryAddress());
             }
 
             System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");

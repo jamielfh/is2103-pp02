@@ -141,9 +141,9 @@ public class AuctionOperationModule {
                 System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
                 System.out.println("Bids (Number of Bids: " + bids.size() + ")");
                 System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                System.out.printf("%10s%20s%20s%20s\n", "Bid ID", "Bid Amount", "Bid Date", "Bidder Username");
+                System.out.printf("%10s%20s%20s%30s\n", "Bid ID", "Bid Amount", "Bid Date", "Bidder Username");
                 for (Bid bid : bids) {
-                    System.out.printf("%10s%20s%20s%20s\n", bid.getId().toString(), NumberFormat.getCurrencyInstance().format(bid.getBidAmount()), bid.getBidDateTime().toString(), bid.getCustomer().getUsername());
+                    System.out.printf("%10s%20s%30s%20s\n", bid.getId().toString(), NumberFormat.getCurrencyInstance().format(bid.getBidAmount()), bid.getBidDateTime().toString(), bid.getCustomer().getUsername());
                 }
                 System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
                 System.out.println("1: Place New Bid");
@@ -177,7 +177,7 @@ public class AuctionOperationModule {
             System.out.printf("%10s%30s%30s%20s\n", "Successful Auction ID", "Successful Auction Name", "Sucessful Auction Details", "Delivery Address");
 
             for (SuccessfulAuction successfulAuction : successfulAuctions) {
-                System.out.printf("%10s%30s%30s%20s\n", successfulAuction.getId().toString(), successfulAuction.getSuccessfulAuctionName(), successfulAuction.getSuccessfulAuctionDetails(), successfulAuction.getSuccessfulAuctionDeliveryAddress());
+                System.out.printf("%10s%30s%30s%45s\n", successfulAuction.getId().toString(), successfulAuction.getSuccessfulAuctionName(), successfulAuction.getSuccessfulAuctionDetails(), successfulAuction.getSuccessfulAuctionDeliveryAddress());
             }
 
             System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");

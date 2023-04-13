@@ -114,11 +114,11 @@ public class CreditOperationModule {
         try {
             creditTransactions = customerSessionBeanRemote.retrieveAllCreditTransactionByCustomerId(currentCustomer.getId());
             System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.printf("%10s%30s%20s%20s\n", "Credit Transaction ID", "Credit Transaction Amount", "Transaction Type", "Transaction Date");
+            System.out.printf("%10s%30s%20s%30s\n", "Credit Transaction ID", "Credit Transaction Amount", "Transaction Type", "Transaction Date");
 
             for(CreditTransaction creditTransaction: creditTransactions)
             {
-                System.out.printf("%10s%30s%20s%20s\n", creditTransaction.getId().toString(), NumberFormat.getCurrencyInstance().format(creditTransaction.getTransactionAmount()), creditTransaction.getCreditTransactionEnum().toString(), creditTransaction.getTransactionDateTime());
+                System.out.printf("%10s%30s%25s%50s\n", creditTransaction.getId().toString(), NumberFormat.getCurrencyInstance().format(creditTransaction.getTransactionAmount()), creditTransaction.getCreditTransactionEnum().toString(), creditTransaction.getTransactionDateTime());
             }
             System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
         } 
