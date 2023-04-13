@@ -12,6 +12,7 @@ import entity.Bid;
 import entity.Customer;
 import entity.SuccessfulAuction;
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -283,14 +284,13 @@ public class SalesOperationModule {
         {
             Auction auction = auctionSessionBeanRemote.retrieveAuctionbyId(auctionId);
             
-            System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.printf("%10s%20s%20s%20s%20s%20s%20s%20s%20s%20s\n", "Auction ID", "Auction Name", "Details", "Start Date & Time", "End Date & Time", "Starting Bid", "Reserve Price", "Is Disabled", "Manual Intervention", "Closed");
+            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            System.out.printf("%10s%20s%20s%30s%30s%20s%20s%15s%25s%15s\n", "Auction ID", "Auction Name", "Auction Details", "Start Date & Time", "End Date & Time", "Starting Bid", "Reserve Price", "Disabled", "Manual Intervention", "Closed");
             
-            String reservePrice = auction.getReservePrice() == null ? "-" : auction.getReservePrice().toString();
-            Boolean hasWinner = auction.getSuccessfulAuction() != null;
-            System.out.printf("%10s%20s%20s%20s%20s%20s%20s%20s%20s%20s\n", auction.getId().toString(), auction.getName(),auction.getDetails(), auction.getStartDateTime().toString(), auction.getEndDateTime().toString(), auction.getStartingBid().toString(), reservePrice, auction.getIsDisabled(), auction.getManualIntervention(), hasWinner);
+            String reservePrice = auction.getReservePrice() == null ? "-" : NumberFormat.getCurrencyInstance().format(auction.getReservePrice());
+            System.out.printf("%10s%20s%20s%30s%30s%20s%20s%15s%25s%15s\n", auction.getId().toString(), auction.getName(),auction.getDetails(), auction.getStartDateTime().toString(), auction.getEndDateTime().toString(), NumberFormat.getCurrencyInstance().format(auction.getStartingBid()), reservePrice, auction.getIsDisabled(), auction.getManualIntervention(), auction.getIsClosed());
             
-            System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
+            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
             System.out.println("1: Update Auction Listing");
             System.out.println("2: Delete Auction Listing");
             System.out.println("3: Back\n");
@@ -332,23 +332,22 @@ public class SalesOperationModule {
         
         List<Auction> auctions = auctionSessionBeanRemote.retrieveAllAuctions();
         
-        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
         if (!auctions.isEmpty())
         {
-            System.out.printf("%10s%20s%20s%20s%20s%20s%20s%20s%20s%20s\n", "Auction ID", "Auction Name", "Details", "Start Date & Time", "End Date & Time", "Starting Bid", "Reserve Price", "Is Disabled", "Manual Intervention", "Has Winner");
+            System.out.printf("%10s%20s%20s%30s%30s%20s%20s%15s%25s%15s\n", "Auction ID", "Auction Name", "Auction Details", "Start Date & Time", "End Date & Time", "Starting Bid", "Reserve Price", "Disabled", "Manual Intervention", "Closed");
 
             for(Auction auction : auctions)
             {
-                String reservePrice = auction.getReservePrice() == null ? "-" : auction.getReservePrice().toString();
-                Boolean hasWinner = auction.getSuccessfulAuction() != null;
-                System.out.printf("%10s%20s%20s%20s%20s%20s%20s%20s%20s%20s\n", auction.getId().toString(), auction.getName(),auction.getDetails(), auction.getStartDateTime().toString(), auction.getEndDateTime().toString(), auction.getStartingBid().toString(), reservePrice, auction.getIsDisabled(), auction.getManualIntervention(), hasWinner);
+                String reservePrice = auction.getReservePrice() == null ? "-" : NumberFormat.getCurrencyInstance().format(auction.getReservePrice());
+                System.out.printf("%10s%20s%20s%30s%30s%20s%20s%15s%25s%15s\n", auction.getId().toString(), auction.getName(),auction.getDetails(), auction.getStartDateTime().toString(), auction.getEndDateTime().toString(), NumberFormat.getCurrencyInstance().format(auction.getStartingBid()), reservePrice, auction.getIsDisabled(), auction.getManualIntervention(), auction.getIsClosed());
             }
         }
         else
         {
             System.out.println("No auction listings found!");
         }
-        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
         System.out.print("Press any key to continue...> ");
         scanner.nextLine();
     }
@@ -362,24 +361,24 @@ public class SalesOperationModule {
         
         List<Auction> auctions = auctionSessionBeanRemote.retrieveAllAuctionsWithBidsButBelowReservePrice();
         
-        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------");
         
         if (!auctions.isEmpty())
         {
             for(Auction auction : auctions)
             {
-                System.out.printf("%10s%20s%20s%20s%20s%20s%20s\n", "Auction ID", "Auction Name", "Details", "Start Date & Time", "End Date & Time", "Starting Bid", "Reserve Price");
+                System.out.printf("%10s%20s%20s%30s%30s%20s%20s\n", "Auction ID", "Auction Name", "Auction Details", "Start Date & Time", "End Date & Time", "Starting Bid", "Reserve Price");
                 
-                String reservePrice = auction.getReservePrice() == null ? "-" : auction.getReservePrice().toString();
-                System.out.printf("%10s%20s%20s%20s%20s%20s%20s\n", auction.getId().toString(), auction.getName(),auction.getDetails(), auction.getStartDateTime().toString(), auction.getEndDateTime().toString(), auction.getStartingBid().toString(), reservePrice);
+                String reservePrice = auction.getReservePrice() == null ? "-" : NumberFormat.getCurrencyInstance().format(auction.getReservePrice());
+                System.out.printf("%10s%20s%20s%30s%30s%20s%20s\n", auction.getId().toString(), auction.getName(),auction.getDetails(), auction.getStartDateTime().toString(), auction.getEndDateTime().toString(), NumberFormat.getCurrencyInstance().format(auction.getStartingBid()), reservePrice);
                 
-                System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
+                System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------");
                 
                 Bid highestBid = auctionSessionBeanRemote.getHighestBid(auction);
                 Customer winner = highestBid.getCustomer();
                 System.out.println("\n*** Highest Bid ***");
-                System.out.printf("%10s%20s%20s\n", "Bid ID", "Customer Username", "Bid Amount");
-                System.out.printf("%10s%20s%20s\n", highestBid.getId(), winner.getUsername(), highestBid.getBidAmount());
+                System.out.printf("%10s%25s%20s\n", "Bid ID", "Customer Username", "Bid Amount");
+                System.out.printf("%10s%25s%20s\n", highestBid.getId(), winner.getUsername(), highestBid.getBidAmount());
                 
                 while (true)
                 {
@@ -420,10 +419,11 @@ public class SalesOperationModule {
                         try
                         {
                             auctionSessionBeanRemote.manuallyCloseAuction(auction.getId());
+                            auctionSessionBeanRemote.doRefund(auctionSessionBeanRemote.getHighestBid(auction));
                             System.out.println("Auction listing successfully marked as having no winning bid!");
                             break;
                         }
-                        catch(AuctionNotFoundException | AuctionAlreadyClosedException ex)
+                        catch(AuctionNotFoundException | AuctionAlreadyClosedException | BidNotFoundException | CustomerNotFoundException ex)
                         {
                             System.out.println("An error occurred while marking auction listing as having no winning bid: " + ex.getMessage());
                         }
@@ -439,7 +439,7 @@ public class SalesOperationModule {
         {
             System.out.println("No auction listings with bids but below reserve price found!");
         }
-        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------");
         System.out.print("Press any key to continue...> ");
         scanner.nextLine();
     }

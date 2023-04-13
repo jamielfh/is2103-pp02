@@ -168,8 +168,8 @@ public class SystemAdminOperationModule {
             Employee employee = employeeSessionBeanRemote.retrieveEmployeebyId(employeeId);
             
             System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.printf("%10s%20s%20s%20s%20s\n", "Employee ID", "First Name", "Last Name", "Access Right", "Username");
-            System.out.printf("%10s%20s%20s%20s%20s\n", employee.getId().toString(), employee.getFirstName(),employee.getLastName(), employee.getAccessRightEnum().toString(), employee.getUsername());
+            System.out.printf("%15s%20s%20s%20s%20s\n", "Employee ID", "First Name", "Last Name", "Access Right", "Username");
+            System.out.printf("%15s%20s%20s%20s%20s\n", employee.getId().toString(), employee.getFirstName(),employee.getLastName(), employee.getAccessRightEnum().toString(), employee.getUsername());
             // For security reasons, system administrators are disallowed from viewing employees' account passwords.
             System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
             System.out.println("1: Update Employee");
@@ -222,12 +222,12 @@ public class SystemAdminOperationModule {
         
         employees = employeeSessionBeanRemote.retrieveAllEmployees();
         System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
-        System.out.printf("%10s%20s%20s%20s%20s\n", "Employee ID", "First Name", "Last Name", "Access Right", "Username");
+        System.out.printf("%15s%20s%20s%20s%20s\n", "Employee ID", "First Name", "Last Name", "Access Right", "Username");
         // For security reasons, system administrators are disallowed from viewing employees' account passwords.
 
         for(Employee employee: employees)
         {
-            System.out.printf("%10s%20s%20s%20s%20s\n", employee.getId().toString(), employee.getFirstName(),employee.getLastName(), employee.getAccessRightEnum().toString(), employee.getUsername());
+            System.out.printf("%15s%20s%20s%20s%20s\n", employee.getId().toString(), employee.getFirstName(),employee.getLastName(), employee.getAccessRightEnum().toString(), employee.getUsername());
         }
         System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
         System.out.print("Press any key to continue...> ");

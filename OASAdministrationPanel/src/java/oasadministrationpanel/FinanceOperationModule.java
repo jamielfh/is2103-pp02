@@ -8,6 +8,7 @@ package oasadministrationpanel;
 import ejb.session.stateless.CreditPackageSessionBeanRemote;
 import entity.CreditPackage;
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.Scanner;
 import util.exception.CreditPackageIsDisabledException;
@@ -128,10 +129,10 @@ public class FinanceOperationModule {
         {
             CreditPackage creditPackage = creditPackageSessionBeanRemote.retrieveCreditPackagebyId(creditPackageId);
             
-            System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.printf("%10s%20s%20s\n", "Package ID", "Amount", "Is Disabled");
-            System.out.printf("%10s%20s%20b\n", creditPackage.getId().toString(), creditPackage.getCreditPackageAmount().toString(), creditPackage.getIsDisabled());
-            System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
+            System.out.println("-----------------------------------------------------------");
+            System.out.printf("%10s%20s%15s\n", "Package ID", "Package Amount", "Disabled");
+            System.out.printf("%10s%20s%15b\n", creditPackage.getId().toString(), NumberFormat.getCurrencyInstance().format(creditPackage.getCreditPackageAmount()), creditPackage.getIsDisabled());
+            System.out.println("-----------------------------------------------------------");
             System.out.println("1: Update Credit Package");
             System.out.println("2: Delete Credit Package");
             System.out.println("3: Back\n");
@@ -181,14 +182,14 @@ public class FinanceOperationModule {
         List<CreditPackage> creditPackages;
         
         creditPackages = creditPackageSessionBeanRemote.retrieveAllCreditPackages();
-        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("-----------------------------------------------------------");
 
         if (!creditPackages.isEmpty())
         {
-            System.out.printf("%10s%20s%20s\n", "Package ID", "Amount", "Is Disabled");
+            System.out.printf("%10s%20s%15s\n", "Package ID", "Package Amount", "Disabled");
             for(CreditPackage creditPackage : creditPackages)
             {
-                System.out.printf("%10s%20s%20b\n", creditPackage.getId().toString(), creditPackage.getCreditPackageAmount().toString(), creditPackage.getIsDisabled());
+                System.out.printf("%10s%20s%15b\n", creditPackage.getId().toString(), NumberFormat.getCurrencyInstance().format(creditPackage.getCreditPackageAmount()), creditPackage.getIsDisabled());
             }
         }
         else
@@ -196,7 +197,7 @@ public class FinanceOperationModule {
             System.out.println("No credit packages found!");
         }
         
-        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("-----------------------------------------------------------");
         System.out.print("Press any key to continue...> ");
         scanner.nextLine();
     }
