@@ -14,6 +14,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -22,10 +24,13 @@ import util.exception.InvalidRegistrationException;
 import ws.soap.PremiumCustomer.Auction;
 import ws.soap.PremiumCustomer.AuctionNotFoundException_Exception;
 import ws.soap.PremiumCustomer.Bid;
+import ws.soap.PremiumCustomer.BidNotFoundException_Exception;
 import ws.soap.PremiumCustomer.Customer;
 import ws.soap.PremiumCustomer.CustomerNotFoundException_Exception;
 import ws.soap.PremiumCustomer.CustomerTierEnum;
+import ws.soap.PremiumCustomer.InvalidBidException_Exception;
 import ws.soap.PremiumCustomer.InvalidLoginCredentialException_Exception;
+import ws.soap.PremiumCustomer.NotEnoughCreditException_Exception;
 import ws.soap.PremiumCustomer.PremiumCustomerWebService;
 import ws.soap.PremiumCustomer.SuccessfulAuction;
 import ws.soap.PremiumCustomer.UpdateCustomerException_Exception;
@@ -251,9 +256,9 @@ public class MainApp {
                 System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
                 System.out.println("Bids (Number of Bids: " + bids.size() + ")");
                 System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                System.out.printf("%10s%20s%20s%20s\n", "Bid ID", "Bid Amount", "Bid Date", "Bidder Username");
+                System.out.printf("%10s%20s%20s%30s\n", "Bid ID", "Bid Amount", "Bid Date", "Bidder Username");
                 for (Bid bid : bids) {
-                    System.out.printf("%10s%20s%20s%20s\n", bid.getId(), NumberFormat.getCurrencyInstance().format(bid.getBidAmount()), bid.getBidDateTime(), bid.getCustomer().getUsername());
+                    System.out.printf("%10s%20s%30s%20s\n", bid.getId().toString(), NumberFormat.getCurrencyInstance().format(bid.getBidAmount()), bid.getBidDateTime().toString(), bid.getCustomer().getUsername());
                 }
                 System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
                 System.out.println("1: Configure Proxy Bidding for Auction Listing");
@@ -364,8 +369,15 @@ public class MainApp {
             } else {
                 try {
                     premiumCustomerWebServicePort.proxyBidding(auction, maxAmount, premiumCustomer);
+                    premiumCustomerWebServicePort.placeABid(auction.getId(), currentPremiumCustomer.getId(), highestBidAmount.add(bidIncrement));
                     System.out.println("\n*** Congratulations! Your Proxy Bidding has been submitted. You do not need to remain login to the agent. ***\n");
                 } catch (AuctionNotFoundException_Exception | CustomerNotFoundException_Exception ex) {
+                    System.out.println("\nAn error occurred while creating proxy bid: " + ex.getMessage() + "\n");
+                } catch (BidNotFoundException_Exception ex) {
+                    System.out.println("\nAn error occurred while creating proxy bid: " + ex.getMessage() + "\n");
+                } catch (InvalidBidException_Exception ex) {
+                    System.out.println("\nAn error occurred while creating proxy bid: " + ex.getMessage() + "\n");
+                } catch (NotEnoughCreditException_Exception ex) {
                     System.out.println("\nAn error occurred while creating proxy bid: " + ex.getMessage() + "\n");
                 }
             }
