@@ -13,6 +13,7 @@ import util.enumeration.AccessRightEnum;
 import util.exception.EmployeeNotFoundException;
 import util.exception.InvalidEmployeeCreationException;
 import util.exception.GeneralException;
+import util.exception.InputDataValidationException;
 import util.exception.UpdateEmployeeException;
 
 /**
@@ -144,7 +145,7 @@ public class SystemAdminOperationModule {
                 Long employeeId = employeeSessionBeanRemote.createNewEmployee(newEmployee);
                 System.out.println("\nEmployee created successfully!: " + employeeId);
             }
-            catch (GeneralException ex)
+            catch (GeneralException | InputDataValidationException ex)
             {
                 System.out.println("\nAn error has occurred while creating the new employee: " + ex.getMessage() + "\n");
             }
@@ -298,7 +299,7 @@ public class SystemAdminOperationModule {
             
             System.out.println("\nEmployee updated successfully!\n");
         }
-        catch (EmployeeNotFoundException | UpdateEmployeeException ex) 
+        catch (EmployeeNotFoundException | UpdateEmployeeException | InputDataValidationException ex) 
         {
             System.out.println("\nAn error has occurred while updating employee: " + ex.getMessage() + "\n");
         }

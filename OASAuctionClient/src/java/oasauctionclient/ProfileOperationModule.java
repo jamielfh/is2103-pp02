@@ -9,6 +9,7 @@ import ejb.session.stateless.CustomerSessionBeanRemote;
 import entity.Customer;
 import java.util.Scanner;
 import util.exception.CustomerNotFoundException;
+import util.exception.InputDataValidationException;
 import util.exception.UpdateCustomerException;
 
 /**
@@ -175,7 +176,7 @@ public class ProfileOperationModule {
         {
             System.out.println("\nAn error has occurred while retrieving customer: " + ex.getMessage() + "\n");
         }
-        catch (UpdateCustomerException ex) 
+        catch (UpdateCustomerException | InputDataValidationException ex) 
         {
             System.out.println("\nAn error has occurred while updating customer: " + ex.getMessage() + "\n");
         }

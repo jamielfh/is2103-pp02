@@ -17,6 +17,7 @@ import util.exception.AddressNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InvalidAddressCreationException;
 import util.exception.GeneralException;
+import util.exception.InputDataValidationException;
 import util.exception.UpdateAddressException;
 
 /**
@@ -115,7 +116,7 @@ public class AddressOperationModule {
         
             } catch (GeneralException ex) {
                 System.out.println("\nAn unknown error has occurred while creating the new address!: " + ex.getMessage() + "\n");
-            } catch (CustomerNotFoundException ex) {
+            } catch (CustomerNotFoundException | InputDataValidationException ex) {
                 System.out.println(ex.getMessage());
             }
         }
@@ -220,7 +221,7 @@ public class AddressOperationModule {
             addressSessionBeanRemote.updateAddress(updateAddress);
             System.out.println("\nAddress updated successfully!\n");
         }
-        catch (AddressNotFoundException | UpdateAddressException ex) 
+        catch (AddressNotFoundException | UpdateAddressException | InputDataValidationException ex) 
         {
             System.out.println("\nAn error has occurred while updating address: " + ex.getMessage() + "\n");
         }

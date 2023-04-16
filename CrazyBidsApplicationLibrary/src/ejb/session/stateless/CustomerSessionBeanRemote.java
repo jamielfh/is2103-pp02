@@ -16,6 +16,7 @@ import util.exception.CreditPackageNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.GeneralException;
+import util.exception.InputDataValidationException;
 import util.exception.InvalidBidException;
 import util.exception.NotEnoughCreditException;
 import util.exception.UpdateCustomerException;
@@ -34,9 +35,9 @@ public interface CustomerSessionBeanRemote {
 
     List<Customer> retrieveAllCustomers();
 
-    Long createNewCustomer(Customer newCustomer) throws GeneralException;
+    Long createNewCustomer(Customer newCustomer) throws GeneralException, InputDataValidationException;
 
-    void updateCustomer(Customer customer) throws CustomerNotFoundException, UpdateCustomerException;
+    void updateCustomer(Customer customer) throws CustomerNotFoundException, UpdateCustomerException, InputDataValidationException;
     
     List<CreditTransaction> retrieveAllCreditTransactionByCustomerId(Long customerId) throws CustomerNotFoundException;
     

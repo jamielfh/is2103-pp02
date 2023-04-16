@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -23,6 +24,10 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.enumeration.CreditTransactionEnum;
 import util.exception.AuctionNotFoundException;
 import util.exception.BidNotFoundException;
@@ -30,6 +35,7 @@ import util.exception.CreditPackageNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.GeneralException;
+import util.exception.InputDataValidationException;
 import util.exception.InvalidBidException;
 import util.exception.NotEnoughCreditException;
 import util.exception.UpdateCustomerException;
@@ -50,7 +56,12 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
     @PersistenceContext(unitName = "CrazyBidsApplication-ejbPU")
     private EntityManager em;
 
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+    
     public CustomerSessionBean() {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
     }
 
     @Override
@@ -105,44 +116,62 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
     }
 
     @Override
-    public Long createNewCustomer(Customer newCustomer) throws GeneralException {
-        try {
-            em.persist(newCustomer);
-            em.flush();
+    public Long createNewCustomer(Customer newCustomer) throws GeneralException, InputDataValidationException {
+        Set<ConstraintViolation<Customer>>constraintViolations = validator.validate(newCustomer);
+        
+        if(constraintViolations.isEmpty())
+        {
+            try {
+                em.persist(newCustomer);
+                em.flush();
 
-            return newCustomer.getId();
-        } catch (PersistenceException ex) {
-            if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
-                if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
-                    throw new GeneralException("Customer with username " + newCustomer.getUsername() + " already exists!");
+                return newCustomer.getId();
+            } catch (PersistenceException ex) {
+                if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
+                    if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
+                        throw new GeneralException("Customer with username " + newCustomer.getUsername() + " already exists!");
+                    } else {
+                        throw new GeneralException(ex.getMessage());
+                    }
                 } else {
                     throw new GeneralException(ex.getMessage());
                 }
-            } else {
-                throw new GeneralException(ex.getMessage());
             }
+        }
+        else
+        {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
         }
     }
 
     @Override
-    public void updateCustomer(Customer updatedCustomer) throws CustomerNotFoundException, UpdateCustomerException {
-        if (updatedCustomer != null && updatedCustomer.getId() != null) {
-            Customer customerToUpdate = retrieveCustomerbyId(updatedCustomer.getId());
+    public void updateCustomer(Customer updatedCustomer) throws CustomerNotFoundException, UpdateCustomerException, InputDataValidationException {
+        Set<ConstraintViolation<Customer>>constraintViolations = validator.validate(updatedCustomer);
+        
+        if(constraintViolations.isEmpty())
+        {
+            if (updatedCustomer != null && updatedCustomer.getId() != null) {
+                Customer customerToUpdate = retrieveCustomerbyId(updatedCustomer.getId());
 
-            if (customerToUpdate.getUsername().equals(updatedCustomer.getUsername())) {
-                customerToUpdate.setFirstName(updatedCustomer.getFirstName());
-                customerToUpdate.setLastName(updatedCustomer.getLastName());
-                customerToUpdate.setEmail(updatedCustomer.getEmail());
-                customerToUpdate.setMobileNumber(updatedCustomer.getMobileNumber());
-                customerToUpdate.setPassword(updatedCustomer.getPassword());
+                if (customerToUpdate.getUsername().equals(updatedCustomer.getUsername())) {
+                    customerToUpdate.setFirstName(updatedCustomer.getFirstName());
+                    customerToUpdate.setLastName(updatedCustomer.getLastName());
+                    customerToUpdate.setEmail(updatedCustomer.getEmail());
+                    customerToUpdate.setMobileNumber(updatedCustomer.getMobileNumber());
+                    customerToUpdate.setPassword(updatedCustomer.getPassword());
 
-                // Username and Credit Balance are deliberately NOT updated to demonstrate that client is not allowed to update account credential through this business method
-                // Credit balance is updated when customer buy credit packages or bid in auction or refunded from auction
+                    // Username and Credit Balance are deliberately NOT updated to demonstrate that client is not allowed to update account credential through this business method
+                    // Credit balance is updated when customer buy credit packages or bid in auction or refunded from auction
+                } else {
+                    throw new UpdateCustomerException("Username of customer record to be updated does not match the existing record");
+                }
             } else {
-                throw new UpdateCustomerException("Username of customer record to be updated does not match the existing record");
+                throw new CustomerNotFoundException("Customer ID not provided for customer to be updated");
             }
-        } else {
-            throw new CustomerNotFoundException("Customer ID not provided for customer to be updated");
+        }
+        else
+        {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
         }
     }
 
@@ -252,4 +281,16 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
         }
     }
 
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Customer>>constraintViolations)
+    {
+        String msg = "Input data validation error!:";
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+        
+        return msg;
+    }
+    
 }

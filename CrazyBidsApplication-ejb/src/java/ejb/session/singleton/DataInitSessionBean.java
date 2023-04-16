@@ -16,6 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import util.enumeration.AccessRightEnum;
 import util.exception.GeneralException;
+import util.exception.InputDataValidationException;
 
 /**
  *
@@ -25,7 +26,7 @@ import util.exception.GeneralException;
 @LocalBean
 @Startup
 
-public class AdminDataInitSessionBean {
+public class DataInitSessionBean {
 
     @EJB
     private EmployeeSessionBeanLocal employeeSessionBeanLocal;
@@ -33,7 +34,7 @@ public class AdminDataInitSessionBean {
     @PersistenceContext(unitName = "CrazyBidsApplication-ejbPU")
     private EntityManager em;
 
-    public AdminDataInitSessionBean() {
+    public DataInitSessionBean() {
     }
     
     @PostConstruct
@@ -41,7 +42,7 @@ public class AdminDataInitSessionBean {
         if(em.find(Employee.class, 1l) == null) {
             try {
                 employeeSessionBeanLocal.createNewEmployee(new Employee("System", "Admin 1", AccessRightEnum.SYSTEMADMIN, "systemadmin1", "password"));
-            } catch (GeneralException ex) {
+            } catch (GeneralException | InputDataValidationException ex) {
                 ex.printStackTrace();
             }
         }

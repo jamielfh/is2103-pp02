@@ -8,15 +8,21 @@ package ejb.session.stateless;
 import entity.CreditPackage;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.exception.CreditPackageIsDisabledException;
 import util.exception.CreditPackageIsUsedException;
 import util.exception.CreditPackageNotFoundException;
 import util.exception.GeneralException;
+import util.exception.InputDataValidationException;
 import util.exception.UpdateCreditPackageException;
 
 /**
@@ -28,8 +34,13 @@ public class CreditPackageSessionBean implements CreditPackageSessionBeanRemote,
 
     @PersistenceContext(unitName = "CrazyBidsApplication-ejbPU")
     private EntityManager em;
+    
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
 
     public CreditPackageSessionBean() {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
     }
 
     @Override
@@ -57,14 +68,23 @@ public class CreditPackageSessionBean implements CreditPackageSessionBeanRemote,
     }
 
     @Override
-    public Long createCreditPackage(CreditPackage newCreditPackage) throws GeneralException {
-        try {
-            em.persist(newCreditPackage);
-            em.flush();
-            
-            return newCreditPackage.getId();
-        } catch (PersistenceException ex) {
-            throw new GeneralException(ex.getMessage());
+    public Long createCreditPackage(CreditPackage newCreditPackage) throws GeneralException, InputDataValidationException {
+        Set<ConstraintViolation<CreditPackage>>constraintViolations = validator.validate(newCreditPackage);
+        
+        if(constraintViolations.isEmpty())
+        {
+            try {
+                em.persist(newCreditPackage);
+                em.flush();
+
+                return newCreditPackage.getId();
+            } catch (PersistenceException ex) {
+                throw new GeneralException(ex.getMessage());
+            }
+        }
+        else
+        {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
         }
     }
 
@@ -114,6 +134,16 @@ public class CreditPackageSessionBean implements CreditPackageSessionBeanRemote,
         }
     }
     
-    
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<CreditPackage>>constraintViolations)
+    {
+        String msg = "Input data validation error!:";
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+        
+        return msg;
+    }
 
 }

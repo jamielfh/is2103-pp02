@@ -16,6 +16,7 @@ import util.exception.CreditPackageIsUsedException;
 import util.exception.CreditPackageNotFoundException;
 import util.exception.InvalidCreditPackageCreationException;
 import util.exception.GeneralException;
+import util.exception.InputDataValidationException;
 import util.exception.UpdateCreditPackageException;
 
 /**
@@ -106,7 +107,7 @@ public class FinanceOperationModule {
                 Long creditPackageId = creditPackageSessionBeanRemote.createCreditPackage(newCreditPackage);
                 System.out.println("\nCredit package created successfully!: " + creditPackageId + "\n");
             }
-            catch (GeneralException ex)
+            catch (GeneralException | InputDataValidationException ex)
             {
                 System.out.println("\nAn unknown error has occurred while creating the new credit package: " + ex.getMessage() + "\n");
             }

@@ -26,6 +26,7 @@ import util.exception.BidNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InvalidAuctionCreationException;
 import util.exception.GeneralException;
+import util.exception.InputDataValidationException;
 import util.exception.UpdateAuctionException;
 
 /**
@@ -187,7 +188,7 @@ public class SalesOperationModule {
                 Long auctionId = auctionSessionBeanRemote.createAuction(newAuction);
                 System.out.println("\nAuction listing created successfully!: " + auctionId + "\n");
             }
-            catch (GeneralException ex)
+            catch (GeneralException | InputDataValidationException ex)
             {
                 System.out.println("\nAn unknown error has occurred while creating the new auction listing: " + ex.getMessage() + "\n");
             }
@@ -405,7 +406,7 @@ public class SalesOperationModule {
                                 System.out.println("An error occurred while creating successful auction: " + ex1.getMessage());
                             }
                         }
-                        catch(GeneralException | CustomerNotFoundException | AuctionNotFoundException ex)
+                        catch(GeneralException | CustomerNotFoundException | AuctionNotFoundException | InputDataValidationException ex)
                         {
                             System.out.println("An error occurred while creating successful auction: " + ex.getMessage());
                         }
@@ -549,7 +550,7 @@ public class SalesOperationModule {
             auctionSessionBeanRemote.updateAuction(updateAuction);
             System.out.println("\nAuction listing updated successfully!\n");
         }
-        catch (AuctionNotFoundException | UpdateAuctionException ex) 
+        catch (AuctionNotFoundException | UpdateAuctionException | InputDataValidationException ex) 
         {
             System.out.println("\nAn error has occurred while updating auction: " + ex.getMessage() + "\n");
         }

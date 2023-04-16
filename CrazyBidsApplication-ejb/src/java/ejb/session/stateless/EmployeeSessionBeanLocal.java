@@ -11,6 +11,7 @@ import javax.ejb.Local;
 import util.exception.EmployeeNotFoundException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.GeneralException;
+import util.exception.InputDataValidationException;
 import util.exception.UpdateEmployeeException;
 
 /**
@@ -26,7 +27,7 @@ public interface EmployeeSessionBeanLocal {
 
     Employee employeeLogin(String username, String password) throws InvalidLoginCredentialException;
 
-    Long createNewEmployee(Employee newEmployee) throws GeneralException;
+    Long createNewEmployee(Employee newEmployee) throws GeneralException, InputDataValidationException;
 
     void changePassword(Long employeeId, String newPassword) throws EmployeeNotFoundException;
 
@@ -34,6 +35,6 @@ public interface EmployeeSessionBeanLocal {
 
     List<Employee> retrieveAllEmployees();
 
-    void updateEmployee(Employee updatedEmployee) throws EmployeeNotFoundException, UpdateEmployeeException;
+    void updateEmployee(Employee updatedEmployee) throws EmployeeNotFoundException, UpdateEmployeeException, InputDataValidationException;
     
 }

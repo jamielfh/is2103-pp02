@@ -14,6 +14,7 @@ import util.exception.AddressIsDisabledException;
 import util.exception.AddressNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.GeneralException;
+import util.exception.InputDataValidationException;
 import util.exception.UpdateAddressException;
 
 /**
@@ -27,9 +28,9 @@ public interface AddressSessionBeanRemote {
 
     List<Address> retrieveAllAddressesByCustomerId(Long customerId) throws CustomerNotFoundException;
     
-    void updateAddress(Address updatedAddress) throws AddressNotFoundException, UpdateAddressException;
+    void updateAddress(Address updatedAddress) throws AddressNotFoundException, UpdateAddressException, InputDataValidationException;
 
-    Long createAddress(Address newAddress, Long customerId) throws GeneralException, CustomerNotFoundException;
+    Long createAddress(Address newAddress, Long customerId) throws GeneralException, CustomerNotFoundException, InputDataValidationException;
 
     void disableAddress(Long addressId) throws AddressNotFoundException, AddressIsDisabledException;
     

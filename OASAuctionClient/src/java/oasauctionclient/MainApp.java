@@ -18,6 +18,7 @@ import util.exception.CustomerNotFoundException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.InvalidRegistrationException;
 import util.exception.GeneralException;
+import util.exception.InputDataValidationException;
 
 /**
  *
@@ -170,7 +171,14 @@ public class MainApp {
         if(username.length() > 0 && password.length() > 0 && firstName.length() > 0 && lastName.length() > 0 && email.length() > 0 && mobileNumber.length() > 0)
         {
             Customer newCustomer = new Customer(firstName, lastName, username, password, email, mobileNumber, creditBalance, CustomerTierEnum.STANDARD, false);
-            customerSessionBeanRemote.createNewCustomer(newCustomer);
+            try
+            {
+                customerSessionBeanRemote.createNewCustomer(newCustomer);
+            }
+            catch(InputDataValidationException ex)
+            {
+                System.out.println("An error occurred during registration: " + ex.getMessage() + "\n");
+            }
         }
         else
         {

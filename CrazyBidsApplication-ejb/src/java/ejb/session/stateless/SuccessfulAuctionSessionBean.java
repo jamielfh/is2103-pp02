@@ -10,12 +10,17 @@ import entity.Auction;
 import entity.Customer;
 import entity.SuccessfulAuction;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.exception.AddressIsDisabledException;
 import util.exception.AddressNotFoundException;
 import util.exception.AuctionNotFoundException;
@@ -23,6 +28,7 @@ import util.exception.CustomerNotFoundException;
 import util.exception.DeliveryAddressExistException;
 import util.exception.SuccessfulAuctionNotFoundException;
 import util.exception.GeneralException;
+import util.exception.InputDataValidationException;
 import util.exception.UpdateDeliveryAddressException;
 
 /**
@@ -43,6 +49,14 @@ public class SuccessfulAuctionSessionBean implements SuccessfulAuctionSessionBea
 
     @PersistenceContext(unitName = "CrazyBidsApplication-ejbPU")
     private EntityManager em;
+    
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+
+    public SuccessfulAuctionSessionBean() {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
     
     @Override
     public SuccessfulAuction retrieveSuccessfulAuctionbyId(Long successfulAuctionId) throws SuccessfulAuctionNotFoundException {
@@ -69,23 +83,32 @@ public class SuccessfulAuctionSessionBean implements SuccessfulAuctionSessionBea
     }
 
     @Override
-    public Long createNewSuccessfulAuction(SuccessfulAuction newSuccessfulAuction, Long customerId, Long auctionId) throws GeneralException, CustomerNotFoundException, AuctionNotFoundException {
-        try {
-             
-            Customer customer = customerSessionBeanLocal.retrieveCustomerbyId(customerId);
-            Auction auction = auctionSessionBeanLocal.retrieveAuctionbyId(auctionId);
-            
-            //Set relationship association
-            newSuccessfulAuction.setCustomer(customer);
-            newSuccessfulAuction.setAuction(auction);
-            customer.getSuccessfulAuctions().add(newSuccessfulAuction);
-            auction.setSuccessfulAuction(newSuccessfulAuction);
-            em.persist(newSuccessfulAuction);
-            em.flush();
-            
-            return newSuccessfulAuction.getId();
-        } catch (PersistenceException ex) {
-            throw new GeneralException(ex.getMessage());
+    public Long createNewSuccessfulAuction(SuccessfulAuction newSuccessfulAuction, Long customerId, Long auctionId) throws GeneralException, CustomerNotFoundException, AuctionNotFoundException, InputDataValidationException {
+        Set<ConstraintViolation<SuccessfulAuction>>constraintViolations = validator.validate(newSuccessfulAuction);
+        
+        if(constraintViolations.isEmpty())
+        {
+            try {
+
+                Customer customer = customerSessionBeanLocal.retrieveCustomerbyId(customerId);
+                Auction auction = auctionSessionBeanLocal.retrieveAuctionbyId(auctionId);
+
+                //Set relationship association
+                newSuccessfulAuction.setCustomer(customer);
+                newSuccessfulAuction.setAuction(auction);
+                customer.getSuccessfulAuctions().add(newSuccessfulAuction);
+                auction.setSuccessfulAuction(newSuccessfulAuction);
+                em.persist(newSuccessfulAuction);
+                em.flush();
+
+                return newSuccessfulAuction.getId();
+            } catch (PersistenceException ex) {
+                throw new GeneralException(ex.getMessage());
+            }
+        }
+        else
+        {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
         }
     }
     
@@ -117,5 +140,17 @@ public class SuccessfulAuctionSessionBean implements SuccessfulAuctionSessionBea
         {
             throw new UpdateDeliveryAddressException("Successful Auction Id and Address Id not provided for delivery address to be updated");
         }
+    }
+    
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<SuccessfulAuction>>constraintViolations)
+    {
+        String msg = "Input data validation error!:";
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+        
+        return msg;
     }
 }

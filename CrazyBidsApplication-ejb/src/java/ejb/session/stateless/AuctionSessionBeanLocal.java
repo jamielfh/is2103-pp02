@@ -17,6 +17,7 @@ import util.exception.AuctionNotFoundException;
 import util.exception.BidNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.GeneralException;
+import util.exception.InputDataValidationException;
 import util.exception.UpdateAuctionException;
 
 /**
@@ -30,9 +31,9 @@ public interface AuctionSessionBeanLocal {
 
     List<Auction> retrieveAllAuctions();
 
-    Long createAuction(Auction newAuction) throws GeneralException;
+    Long createAuction(Auction newAuction) throws GeneralException, InputDataValidationException;
 
-    void updateAuction(Auction updatedAuction) throws AuctionNotFoundException, UpdateAuctionException;
+    void updateAuction(Auction updatedAuction) throws AuctionNotFoundException, UpdateAuctionException, InputDataValidationException;
 
     void deleteAuction(Long auctionId) throws AuctionNotFoundException, AuctionHasBidsException;
 

@@ -13,12 +13,17 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.enumeration.CreditTransactionEnum;
 import util.exception.AuctionAlreadyClosedException;
 import util.exception.AuctionHasBidsException;
@@ -27,7 +32,7 @@ import util.exception.AuctionNotFoundException;
 import util.exception.BidNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.GeneralException;
-import util.exception.InvalidBidException;
+import util.exception.InputDataValidationException;
 import util.exception.UpdateAuctionException;
 
 /**
@@ -42,8 +47,13 @@ public class AuctionSessionBean implements AuctionSessionBeanRemote, AuctionSess
 
     @PersistenceContext(unitName = "CrazyBidsApplication-ejbPU")
     private EntityManager em;
+    
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
 
     public AuctionSessionBean() {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
     }
 
     @Override
@@ -79,49 +89,66 @@ public class AuctionSessionBean implements AuctionSessionBeanRemote, AuctionSess
     }
 
     @Override
-    public Long createAuction(Auction newAuction) throws GeneralException {
-        try {
-            em.persist(newAuction);
-            em.flush();
-            
-            return newAuction.getId();
-        } catch (PersistenceException ex) {
-            throw new GeneralException(ex.getMessage());
+    public Long createAuction(Auction newAuction) throws GeneralException, InputDataValidationException {
+        Set<ConstraintViolation<Auction>>constraintViolations = validator.validate(newAuction);
+        
+        if(constraintViolations.isEmpty())
+        {
+            try {
+                em.persist(newAuction);
+                em.flush();
+
+                return newAuction.getId();
+            } catch (PersistenceException ex) {
+                throw new GeneralException(ex.getMessage());
+            }
+        }
+        else
+        {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
         }
     }
 
     @Override
-    public void updateAuction(Auction updatedAuction) throws AuctionNotFoundException, UpdateAuctionException {
-         
-        if(updatedAuction != null && updatedAuction.getId() != null)
-        {
-            Auction auctionToUpdate = retrieveAuctionbyId(updatedAuction.getId());
-            
-            
-                // Only allowed to update the general details of auction in this business method.
-                auctionToUpdate.setName(updatedAuction.getName());
-                auctionToUpdate.setDetails(updatedAuction.getDetails());
-                
-                // Not allowed to change startDateTime, endDateTime, startingBid and reservePrice if a customer has already bidded or auction has been closed.
-                if(auctionToUpdate.getBids().isEmpty() && auctionToUpdate.getIsClosed() == false)
-                {
-                    auctionToUpdate.setStartDateTime(updatedAuction.getStartDateTime());
-                    auctionToUpdate.setEndDateTime(updatedAuction.getEndDateTime());
-                    auctionToUpdate.setStartingBid(updatedAuction.getStartingBid());
-                    auctionToUpdate.setReservePrice(updatedAuction.getReservePrice());
-                }
-                
-                //auctionToUpdate.setIsDisabled(updatedAuction.getIsDisabled());
-                //auctionToUpdate.setManualIntervention(updatedAuction.getManualIntervention());
-                
-                // ManualIntervention is set automatically when highest bid is the same as or below the reserve price (when timer runs out).
-                // isDisabled is set under disableAuction.
-            
-            
+    public void updateAuction(Auction updatedAuction) throws AuctionNotFoundException, UpdateAuctionException, InputDataValidationException {
+        Set<ConstraintViolation<Auction>>constraintViolations = validator.validate(updatedAuction);
+        
+        if(constraintViolations.isEmpty())
+        { 
+            if(updatedAuction != null && updatedAuction.getId() != null)
+            {
+                Auction auctionToUpdate = retrieveAuctionbyId(updatedAuction.getId());
+
+
+                    // Only allowed to update the general details of auction in this business method.
+                    auctionToUpdate.setName(updatedAuction.getName());
+                    auctionToUpdate.setDetails(updatedAuction.getDetails());
+
+                    // Not allowed to change startDateTime, endDateTime, startingBid and reservePrice if a customer has already bidded or auction has been closed.
+                    if(auctionToUpdate.getBids().isEmpty() && auctionToUpdate.getIsClosed() == false)
+                    {
+                        auctionToUpdate.setStartDateTime(updatedAuction.getStartDateTime());
+                        auctionToUpdate.setEndDateTime(updatedAuction.getEndDateTime());
+                        auctionToUpdate.setStartingBid(updatedAuction.getStartingBid());
+                        auctionToUpdate.setReservePrice(updatedAuction.getReservePrice());
+                    }
+
+                    //auctionToUpdate.setIsDisabled(updatedAuction.getIsDisabled());
+                    //auctionToUpdate.setManualIntervention(updatedAuction.getManualIntervention());
+
+                    // ManualIntervention is set automatically when highest bid is the same as or below the reserve price (when timer runs out).
+                    // isDisabled is set under disableAuction.
+
+
+            }
+            else
+            {
+                throw new AuctionNotFoundException("Auction ID not provided for auction to be updated");
+            }
         }
         else
         {
-            throw new AuctionNotFoundException("Auction ID not provided for auction to be updated");
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
         }
     }
 
@@ -250,4 +277,16 @@ public class AuctionSessionBean implements AuctionSessionBeanRemote, AuctionSess
         return bidIncrement;
     }
 
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Auction>>constraintViolations)
+    {
+        String msg = "Input data validation error!:";
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+        
+        return msg;
+    }
+    
 }

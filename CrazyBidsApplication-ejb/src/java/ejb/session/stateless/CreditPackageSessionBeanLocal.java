@@ -13,6 +13,7 @@ import util.exception.CreditPackageIsDisabledException;
 import util.exception.CreditPackageIsUsedException;
 import util.exception.CreditPackageNotFoundException;
 import util.exception.GeneralException;
+import util.exception.InputDataValidationException;
 import util.exception.UpdateCreditPackageException;
 
 /**
@@ -24,7 +25,7 @@ public interface CreditPackageSessionBeanLocal {
 
     CreditPackage retrieveCreditPackagebyId(Long creditPackageId) throws CreditPackageNotFoundException;
 
-    Long createCreditPackage(CreditPackage newCreditPackage) throws GeneralException;
+    Long createCreditPackage(CreditPackage newCreditPackage) throws GeneralException, InputDataValidationException;
 
     void deleteCreditPackage(Long creditPackageId) throws CreditPackageNotFoundException, CreditPackageIsUsedException;
 

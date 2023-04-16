@@ -8,16 +8,22 @@ package ejb.session.stateless;
 import entity.Address;
 import entity.Customer;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.exception.AddressIsAssociatedWithWinningBidException;
 import util.exception.AddressIsDisabledException;
 import util.exception.AddressNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.GeneralException;
+import util.exception.InputDataValidationException;
 import util.exception.UpdateAddressException;
 
 /**
@@ -33,7 +39,12 @@ public class AddressSessionBean implements AddressSessionBeanRemote, AddressSess
     @PersistenceContext(unitName = "CrazyBidsApplication-ejbPU")
     private EntityManager em;
 
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+    
     public AddressSessionBean() {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
     }
 
     @Override
@@ -59,37 +70,54 @@ public class AddressSessionBean implements AddressSessionBeanRemote, AddressSess
     }
 
     @Override
-    public Long createAddress(Address newAddress, Long customerId) throws GeneralException, CustomerNotFoundException {
-        try {
-            em.persist(newAddress);
-            em.flush();
-            
-            // Set Relationship Association
-            Customer customer = customerSessionBeanLocal.retrieveCustomerbyId(customerId);
-            customer.getAddresses().add(newAddress);
-            
-            return newAddress.getId();
-        } catch (PersistenceException ex) {
-            throw new GeneralException(ex.getMessage());
+    public Long createAddress(Address newAddress, Long customerId) throws GeneralException, CustomerNotFoundException, InputDataValidationException {
+        Set<ConstraintViolation<Address>>constraintViolations = validator.validate(newAddress);
+        
+        if(constraintViolations.isEmpty())
+        {
+            try {
+                em.persist(newAddress);
+                em.flush();
+
+                // Set Relationship Association
+                Customer customer = customerSessionBeanLocal.retrieveCustomerbyId(customerId);
+                customer.getAddresses().add(newAddress);
+
+                return newAddress.getId();
+            } catch (PersistenceException ex) {
+                throw new GeneralException(ex.getMessage());
+            }
+        }
+        else
+        {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
         }
     }
 
     @Override
-    public void updateAddress(Address updatedAddress) throws AddressNotFoundException, UpdateAddressException {
-         
-        if(updatedAddress != null && updatedAddress.getId() != null)
-        {
-            Address addressToUpdate = retrieveAddressbyId(updatedAddress.getId());
-       
-            addressToUpdate.setAddressLine1(updatedAddress.getAddressLine1());
-            addressToUpdate.setAddressLine2(updatedAddress.getAddressLine2());
-            addressToUpdate.setPostalCode(updatedAddress.getPostalCode());
+    public void updateAddress(Address updatedAddress) throws AddressNotFoundException, UpdateAddressException, InputDataValidationException {
+        Set<ConstraintViolation<Address>>constraintViolations = validator.validate(updatedAddress);
+        
+        if(constraintViolations.isEmpty())
+        { 
+            if(updatedAddress != null && updatedAddress.getId() != null)
+            {
+                Address addressToUpdate = retrieveAddressbyId(updatedAddress.getId());
 
-            // Only allow to update the general details of address in this business method.
+                addressToUpdate.setAddressLine1(updatedAddress.getAddressLine1());
+                addressToUpdate.setAddressLine2(updatedAddress.getAddressLine2());
+                addressToUpdate.setPostalCode(updatedAddress.getPostalCode());
+
+                // Only allow to update the general details of address in this business method.
+            }
+            else
+            {
+                throw new AddressNotFoundException("Address ID not provided for address to be updated");
+            }
         }
         else
         {
-            throw new AddressNotFoundException("Address ID not provided for address to be updated");
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
         }
     }
 
@@ -115,6 +143,18 @@ public class AddressSessionBean implements AddressSessionBeanRemote, AddressSess
            } else {
                throw new AddressIsDisabledException("Address is already disabled.");
            }
+    }
+    
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Address>>constraintViolations)
+    {
+        String msg = "Input data validation error!:";
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+        
+        return msg;
     }
 }
 

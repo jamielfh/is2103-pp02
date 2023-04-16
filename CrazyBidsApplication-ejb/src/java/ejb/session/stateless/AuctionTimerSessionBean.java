@@ -24,6 +24,7 @@ import util.exception.AuctionNotFoundException;
 import util.exception.BidNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.GeneralException;
+import util.exception.InputDataValidationException;
 import util.exception.InvalidBidException;
 import util.exception.NotEnoughCreditException;
 
@@ -89,7 +90,7 @@ public class AuctionTimerSessionBean implements AuctionTimerSessionBeanRemote, A
                 auction.setSuccessfulAuction(successfulAuction);
                 System.out.println("Successful auction with ID: " + successfulAuctionId + " created successfully!");
             }
-            catch(GeneralException | CustomerNotFoundException | AuctionNotFoundException ex)
+            catch(GeneralException | CustomerNotFoundException | AuctionNotFoundException | InputDataValidationException ex)
             {
                 System.out.println("An error occurred while creating successful auction: " + ex.getMessage());
             }
