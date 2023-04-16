@@ -98,7 +98,7 @@ public class AuctionTimerSessionBean implements AuctionTimerSessionBeanRemote, A
     }
 
     @Override
-    @Schedule(hour = "*", minute = "*", info = "CheckForSnipesTimer")
+    @Schedule(hour = "*", minute = "*", second = "*", info = "CheckForSnipesTimer")
     public void checkForSnipeTimer() {
         Query query = em.createQuery("SELECT s from Snipe s WHERE s.snipeDateTime >= :startWindow AND s.snipeDateTime <= :endWindow");
         Date currentDateTime = new Date();
@@ -123,16 +123,7 @@ public class AuctionTimerSessionBean implements AuctionTimerSessionBeanRemote, A
             }
             
             Auction auction = snipe.getAuction();
-            BigDecimal nextBidIncrement = auctionSessionBeanLocal.bidConverter(auction);
-            BigDecimal snipeBidAmount;
-            
-            if (auction.getBids().isEmpty()) {
-                // if no bids yet, use starting bid
-                snipeBidAmount = auction.getStartingBid().add(nextBidIncrement);
-            } else {
-                // if there are bids, use highest bidding price
-                snipeBidAmount = auctionSessionBeanLocal.getHighestBid(auction).getBidAmount().add(nextBidIncrement);
-            }       
+            BigDecimal snipeBidAmount = snipe.getBidAmount();
             
             try
             {

@@ -189,11 +189,11 @@ public class PremiumCustomerWebService {
         em.persist(proxyBid);
     }
     
-    public void sniping(Auction auction, Date snipeDateTime, Customer customer) throws AuctionNotFoundException, CustomerNotFoundException {
+    public void sniping(Auction auction, Date snipeDateTime, Customer customer, BigDecimal bidAmount) throws AuctionNotFoundException, CustomerNotFoundException {
         Auction currAuction = auctionSessionBeanLocal.retrieveAuctionbyId(auction.getId());
         Customer premiumCustomer = customerSessionBeanLocal.retrieveCustomerbyId(customer.getId());
         
-        Snipe snipe = new Snipe(new Date(), snipeDateTime);
+        Snipe snipe = new Snipe(new Date(), snipeDateTime, bidAmount);
         
         //Set Relationship
         snipe.setAuction(auction);

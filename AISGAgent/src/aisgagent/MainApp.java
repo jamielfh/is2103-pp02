@@ -14,8 +14,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -392,6 +390,7 @@ public class MainApp {
     private void doSniping(Auction auction) {
         Scanner scanner = new Scanner(System.in);
         Integer timeDuration;
+        BigDecimal bid;
         
         System.out.println("*** Premium Bidding cum Sniping Agent System :: Configure Sniping for Auction Listing ***\n");
         Date endDateTime = auction.getEndDateTime().toGregorianCalendar().getTime();
@@ -401,23 +400,39 @@ public class MainApp {
         
         while(true)
         {
-            System.out.print("\nEnter desired time duration before end of auction to snipe in minutes> ");
+            System.out.print("\nEnter desired time duration before end of auction to snipe in seconds> ");
             timeDuration = scanner.nextInt();
             
             if (timeDuration < 1)
             {
-                System.out.println("Time duration must be at least 1 minute!");
+                System.out.println("Time duration must be at least 1 second!");
             }
             else
             {
                 break;
             }
         }
+        scanner.nextLine();
         
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(endDateTime);
-        calendar.add(Calendar.MINUTE, -timeDuration);
+        calendar.add(Calendar.SECOND, -timeDuration);
         Date snipeDateTime = calendar.getTime();
+        
+        while (true)
+        {
+            System.out.print("Enter bid (up to 4 decimal places)> ");
+            bid = new BigDecimal(scanner.nextLine().trim());
+            
+            if (bid.compareTo(new BigDecimal("0.01")) != -1)
+            {
+                break;
+            }
+            else
+            {
+                System.out.println("Bid must be at least 0.01!");
+            }
+        }
         
         try
         {
@@ -430,7 +445,8 @@ public class MainApp {
                 XMLGregorianCalendar date = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
                 try
                 {
-                    premiumCustomerWebServicePort.sniping(auction, date, premiumCustomer);
+                    premiumCustomerWebServicePort.sniping(auction, date, premiumCustomer, bid);
+                    System.out.println("\nSnipe created successfully!");
                 }
                 catch (AuctionNotFoundException_Exception | CustomerNotFoundException_Exception ex)
                 {

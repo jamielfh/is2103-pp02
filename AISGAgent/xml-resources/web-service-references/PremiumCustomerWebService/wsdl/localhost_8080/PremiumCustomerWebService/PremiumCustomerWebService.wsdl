@@ -4,21 +4,6 @@
 <xsd:import namespace="http://soap.ws/" schemaLocation="http://localhost:8080/PremiumCustomerWebService/PremiumCustomerWebService?xsd=1"/>
 </xsd:schema>
 </types>
-<message name="retrieveAllActiveAuctions">
-<part name="parameters" element="tns:retrieveAllActiveAuctions"/>
-</message>
-<message name="retrieveAllActiveAuctionsResponse">
-<part name="parameters" element="tns:retrieveAllActiveAuctionsResponse"/>
-</message>
-<message name="retrieveAllSuccessfulAuctionByCustomerId">
-<part name="parameters" element="tns:retrieveAllSuccessfulAuctionByCustomerId"/>
-</message>
-<message name="retrieveAllSuccessfulAuctionByCustomerIdResponse">
-<part name="parameters" element="tns:retrieveAllSuccessfulAuctionByCustomerIdResponse"/>
-</message>
-<message name="CustomerNotFoundException">
-<part name="fault" element="tns:CustomerNotFoundException"/>
-</message>
 <message name="retrieveSuccessfulAuctionbyId">
 <part name="parameters" element="tns:retrieveSuccessfulAuctionbyId"/>
 </message>
@@ -34,53 +19,41 @@
 <message name="retrieveAllSuccessfulAuctionsResponse">
 <part name="parameters" element="tns:retrieveAllSuccessfulAuctionsResponse"/>
 </message>
+<message name="retrieveAllSuccessfulAuctionByCustomerId">
+<part name="parameters" element="tns:retrieveAllSuccessfulAuctionByCustomerId"/>
+</message>
+<message name="retrieveAllSuccessfulAuctionByCustomerIdResponse">
+<part name="parameters" element="tns:retrieveAllSuccessfulAuctionByCustomerIdResponse"/>
+</message>
+<message name="CustomerNotFoundException">
+<part name="fault" element="tns:CustomerNotFoundException"/>
+</message>
+<message name="retrieveAllActiveAuctions">
+<part name="parameters" element="tns:retrieveAllActiveAuctions"/>
+</message>
+<message name="retrieveAllActiveAuctionsResponse">
+<part name="parameters" element="tns:retrieveAllActiveAuctionsResponse"/>
+</message>
 <message name="retrieveCustomerbyUsername">
 <part name="parameters" element="tns:retrieveCustomerbyUsername"/>
 </message>
 <message name="retrieveCustomerbyUsernameResponse">
 <part name="parameters" element="tns:retrieveCustomerbyUsernameResponse"/>
 </message>
-<message name="placeABid">
-<part name="parameters" element="tns:placeABid"/>
-</message>
-<message name="placeABidResponse">
-<part name="parameters" element="tns:placeABidResponse"/>
-</message>
-<message name="AuctionNotFoundException">
-<part name="fault" element="tns:AuctionNotFoundException"/>
-</message>
-<message name="NotEnoughCreditException">
-<part name="fault" element="tns:NotEnoughCreditException"/>
-</message>
-<message name="InvalidBidException">
-<part name="fault" element="tns:InvalidBidException"/>
-</message>
-<message name="BidNotFoundException">
-<part name="fault" element="tns:BidNotFoundException"/>
-</message>
-<message name="customerLogin">
-<part name="parameters" element="tns:customerLogin"/>
-</message>
-<message name="customerLoginResponse">
-<part name="parameters" element="tns:customerLoginResponse"/>
-</message>
-<message name="InvalidLoginCredentialException">
-<part name="fault" element="tns:InvalidLoginCredentialException"/>
-</message>
-<message name="UpdateCustomerException">
-<part name="fault" element="tns:UpdateCustomerException"/>
-</message>
-<message name="customerLogout">
-<part name="parameters" element="tns:customerLogout"/>
-</message>
-<message name="customerLogoutResponse">
-<part name="parameters" element="tns:customerLogoutResponse"/>
-</message>
 <message name="detachCustomer">
 <part name="parameters" element="tns:detachCustomer"/>
 </message>
 <message name="detachCustomerResponse">
 <part name="parameters" element="tns:detachCustomerResponse"/>
+</message>
+<message name="updatePremiumCustomer">
+<part name="parameters" element="tns:updatePremiumCustomer"/>
+</message>
+<message name="updatePremiumCustomerResponse">
+<part name="parameters" element="tns:updatePremiumCustomerResponse"/>
+</message>
+<message name="UpdateCustomerException">
+<part name="fault" element="tns:UpdateCustomerException"/>
 </message>
 <message name="detachAuction">
 <part name="parameters" element="tns:detachAuction"/>
@@ -94,17 +67,14 @@
 <message name="detachSuccessfulAuctionResponse">
 <part name="parameters" element="tns:detachSuccessfulAuctionResponse"/>
 </message>
-<message name="updatePremiumCustomer">
-<part name="parameters" element="tns:updatePremiumCustomer"/>
-</message>
-<message name="updatePremiumCustomerResponse">
-<part name="parameters" element="tns:updatePremiumCustomerResponse"/>
-</message>
 <message name="proxyBidding">
 <part name="parameters" element="tns:proxyBidding"/>
 </message>
 <message name="proxyBiddingResponse">
 <part name="parameters" element="tns:proxyBiddingResponse"/>
+</message>
+<message name="AuctionNotFoundException">
+<part name="fault" element="tns:AuctionNotFoundException"/>
 </message>
 <message name="retrieveAuctionbyId">
 <part name="parameters" element="tns:retrieveAuctionbyId"/>
@@ -112,11 +82,23 @@
 <message name="retrieveAuctionbyIdResponse">
 <part name="parameters" element="tns:retrieveAuctionbyIdResponse"/>
 </message>
+<message name="retrieveAllAuctions">
+<part name="parameters" element="tns:retrieveAllAuctions"/>
+</message>
+<message name="retrieveAllAuctionsResponse">
+<part name="parameters" element="tns:retrieveAllAuctionsResponse"/>
+</message>
 <message name="getHighestBid">
 <part name="parameters" element="tns:getHighestBid"/>
 </message>
 <message name="getHighestBidResponse">
 <part name="parameters" element="tns:getHighestBidResponse"/>
+</message>
+<message name="bidConverter">
+<part name="parameters" element="tns:bidConverter"/>
+</message>
+<message name="bidConverterResponse">
+<part name="parameters" element="tns:bidConverterResponse"/>
 </message>
 <message name="retrieveCustomerbyId">
 <part name="parameters" element="tns:retrieveCustomerbyId"/>
@@ -124,17 +106,35 @@
 <message name="retrieveCustomerbyIdResponse">
 <part name="parameters" element="tns:retrieveCustomerbyIdResponse"/>
 </message>
-<message name="retrieveAllAuctions">
-<part name="parameters" element="tns:retrieveAllAuctions"/>
+<message name="customerLogin">
+<part name="parameters" element="tns:customerLogin"/>
 </message>
-<message name="retrieveAllAuctionsResponse">
-<part name="parameters" element="tns:retrieveAllAuctionsResponse"/>
+<message name="customerLoginResponse">
+<part name="parameters" element="tns:customerLoginResponse"/>
 </message>
-<message name="bidConverter">
-<part name="parameters" element="tns:bidConverter"/>
+<message name="InvalidLoginCredentialException">
+<part name="fault" element="tns:InvalidLoginCredentialException"/>
 </message>
-<message name="bidConverterResponse">
-<part name="parameters" element="tns:bidConverterResponse"/>
+<message name="placeABid">
+<part name="parameters" element="tns:placeABid"/>
+</message>
+<message name="placeABidResponse">
+<part name="parameters" element="tns:placeABidResponse"/>
+</message>
+<message name="NotEnoughCreditException">
+<part name="fault" element="tns:NotEnoughCreditException"/>
+</message>
+<message name="InvalidBidException">
+<part name="fault" element="tns:InvalidBidException"/>
+</message>
+<message name="BidNotFoundException">
+<part name="fault" element="tns:BidNotFoundException"/>
+</message>
+<message name="customerLogout">
+<part name="parameters" element="tns:customerLogout"/>
+</message>
+<message name="customerLogoutResponse">
+<part name="parameters" element="tns:customerLogoutResponse"/>
 </message>
 <message name="sniping">
 <part name="parameters" element="tns:sniping"/>
@@ -143,15 +143,6 @@
 <part name="parameters" element="tns:snipingResponse"/>
 </message>
 <portType name="PremiumCustomerWebService">
-<operation name="retrieveAllActiveAuctions">
-<input wsam:Action="http://soap.ws/PremiumCustomerWebService/retrieveAllActiveAuctionsRequest" message="tns:retrieveAllActiveAuctions"/>
-<output wsam:Action="http://soap.ws/PremiumCustomerWebService/retrieveAllActiveAuctionsResponse" message="tns:retrieveAllActiveAuctionsResponse"/>
-</operation>
-<operation name="retrieveAllSuccessfulAuctionByCustomerId">
-<input wsam:Action="http://soap.ws/PremiumCustomerWebService/retrieveAllSuccessfulAuctionByCustomerIdRequest" message="tns:retrieveAllSuccessfulAuctionByCustomerId"/>
-<output wsam:Action="http://soap.ws/PremiumCustomerWebService/retrieveAllSuccessfulAuctionByCustomerIdResponse" message="tns:retrieveAllSuccessfulAuctionByCustomerIdResponse"/>
-<fault message="tns:CustomerNotFoundException" name="CustomerNotFoundException" wsam:Action="http://soap.ws/PremiumCustomerWebService/retrieveAllSuccessfulAuctionByCustomerId/Fault/CustomerNotFoundException"/>
-</operation>
 <operation name="retrieveSuccessfulAuctionbyId">
 <input wsam:Action="http://soap.ws/PremiumCustomerWebService/retrieveSuccessfulAuctionbyIdRequest" message="tns:retrieveSuccessfulAuctionbyId"/>
 <output wsam:Action="http://soap.ws/PremiumCustomerWebService/retrieveSuccessfulAuctionbyIdResponse" message="tns:retrieveSuccessfulAuctionbyIdResponse"/>
@@ -161,35 +152,29 @@
 <input wsam:Action="http://soap.ws/PremiumCustomerWebService/retrieveAllSuccessfulAuctionsRequest" message="tns:retrieveAllSuccessfulAuctions"/>
 <output wsam:Action="http://soap.ws/PremiumCustomerWebService/retrieveAllSuccessfulAuctionsResponse" message="tns:retrieveAllSuccessfulAuctionsResponse"/>
 </operation>
+<operation name="retrieveAllSuccessfulAuctionByCustomerId">
+<input wsam:Action="http://soap.ws/PremiumCustomerWebService/retrieveAllSuccessfulAuctionByCustomerIdRequest" message="tns:retrieveAllSuccessfulAuctionByCustomerId"/>
+<output wsam:Action="http://soap.ws/PremiumCustomerWebService/retrieveAllSuccessfulAuctionByCustomerIdResponse" message="tns:retrieveAllSuccessfulAuctionByCustomerIdResponse"/>
+<fault message="tns:CustomerNotFoundException" name="CustomerNotFoundException" wsam:Action="http://soap.ws/PremiumCustomerWebService/retrieveAllSuccessfulAuctionByCustomerId/Fault/CustomerNotFoundException"/>
+</operation>
+<operation name="retrieveAllActiveAuctions">
+<input wsam:Action="http://soap.ws/PremiumCustomerWebService/retrieveAllActiveAuctionsRequest" message="tns:retrieveAllActiveAuctions"/>
+<output wsam:Action="http://soap.ws/PremiumCustomerWebService/retrieveAllActiveAuctionsResponse" message="tns:retrieveAllActiveAuctionsResponse"/>
+</operation>
 <operation name="retrieveCustomerbyUsername">
 <input wsam:Action="http://soap.ws/PremiumCustomerWebService/retrieveCustomerbyUsernameRequest" message="tns:retrieveCustomerbyUsername"/>
 <output wsam:Action="http://soap.ws/PremiumCustomerWebService/retrieveCustomerbyUsernameResponse" message="tns:retrieveCustomerbyUsernameResponse"/>
 <fault message="tns:CustomerNotFoundException" name="CustomerNotFoundException" wsam:Action="http://soap.ws/PremiumCustomerWebService/retrieveCustomerbyUsername/Fault/CustomerNotFoundException"/>
 </operation>
-<operation name="placeABid">
-<input wsam:Action="http://soap.ws/PremiumCustomerWebService/placeABidRequest" message="tns:placeABid"/>
-<output wsam:Action="http://soap.ws/PremiumCustomerWebService/placeABidResponse" message="tns:placeABidResponse"/>
-<fault message="tns:CustomerNotFoundException" name="CustomerNotFoundException" wsam:Action="http://soap.ws/PremiumCustomerWebService/placeABid/Fault/CustomerNotFoundException"/>
-<fault message="tns:AuctionNotFoundException" name="AuctionNotFoundException" wsam:Action="http://soap.ws/PremiumCustomerWebService/placeABid/Fault/AuctionNotFoundException"/>
-<fault message="tns:NotEnoughCreditException" name="NotEnoughCreditException" wsam:Action="http://soap.ws/PremiumCustomerWebService/placeABid/Fault/NotEnoughCreditException"/>
-<fault message="tns:InvalidBidException" name="InvalidBidException" wsam:Action="http://soap.ws/PremiumCustomerWebService/placeABid/Fault/InvalidBidException"/>
-<fault message="tns:BidNotFoundException" name="BidNotFoundException" wsam:Action="http://soap.ws/PremiumCustomerWebService/placeABid/Fault/BidNotFoundException"/>
-</operation>
-<operation name="customerLogin">
-<input wsam:Action="http://soap.ws/PremiumCustomerWebService/customerLoginRequest" message="tns:customerLogin"/>
-<output wsam:Action="http://soap.ws/PremiumCustomerWebService/customerLoginResponse" message="tns:customerLoginResponse"/>
-<fault message="tns:InvalidLoginCredentialException" name="InvalidLoginCredentialException" wsam:Action="http://soap.ws/PremiumCustomerWebService/customerLogin/Fault/InvalidLoginCredentialException"/>
-<fault message="tns:CustomerNotFoundException" name="CustomerNotFoundException" wsam:Action="http://soap.ws/PremiumCustomerWebService/customerLogin/Fault/CustomerNotFoundException"/>
-<fault message="tns:UpdateCustomerException" name="UpdateCustomerException" wsam:Action="http://soap.ws/PremiumCustomerWebService/customerLogin/Fault/UpdateCustomerException"/>
-</operation>
-<operation name="customerLogout">
-<input wsam:Action="http://soap.ws/PremiumCustomerWebService/customerLogoutRequest" message="tns:customerLogout"/>
-<output wsam:Action="http://soap.ws/PremiumCustomerWebService/customerLogoutResponse" message="tns:customerLogoutResponse"/>
-<fault message="tns:CustomerNotFoundException" name="CustomerNotFoundException" wsam:Action="http://soap.ws/PremiumCustomerWebService/customerLogout/Fault/CustomerNotFoundException"/>
-</operation>
 <operation name="detachCustomer">
 <input wsam:Action="http://soap.ws/PremiumCustomerWebService/detachCustomerRequest" message="tns:detachCustomer"/>
 <output wsam:Action="http://soap.ws/PremiumCustomerWebService/detachCustomerResponse" message="tns:detachCustomerResponse"/>
+</operation>
+<operation name="updatePremiumCustomer">
+<input wsam:Action="http://soap.ws/PremiumCustomerWebService/updatePremiumCustomerRequest" message="tns:updatePremiumCustomer"/>
+<output wsam:Action="http://soap.ws/PremiumCustomerWebService/updatePremiumCustomerResponse" message="tns:updatePremiumCustomerResponse"/>
+<fault message="tns:CustomerNotFoundException" name="CustomerNotFoundException" wsam:Action="http://soap.ws/PremiumCustomerWebService/updatePremiumCustomer/Fault/CustomerNotFoundException"/>
+<fault message="tns:UpdateCustomerException" name="UpdateCustomerException" wsam:Action="http://soap.ws/PremiumCustomerWebService/updatePremiumCustomer/Fault/UpdateCustomerException"/>
 </operation>
 <operation name="detachAuction">
 <input wsam:Action="http://soap.ws/PremiumCustomerWebService/detachAuctionRequest" message="tns:detachAuction"/>
@@ -198,12 +183,6 @@
 <operation name="detachSuccessfulAuction">
 <input wsam:Action="http://soap.ws/PremiumCustomerWebService/detachSuccessfulAuctionRequest" message="tns:detachSuccessfulAuction"/>
 <output wsam:Action="http://soap.ws/PremiumCustomerWebService/detachSuccessfulAuctionResponse" message="tns:detachSuccessfulAuctionResponse"/>
-</operation>
-<operation name="updatePremiumCustomer">
-<input wsam:Action="http://soap.ws/PremiumCustomerWebService/updatePremiumCustomerRequest" message="tns:updatePremiumCustomer"/>
-<output wsam:Action="http://soap.ws/PremiumCustomerWebService/updatePremiumCustomerResponse" message="tns:updatePremiumCustomerResponse"/>
-<fault message="tns:CustomerNotFoundException" name="CustomerNotFoundException" wsam:Action="http://soap.ws/PremiumCustomerWebService/updatePremiumCustomer/Fault/CustomerNotFoundException"/>
-<fault message="tns:UpdateCustomerException" name="UpdateCustomerException" wsam:Action="http://soap.ws/PremiumCustomerWebService/updatePremiumCustomer/Fault/UpdateCustomerException"/>
 </operation>
 <operation name="proxyBidding">
 <input wsam:Action="http://soap.ws/PremiumCustomerWebService/proxyBiddingRequest" message="tns:proxyBidding"/>
@@ -216,22 +195,43 @@
 <output wsam:Action="http://soap.ws/PremiumCustomerWebService/retrieveAuctionbyIdResponse" message="tns:retrieveAuctionbyIdResponse"/>
 <fault message="tns:AuctionNotFoundException" name="AuctionNotFoundException" wsam:Action="http://soap.ws/PremiumCustomerWebService/retrieveAuctionbyId/Fault/AuctionNotFoundException"/>
 </operation>
+<operation name="retrieveAllAuctions">
+<input wsam:Action="http://soap.ws/PremiumCustomerWebService/retrieveAllAuctionsRequest" message="tns:retrieveAllAuctions"/>
+<output wsam:Action="http://soap.ws/PremiumCustomerWebService/retrieveAllAuctionsResponse" message="tns:retrieveAllAuctionsResponse"/>
+</operation>
 <operation name="getHighestBid">
 <input wsam:Action="http://soap.ws/PremiumCustomerWebService/getHighestBidRequest" message="tns:getHighestBid"/>
 <output wsam:Action="http://soap.ws/PremiumCustomerWebService/getHighestBidResponse" message="tns:getHighestBidResponse"/>
+</operation>
+<operation name="bidConverter">
+<input wsam:Action="http://soap.ws/PremiumCustomerWebService/bidConverterRequest" message="tns:bidConverter"/>
+<output wsam:Action="http://soap.ws/PremiumCustomerWebService/bidConverterResponse" message="tns:bidConverterResponse"/>
 </operation>
 <operation name="retrieveCustomerbyId">
 <input wsam:Action="http://soap.ws/PremiumCustomerWebService/retrieveCustomerbyIdRequest" message="tns:retrieveCustomerbyId"/>
 <output wsam:Action="http://soap.ws/PremiumCustomerWebService/retrieveCustomerbyIdResponse" message="tns:retrieveCustomerbyIdResponse"/>
 <fault message="tns:CustomerNotFoundException" name="CustomerNotFoundException" wsam:Action="http://soap.ws/PremiumCustomerWebService/retrieveCustomerbyId/Fault/CustomerNotFoundException"/>
 </operation>
-<operation name="retrieveAllAuctions">
-<input wsam:Action="http://soap.ws/PremiumCustomerWebService/retrieveAllAuctionsRequest" message="tns:retrieveAllAuctions"/>
-<output wsam:Action="http://soap.ws/PremiumCustomerWebService/retrieveAllAuctionsResponse" message="tns:retrieveAllAuctionsResponse"/>
+<operation name="customerLogin">
+<input wsam:Action="http://soap.ws/PremiumCustomerWebService/customerLoginRequest" message="tns:customerLogin"/>
+<output wsam:Action="http://soap.ws/PremiumCustomerWebService/customerLoginResponse" message="tns:customerLoginResponse"/>
+<fault message="tns:InvalidLoginCredentialException" name="InvalidLoginCredentialException" wsam:Action="http://soap.ws/PremiumCustomerWebService/customerLogin/Fault/InvalidLoginCredentialException"/>
+<fault message="tns:CustomerNotFoundException" name="CustomerNotFoundException" wsam:Action="http://soap.ws/PremiumCustomerWebService/customerLogin/Fault/CustomerNotFoundException"/>
+<fault message="tns:UpdateCustomerException" name="UpdateCustomerException" wsam:Action="http://soap.ws/PremiumCustomerWebService/customerLogin/Fault/UpdateCustomerException"/>
 </operation>
-<operation name="bidConverter">
-<input wsam:Action="http://soap.ws/PremiumCustomerWebService/bidConverterRequest" message="tns:bidConverter"/>
-<output wsam:Action="http://soap.ws/PremiumCustomerWebService/bidConverterResponse" message="tns:bidConverterResponse"/>
+<operation name="placeABid">
+<input wsam:Action="http://soap.ws/PremiumCustomerWebService/placeABidRequest" message="tns:placeABid"/>
+<output wsam:Action="http://soap.ws/PremiumCustomerWebService/placeABidResponse" message="tns:placeABidResponse"/>
+<fault message="tns:CustomerNotFoundException" name="CustomerNotFoundException" wsam:Action="http://soap.ws/PremiumCustomerWebService/placeABid/Fault/CustomerNotFoundException"/>
+<fault message="tns:AuctionNotFoundException" name="AuctionNotFoundException" wsam:Action="http://soap.ws/PremiumCustomerWebService/placeABid/Fault/AuctionNotFoundException"/>
+<fault message="tns:NotEnoughCreditException" name="NotEnoughCreditException" wsam:Action="http://soap.ws/PremiumCustomerWebService/placeABid/Fault/NotEnoughCreditException"/>
+<fault message="tns:InvalidBidException" name="InvalidBidException" wsam:Action="http://soap.ws/PremiumCustomerWebService/placeABid/Fault/InvalidBidException"/>
+<fault message="tns:BidNotFoundException" name="BidNotFoundException" wsam:Action="http://soap.ws/PremiumCustomerWebService/placeABid/Fault/BidNotFoundException"/>
+</operation>
+<operation name="customerLogout">
+<input wsam:Action="http://soap.ws/PremiumCustomerWebService/customerLogoutRequest" message="tns:customerLogout"/>
+<output wsam:Action="http://soap.ws/PremiumCustomerWebService/customerLogoutResponse" message="tns:customerLogoutResponse"/>
+<fault message="tns:CustomerNotFoundException" name="CustomerNotFoundException" wsam:Action="http://soap.ws/PremiumCustomerWebService/customerLogout/Fault/CustomerNotFoundException"/>
 </operation>
 <operation name="sniping">
 <input wsam:Action="http://soap.ws/PremiumCustomerWebService/snipingRequest" message="tns:sniping"/>
@@ -242,27 +242,6 @@
 </portType>
 <binding name="PremiumCustomerWebServicePortBinding" type="tns:PremiumCustomerWebService">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
-<operation name="retrieveAllActiveAuctions">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="retrieveAllSuccessfulAuctionByCustomerId">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="CustomerNotFoundException">
-<soap:fault name="CustomerNotFoundException" use="literal"/>
-</fault>
-</operation>
 <operation name="retrieveSuccessfulAuctionbyId">
 <soap:operation soapAction=""/>
 <input>
@@ -284,6 +263,27 @@
 <soap:body use="literal"/>
 </output>
 </operation>
+<operation name="retrieveAllSuccessfulAuctionByCustomerId">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="CustomerNotFoundException">
+<soap:fault name="CustomerNotFoundException" use="literal"/>
+</fault>
+</operation>
+<operation name="retrieveAllActiveAuctions">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
 <operation name="retrieveCustomerbyUsername">
 <soap:operation soapAction=""/>
 <input>
@@ -294,6 +294,132 @@
 </output>
 <fault name="CustomerNotFoundException">
 <soap:fault name="CustomerNotFoundException" use="literal"/>
+</fault>
+</operation>
+<operation name="detachCustomer">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="updatePremiumCustomer">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="CustomerNotFoundException">
+<soap:fault name="CustomerNotFoundException" use="literal"/>
+</fault>
+<fault name="UpdateCustomerException">
+<soap:fault name="UpdateCustomerException" use="literal"/>
+</fault>
+</operation>
+<operation name="detachAuction">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="detachSuccessfulAuction">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="proxyBidding">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="AuctionNotFoundException">
+<soap:fault name="AuctionNotFoundException" use="literal"/>
+</fault>
+<fault name="CustomerNotFoundException">
+<soap:fault name="CustomerNotFoundException" use="literal"/>
+</fault>
+</operation>
+<operation name="retrieveAuctionbyId">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="AuctionNotFoundException">
+<soap:fault name="AuctionNotFoundException" use="literal"/>
+</fault>
+</operation>
+<operation name="retrieveAllAuctions">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="getHighestBid">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="bidConverter">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="retrieveCustomerbyId">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="CustomerNotFoundException">
+<soap:fault name="CustomerNotFoundException" use="literal"/>
+</fault>
+</operation>
+<operation name="customerLogin">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="InvalidLoginCredentialException">
+<soap:fault name="InvalidLoginCredentialException" use="literal"/>
+</fault>
+<fault name="CustomerNotFoundException">
+<soap:fault name="CustomerNotFoundException" use="literal"/>
+</fault>
+<fault name="UpdateCustomerException">
+<soap:fault name="UpdateCustomerException" use="literal"/>
 </fault>
 </operation>
 <operation name="placeABid">
@@ -320,24 +446,6 @@
 <soap:fault name="BidNotFoundException" use="literal"/>
 </fault>
 </operation>
-<operation name="customerLogin">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="InvalidLoginCredentialException">
-<soap:fault name="InvalidLoginCredentialException" use="literal"/>
-</fault>
-<fault name="CustomerNotFoundException">
-<soap:fault name="CustomerNotFoundException" use="literal"/>
-</fault>
-<fault name="UpdateCustomerException">
-<soap:fault name="UpdateCustomerException" use="literal"/>
-</fault>
-</operation>
 <operation name="customerLogout">
 <soap:operation soapAction=""/>
 <input>
@@ -349,114 +457,6 @@
 <fault name="CustomerNotFoundException">
 <soap:fault name="CustomerNotFoundException" use="literal"/>
 </fault>
-</operation>
-<operation name="detachCustomer">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="detachAuction">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="detachSuccessfulAuction">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="updatePremiumCustomer">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="CustomerNotFoundException">
-<soap:fault name="CustomerNotFoundException" use="literal"/>
-</fault>
-<fault name="UpdateCustomerException">
-<soap:fault name="UpdateCustomerException" use="literal"/>
-</fault>
-</operation>
-<operation name="proxyBidding">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="AuctionNotFoundException">
-<soap:fault name="AuctionNotFoundException" use="literal"/>
-</fault>
-<fault name="CustomerNotFoundException">
-<soap:fault name="CustomerNotFoundException" use="literal"/>
-</fault>
-</operation>
-<operation name="retrieveAuctionbyId">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="AuctionNotFoundException">
-<soap:fault name="AuctionNotFoundException" use="literal"/>
-</fault>
-</operation>
-<operation name="getHighestBid">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="retrieveCustomerbyId">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="CustomerNotFoundException">
-<soap:fault name="CustomerNotFoundException" use="literal"/>
-</fault>
-</operation>
-<operation name="retrieveAllAuctions">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="bidConverter">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
 </operation>
 <operation name="sniping">
 <soap:operation soapAction=""/>

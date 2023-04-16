@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,6 +17,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -37,6 +40,11 @@ public class Snipe implements Serializable {
     @Column(nullable = false)
     @NotNull
     private Date snipeDateTime;
+    @Column(nullable = false, precision = 18, scale = 4)
+    @NotNull
+    @Digits(integer = 14, fraction = 4)
+    @DecimalMin("0.01")
+    private BigDecimal bidAmount;
     
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
@@ -46,9 +54,10 @@ public class Snipe implements Serializable {
     @JoinColumn(nullable = false)
     private Auction auction;
 
-    public Snipe(Date creationDateTime, Date snipeDateTime) {
+    public Snipe(Date creationDateTime, Date snipeDateTime, BigDecimal bidAmount) {
         this.creationDateTime = creationDateTime;
         this.snipeDateTime = snipeDateTime;
+        this.bidAmount = bidAmount;
     }
 
     public Snipe() {
@@ -141,6 +150,20 @@ public class Snipe implements Serializable {
      */
     public void setAuction(Auction auction) {
         this.auction = auction;
+    }
+
+    /**
+     * @return the bidAmount
+     */
+    public BigDecimal getBidAmount() {
+        return bidAmount;
+    }
+
+    /**
+     * @param bidAmount the bidAmount to set
+     */
+    public void setBidAmount(BigDecimal bidAmount) {
+        this.bidAmount = bidAmount;
     }
     
 }
